@@ -1,0 +1,15 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Query {
+  sermons: [Sermon!]!
+}
+
+type Sermon {
+  date: String!
+  id: ID!
+  preacher: String!
+  title: String!
+  videoUrl: String
+}
