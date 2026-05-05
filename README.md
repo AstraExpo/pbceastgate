@@ -1,159 +1,75 @@
-# Turborepo starter
+# Eastgate Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+A high-performance, full-stack monorepo powered by **Turborepo**, **pnpm**, and **TypeScript 6**. This project uses a unified architectural pattern to share configurations and UI components across a modern web and server stack.
 
-## Using this example
+## 🏗 Project Structure
 
-Run the following command:
+### Apps
+- `apps/web`: **TanStack Start** application (Vite-based React framework) with 100% type-safe routing.
+- `apps/server`: **NestJS** backend providing a GraphQL API via Apollo Server 5.
+- `apps/docs`: **Next.js** documentation site.
 
+### Shared Packages
+- `@eastgate/ui`: Shared React component library.
+- `@eastgate/eslint-config`: Centralized ESLint rules (specialized for NestJS, TanStack, and Next.js).
+- `@eastgate/typescript-config`: Shared `tsconfig.json` bases for strict type-checking across different runtimes.
+
+## 🛠 Tech Stack
+- **Orchestration:** [Turborepo](https://turbo.build/)
+- **Package Manager:** [pnpm](https://pnpm.io/) (v10+)
+- **Frontend:** [TanStack Start](https://tanstack.com/start), React 19, Vite
+- **Backend:** [NestJS](https://nestjs.com/), GraphQL, Apollo Server 5
+- **Language:** [TypeScript 6.0+](https://www.typescriptlang.org/)
+- **Linting & Formatting:** ESLint 10, Prettier 3.8
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Node.js**: `^24` or higher.
+- **pnpm**: `^10.33.2` or higher.
+
+### Installation
+From the root directory:
 ```sh
-npx create-turbo@latest
+pnpm install
+pnpm approve-builds  # Whitelists essential build scripts for sharp/esbuild
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@eastgate/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@eastgate/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@eastgate/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
+### Development
+Start all applications in development mode:
 ```sh
-cd my-turborepo
-turbo build
+pnpm dev
 ```
 
-Without global `turbo`, use your package manager:
-
+To develop a specific app (e.g., just the server):
 ```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
+pnpm dev --filter=@eastgate/server
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
+### Build & Type-Check
+From the root directory:
 ```sh
-turbo build --filter=docs
+pnpm build          # Builds all apps and packages
+pnpm check-types    # Runs sychronized type-checking across the workspace
 ```
 
-Without global `turbo`:
-
+## 🧹 Maintenance Commands
+- **Format Code:** 
+```sh 
+pnpm format
+```
+- **Lint Everything:** 
 ```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+pnpm lint
+```
+- **Clean Workspace:** 
+```sh
+pnpm clean  # (Removes all node_modules, dist, and build caches)
 ```
 
-### Develop
+## 📖 Key Architectural Decisions
+- **ESM-First:** The server and web apps are configured for modern ESM resolution using [NodeNext].
+- **Type-Safe Routing:** The web app uses TanStack Router's code generation for zero-runtime-error navigation.
+- **Unified Configs:** ESLint and TypeScript rules are managed in the [packages/] directory to ensure consistency between the backend and frontend.
 
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+# Built with ❤️ by Richard kisivii.
