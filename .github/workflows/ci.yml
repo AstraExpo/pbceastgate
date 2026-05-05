@@ -18,6 +18,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+            version: 10
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,7 +39,6 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Lint & Type-Check
-        # This runs lint and check-types only on changed files/packages
         run: pnpm turbo lint check-types
 
       - name: Build
