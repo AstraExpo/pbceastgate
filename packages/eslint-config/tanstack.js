@@ -21,7 +21,13 @@ export const tanstackConfig = [
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "react-refresh/only-export-components": [
+        "warn",
+        {
+          allowConstantExport: true,
+          allowExportNames: ["Route", "FileRoute", "meta", "links"],
+        },
+      ],
       "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
     },
