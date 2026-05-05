@@ -5,5 +5,11 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "exports": {
+    "./nextjs.json": "./nextjs.json",
+    "./nest.json": "./nest.json",
+    "./tanstack.json": "./tanstack.json",
+    "./base.json": "./base.json"
   }
 }
