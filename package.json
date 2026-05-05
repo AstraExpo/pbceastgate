@@ -20,10 +20,11 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-    "@apollo/protobufjs",
-    "@nestjs/core",
-    "esbuild",
-    "sharp"
-  ]
+      "@apollo/protobufjs",
+      "@nestjs/core",
+      "esbuild",
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }
