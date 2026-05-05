@@ -20,7 +20,11 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-turbo": "^2.7.1",
     "globals": "^16.5.0",
-    "typescript": "^5.9.2",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.50.0"
+  },
+  "dependencies": {
+    "eslint-config-next": "^16.2.4",
+    "eslint-plugin-react-refresh": "^0.5.2"
   }
 }

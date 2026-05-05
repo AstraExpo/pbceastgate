@@ -34,7 +34,9 @@
     "@nestjs/testing": "^11.0.1",
     "@types/express": "^5.0.0",
     "@types/node": "^22.19.17",
+    "eslint": "^9.39.4",
     "source-map-support": "^0.5.21",
-    "typescript": "5.9.2"
+    "typescript": "6.0.3",
+    "typescript-eslint": "^8.59.2"
   }
 }
