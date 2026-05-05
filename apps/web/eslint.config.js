@@ -1,4 +1,4 @@
-import { nextJsConfig } from "@eastgate/eslint-config/next-js";
+import { tanstackConfig } from "@eastgate/eslint-config/tanstack";
 
 /** @type {import("eslint").Linter.Config[]} */
-export default nextJsConfig;
+export default tanstackConfig;

@@ -1,19 +1,17 @@
 {
-  "extends": "@eastgate/typescript-config/nextjs.json",
+  "extends": "@eastgate/typescript-config/tanstack.json",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "strictNullChecks": true
+    "paths": {
+      "~/*": ["./app/*"],
+      "@/*": ["./*"]
+    }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "next-env.d.ts",
-    "next.config.js",
-    ".next/types/**/*.ts"
+    "src/**/*.ts", 
+    "src/**/*.tsx", 
+    "app/**/*.ts", 
+    "app/**/*.tsx",
+    ".tanstack/router/routeTree.gen.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".output", "dist"]
 }

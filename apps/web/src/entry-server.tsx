@@ -1,10 +1,13 @@
-import { createStartHandler, defaultRenderHandler } from '@tanstack/react-start/server'
-import { getRouter } from './router'
+import {
+  createStartHandler,
+  defaultStreamHandler,
+  defineHandlerCallback,
+} from "@tanstack/react-start/server";
+import { createServerEntry } from "@tanstack/react-start/server-entry";
 
-export default createStartHandler({
-  createRouter: getRouter,
-  getWebRequest: () => {
-    // In a real env, this helps the server understand the request context
-    return new Request('http://localhost:3000')
-  },
-})(defaultRenderHandler)
+const handler = defineHandlerCallback(defaultStreamHandler);
+const fetch = createStartHandler(handler);
+
+export default createServerEntry({
+  fetch,
+});
