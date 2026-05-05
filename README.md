@@ -1,4 +1,4 @@
-# Eastgate Monorepo
+# Eastgate Monorepo ![CI](https://github.com/astradevmagic-cell/eastgate/actions/workflows/ci.yml/badge.svg)
 
 A high-performance, full-stack monorepo powered by **Turborepo**, **pnpm**, and **TypeScript 6**. This project uses a unified architectural pattern to share configurations and UI components across a modern web and server stack.
 
