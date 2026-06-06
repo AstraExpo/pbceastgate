@@ -4,6 +4,7 @@ import { ApolloDriver } from '@nestjs/apollo'
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default'
 import { join } from 'path'
 import { ServiceModule } from './service/service.module.js'
+import { CommonModule } from './common/common.module.js'
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ServiceModule } from './service/service.module.js'
       ],
     }),
     ServiceModule,
+    CommonModule
   ],
   providers: [],
 })

@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: eastgate-local-postgres
+    environment:
+      POSTGRES_USER: eastgate_user
+      POSTGRES_PASSWORD: eastgate_secure_password
+      POSTGRES_DB: eastgate_dev
+    ports:
+      - "5454:5432"
+    volumes:
+      - ./.data/postgres:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres:
