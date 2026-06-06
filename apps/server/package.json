@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nest start --watch",
+    "dev": "nest start --watch --exec \"node --import dotenv/config\"",
     "build": "nest build",
     "start": "node dist/main",
     "lint": "eslint . --max-warnings 0",
@@ -21,12 +21,14 @@
     "@nestjs/platform-express": "^11.1.6",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.4",
+    "dotenv": "^17.4.2",
     "graphql": "^16.10.0",
     "graphql-scalars": "^1.24.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@eastgate/database": "workspace:*",
     "@eastgate/eslint-config": "workspace:*",
     "@eastgate/typescript-config": "workspace:*",
     "@nestjs/cli": "^11.0.5",
