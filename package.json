@@ -7,7 +7,10 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "clean": "rm -rf pnpm-lock.yaml node_modules .turbo && pnpm -r exec rm -rf node_modules .next dist .output .turbo"
+    "clean": "rm -rf pnpm-lock.yaml node_modules .turbo && pnpm -r exec rm -rf node_modules .next dist .output .turbo",
+    "db:migrate": "pnpm --filter @eastgate/database db:migrate",
+    "db:studio": "pnpm --filter @eastgate/database db:studio",
+    "db:generate": "pnpm --filter @eastgate/database build"
   },
   "devDependencies": {
     "prettier": "^3.8.3",
@@ -22,9 +25,10 @@
     "onlyBuiltDependencies": [
       "@apollo/protobufjs",
       "@nestjs/core",
+      "@prisma/engines",
       "esbuild",
-      "sharp",
-      "unrs-resolver"
+      "prisma",
+      "sharp"
     ]
   }
 }
