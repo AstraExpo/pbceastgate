@@ -1,10 +1,10 @@
-name: Eastgate CI Workflow
+name: PBC Eastgate CI Workflow
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "staging", "dev"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "staging", "dev"]
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
