@@ -10,6 +10,24 @@ jobs:
   build:
     name: Build, Lint, and Test
     runs-on: ubuntu-latest
+
+    # Spin up an isolated PostgreSQL container inside the runner network
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: eastgate_user
+          POSTGRES_PASSWORD: eastgate_secure_password
+          POSTGRES_DB: eastgate_dev
+        ports:
+          - 5454:5432
+        # Ensure the database is fully responsive before starting steps
+        options: >-
+          --health-cmd "pg_isready -U eastgate_user -d eastgate_dev"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -36,8 +54,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
 
+      # Create the dynamic .env file inside the NestJS app directory
+      - name: Create Temporary .env File
+        run: |
+          mkdir -p apps/server
+          echo "DATABASE_URL=\"postgresql://eastgate_user:eastgate_secure_password@localhost:5454/eastgate_dev?schema=public\"" > apps/server/.env
+
+      # Generate Prisma Client (now successfully finds the created .env file)
       - name: Generate Prisma Client
         run: pnpm db:generate
+
+        # Apply migrations to the temporary test database container
+      - name: Push Database Schema
+        run: pnpm --filter @eastgate/database prisma db push
 
       - name: Lint & Type-Check
         run: pnpm turbo lint check-types
@@ -48,15 +77,14 @@ jobs:
       # NEW STEP: Validate that the local development environments boot up safely
       - name: Validate Development Boot (pnpm dev)
         run: |
-          echo "DATABASE_URL=postgresql://eastgate_user:eastgate_secure_password@localhost:5454/eastgate_dev?schema=public" >> $GITHUB_ENV
           pnpm dev &
           PID=$!
-          echo "Waiting for development servers to initialize..."
+          echo "Waiting for development servers to initialize and connect..."
           sleep 15
           if kill -0 $PID 2>/dev/null; then
-            echo "SUCCESS: Development processes initialized without immediate crash loops."
+            echo "SUCCESS: All applications booted via 'pnpm dev' and connected to PostgreSQL."
             kill $PID
           else
-            echo "ERROR: One or more applications failed to boot via 'pnpm dev'."
+            echo "ERROR: Applications crashed during 'pnpm dev' execution loop."
             exit 1
           fi
