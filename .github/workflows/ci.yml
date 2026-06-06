@@ -36,8 +36,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
 
+      - name: Generate Prisma Client
+        run: pnpm db:generate
+
       - name: Lint & Type-Check
         run: pnpm turbo lint check-types
 
-      - name: Build
+      - name: Production Build Validation
         run: pnpm turbo build
+
+      # NEW STEP: Validate that the local development environments boot up safely
+      - name: Validate Development Boot (pnpm dev)
+        run: |
+          echo "DATABASE_URL=postgresql://eastgate_user:eastgate_secure_password@localhost:5454/eastgate_dev?schema=public" >> $GITHUB_ENV
+          pnpm dev &
+          PID=$!
+          echo "Waiting for development servers to initialize..."
+          sleep 15
+          if kill -0 $PID 2>/dev/null; then
+            echo "SUCCESS: Development processes initialized without immediate crash loops."
+            kill $PID
+          else
+            echo "ERROR: One or more applications failed to boot via 'pnpm dev'."
+            exit 1
+          fi
