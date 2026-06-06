@@ -1,0 +1,12 @@
+{
+  "extends": "@eastgate/typescript-config/base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["index.ts", "index.d.ts", "client/**/*.d.ts"],
+  "exclude": ["node_modules"]
+}
