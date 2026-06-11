@@ -25,10 +25,9 @@
     "onlyBuiltDependencies": [
       "@apollo/protobufjs",
       "@nestjs/core",
-      "@prisma/engines",
       "esbuild",
-      "prisma",
-      "sharp"
+      "sharp",
+      "unrs-resolver"
     ]
   }
 }
