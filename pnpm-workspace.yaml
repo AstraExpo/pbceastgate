@@ -4,5 +4,15 @@ packages:
 allowBuilds:
   '@apollo/protobufjs': true
   '@nestjs/core': true
+  '@prisma/engines': true
   esbuild: true
+  prisma: true
   sharp: true
+  unrs-resolver: true
+peerDependencyRules:
+  ignoreMissing:
+    - "@apollo/server"
+packageExtensions:
+  "@apollo/server-plugin-landing-page-graphql-playground@4.0.1":
+    peerDependencies:
+      "@apollo/server": "^4.0.0 || ^5.0.0"
