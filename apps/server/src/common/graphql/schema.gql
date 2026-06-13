@@ -2,7 +2,28 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateMinistryInput {
+  description: String
+  headId: Float
+  name: String!
+}
+
+type Ministry {
+  description: String
+  headId: Float
+  id: Float!
+  name: String!
+}
+
+type Mutation {
+  createMinistry(input: CreateMinistryInput!): Ministry!
+  deleteMinistry(id: ID!): Ministry!
+  updateMinistry(input: UpdateMinistryInput!): Ministry!
+}
+
 type Query {
+  ministries: [Ministry!]!
+  ministry(id: ID!): Ministry
   sermons: [Sermon!]!
 }
 
@@ -12,4 +33,11 @@ type Sermon {
   preacher: String!
   title: String!
   videoUrl: String
+}
+
+input UpdateMinistryInput {
+  description: String
+  headId: Float
+  id: Float!
+  name: String
 }

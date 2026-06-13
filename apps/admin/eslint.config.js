@@ -3,7 +3,7 @@ import { tanstackConfig } from "@eastgate/eslint-config/tanstack";
 /** @type {import("eslint").Linter.Config[]} */
 export default [
   {
-    ignores: [".output/**", "dist/**", "node_modules/**", ".tanstack/**"],
+    ignores: [".output/**", "dist/**", "node_modules/**", "src/graphql/generated/**/*", ".tanstack/**"],
   },
   ...tanstackConfig,
   {
