@@ -11,17 +11,22 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@apollo/client": "^4.2.3",
     "@eastgate/ui": "workspace:*",
     "@tanstack/react-router": "latest",
     "@tanstack/react-start": "latest",
+    "graphql": "^16.14.2",
+    "graphql-ws": "^6.0.8",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "vite": "^7.3.2"
+    "vite": "^7.3.2",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eastgate/eslint-config": "workspace:*",
     "@eastgate/typescript-config": "workspace:*",
     "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^22.19.21",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.2.0",

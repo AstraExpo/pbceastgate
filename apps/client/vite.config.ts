@@ -3,6 +3,11 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 export default defineConfig({
   server: {
@@ -13,7 +18,6 @@ export default defineConfig({
     tanstackStart({
       srcDirectory: 'src',
       router: {
-        // This matches the "app" folder structure you saw in the docs
         routesDirectory: 'app', 
       },
     }),
@@ -21,9 +25,9 @@ export default defineConfig({
     nitro(),
   ],
   resolve: {
-    // Ensures Vite can resolve your @eastgate workspace packages
     alias: {
-      "@": "/src",
+      "@": resolve(__dirname, "./src"),
+      "~": resolve(__dirname, "./app"),
     },
   },
 })
