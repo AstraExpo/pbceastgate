@@ -1,7 +1,7 @@
-import { baseConfig } from "@eastgate/eslint-config/base";
+import { config } from "@eastgate/eslint-config/base";
 
 export default [
-  ...baseConfig,
+  ...config,
   {
     ignores: ["node_modules/**", "src/generated/**"],
   },
