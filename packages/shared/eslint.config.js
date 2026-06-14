@@ -1,4 +1,4 @@
-import baseConfig from "@eastgate/eslint-config/base";
+import { baseConfig } from "@eastgate/eslint-config/base";
 
 export default [
   ...baseConfig,
