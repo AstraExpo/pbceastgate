@@ -1,5 +1,5 @@
-import { Field, InputType } from "@nestjs/graphql";
-import { IsOptional, IsString, IsNumber } from "class-validator";
+import { Field, InputType, Int } from "@nestjs/graphql";
+import { IsOptional, IsString, IsInt } from "class-validator";
 
 @InputType()
 export class CreateMinistryInput {
@@ -12,8 +12,8 @@ export class CreateMinistryInput {
   @Field(() => String, { nullable: true })
   description?: string;
 
-  @IsNumber()
-  @IsString()
-  @Field(() => Number, { nullable: true })
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
   headId?: number;
 }

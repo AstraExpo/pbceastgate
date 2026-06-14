@@ -24,6 +24,10 @@ export default defineConfig({
     viteReact(),
     nitro(),
   ],
+    optimizeDeps: {
+    // Explicitly pre-bundle 'zod' on server start so Vite doesn't re-optimize mid-session
+    include: ['zod'],
+  },
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),

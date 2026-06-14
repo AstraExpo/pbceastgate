@@ -69,6 +69,7 @@ const config: CodegenConfig = {
       ],
       config: {
         fetcher: 'graphql-request',
+        documentMode: 'string',
       },
     },
   },

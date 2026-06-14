@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MinistryService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async findAll() {
     return this.prisma.ministry.findMany({
@@ -29,21 +29,20 @@ export class MinistryService {
     });
   }
 
-  async update(input: UpdateMinistryInput) {
-    const { id, ...data } = input;
+  async update(id: number, input: UpdateMinistryInput) {
     return this.prisma.ministry.update({
-      where: { id: Number(id) },
+      where: { id },
       data: {
-        name: data.name,
-        description: data.description,
-        headId: data.headId ? Number(data.headId) : null,
+        name: input.name,
+        description: input.description,
+        headId: input.headId ? Number(input.headId) : null,
       },
     });
   }
 
   async delete(id: number) {
     return this.prisma.ministry.delete({
-      where: { id: Number(id) },
+      where: { id },
     });
   }
 }

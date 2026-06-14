@@ -1,4 +1,4 @@
-import { clientEnv } from "@/config/client.env";
+import { clientEnv } from "@/config/admin.env";
 import {
   ApolloLink,
   InMemoryCache,

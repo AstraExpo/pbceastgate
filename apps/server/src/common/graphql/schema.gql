@@ -4,26 +4,26 @@
 
 input CreateMinistryInput {
   description: String
-  headId: Float
+  headId: Int
   name: String!
 }
 
 type Ministry {
   description: String
-  headId: Float
-  id: Float!
+  headId: Int
+  id: Int!
   name: String!
 }
 
 type Mutation {
   createMinistry(input: CreateMinistryInput!): Ministry!
-  deleteMinistry(id: ID!): Ministry!
-  updateMinistry(input: UpdateMinistryInput!): Ministry!
+  deleteMinistry(id: Int!): Ministry!
+  updateMinistry(id: Int!, input: UpdateMinistryInput!): Ministry!
 }
 
 type Query {
   ministries: [Ministry!]!
-  ministry(id: ID!): Ministry
+  ministry(id: Int!): Ministry
   sermons: [Sermon!]!
 }
 
@@ -37,7 +37,6 @@ type Sermon {
 
 input UpdateMinistryInput {
   description: String
-  headId: Float
-  id: Float!
+  headId: Int
   name: String
 }

@@ -22,15 +22,15 @@ export type Scalars = {
 
 export type CreateMinistryInput = {
   description?: InputMaybe<Scalars['String']['input']>;
-  headId?: InputMaybe<Scalars['Float']['input']>;
+  headId?: InputMaybe<Scalars['Int']['input']>;
   name: Scalars['String']['input'];
 };
 
 export type Ministry = {
   __typename?: 'Ministry';
   description?: Maybe<Scalars['String']['output']>;
-  headId?: Maybe<Scalars['Float']['output']>;
-  id: Scalars['Float']['output'];
+  headId?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
 };
 
@@ -48,11 +48,12 @@ export type MutationCreateMinistryArgs = {
 
 
 export type MutationDeleteMinistryArgs = {
-  id: Scalars['ID']['input'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type MutationUpdateMinistryArgs = {
+  id: Scalars['Int']['input'];
   input: UpdateMinistryInput;
 };
 
@@ -65,7 +66,7 @@ export type Query = {
 
 
 export type QueryMinistryArgs = {
-  id: Scalars['ID']['input'];
+  id: Scalars['Int']['input'];
 };
 
 export type Sermon = {
@@ -79,8 +80,7 @@ export type Sermon = {
 
 export type UpdateMinistryInput = {
   description?: InputMaybe<Scalars['String']['input']>;
-  headId?: InputMaybe<Scalars['Float']['input']>;
-  id: Scalars['Float']['input'];
+  headId?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -90,7 +90,7 @@ export type GetMinistriesQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetMinistriesQuery = { __typename?: 'Query', ministries: Array<{ __typename?: 'Ministry', id: number, name: string, description?: string | null, headId?: number | null }> };
 
 export type GetMinistryQueryVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: Scalars['Int']['input'];
 }>;
 
 
@@ -101,9 +101,10 @@ export type CreateMinistryMutationVariables = Exact<{
 }>;
 
 
-export type CreateMinistryMutation = { __typename?: 'Mutation', createMinistry: { __typename?: 'Ministry', id: number, name: string } };
+export type CreateMinistryMutation = { __typename?: 'Mutation', createMinistry: { __typename?: 'Ministry', id: number, name: string, description?: string | null } };
 
 export type UpdateMinistryMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
   input: UpdateMinistryInput;
 }>;
 
@@ -111,7 +112,7 @@ export type UpdateMinistryMutationVariables = Exact<{
 export type UpdateMinistryMutation = { __typename?: 'Mutation', updateMinistry: { __typename?: 'Ministry', id: number, name: string, description?: string | null } };
 
 export type DeleteMinistryMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: Scalars['Int']['input'];
 }>;
 
 
@@ -164,7 +165,7 @@ export type GetMinistriesLazyQueryHookResult = ReturnType<typeof useGetMinistrie
 export type GetMinistriesSuspenseQueryHookResult = ReturnType<typeof useGetMinistriesSuspenseQuery>;
 export type GetMinistriesQueryResult = Apollo.QueryResult<GetMinistriesQuery, GetMinistriesQueryVariables>;
 export const GetMinistryDocument = gql`
-    query GetMinistry($id: ID!) {
+    query GetMinistry($id: Int!) {
   ministry(id: $id) {
     id
     name
@@ -214,6 +215,7 @@ export const CreateMinistryDocument = gql`
   createMinistry(input: $input) {
     id
     name
+    description
   }
 }
     `;
@@ -244,8 +246,8 @@ export type CreateMinistryMutationHookResult = ReturnType<typeof useCreateMinist
 export type CreateMinistryMutationResult = Apollo.MutationResult<CreateMinistryMutation>;
 export type CreateMinistryMutationOptions = Apollo.BaseMutationOptions<CreateMinistryMutation, CreateMinistryMutationVariables>;
 export const UpdateMinistryDocument = gql`
-    mutation UpdateMinistry($input: UpdateMinistryInput!) {
-  updateMinistry(input: $input) {
+    mutation UpdateMinistry($id: Int!, $input: UpdateMinistryInput!) {
+  updateMinistry(id: $id, input: $input) {
     id
     name
     description
@@ -267,6 +269,7 @@ export type UpdateMinistryMutationFn = Apollo.MutationFunction<UpdateMinistryMut
  * @example
  * const [updateMinistryMutation, { data, loading, error }] = useUpdateMinistryMutation({
  *   variables: {
+ *      id: // value for 'id'
  *      input: // value for 'input'
  *   },
  * });
@@ -279,7 +282,7 @@ export type UpdateMinistryMutationHookResult = ReturnType<typeof useUpdateMinist
 export type UpdateMinistryMutationResult = Apollo.MutationResult<UpdateMinistryMutation>;
 export type UpdateMinistryMutationOptions = Apollo.BaseMutationOptions<UpdateMinistryMutation, UpdateMinistryMutationVariables>;
 export const DeleteMinistryDocument = gql`
-    mutation DeleteMinistry($id: ID!) {
+    mutation DeleteMinistry($id: Int!) {
   deleteMinistry(id: $id) {
     id
   }

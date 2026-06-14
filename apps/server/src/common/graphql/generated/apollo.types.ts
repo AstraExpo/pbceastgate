@@ -1,5 +1,4 @@
 import { GraphQLClient, RequestOptions } from 'graphql-request';
-import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -19,15 +18,15 @@ export type Scalars = {
 
 export type CreateMinistryInput = {
   description?: InputMaybe<Scalars['String']['input']>;
-  headId?: InputMaybe<Scalars['Float']['input']>;
+  headId?: InputMaybe<Scalars['Int']['input']>;
   name: Scalars['String']['input'];
 };
 
 export type Ministry = {
   __typename?: 'Ministry';
   description?: Maybe<Scalars['String']['output']>;
-  headId?: Maybe<Scalars['Float']['output']>;
-  id: Scalars['Float']['output'];
+  headId?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
 };
 
@@ -45,11 +44,12 @@ export type MutationCreateMinistryArgs = {
 
 
 export type MutationDeleteMinistryArgs = {
-  id: Scalars['ID']['input'];
+  id: Scalars['Int']['input'];
 };
 
 
 export type MutationUpdateMinistryArgs = {
+  id: Scalars['Int']['input'];
   input: UpdateMinistryInput;
 };
 
@@ -62,7 +62,7 @@ export type Query = {
 
 
 export type QueryMinistryArgs = {
-  id: Scalars['ID']['input'];
+  id: Scalars['Int']['input'];
 };
 
 export type Sermon = {
@@ -76,8 +76,7 @@ export type Sermon = {
 
 export type UpdateMinistryInput = {
   description?: InputMaybe<Scalars['String']['input']>;
-  headId?: InputMaybe<Scalars['Float']['input']>;
-  id: Scalars['Float']['input'];
+  headId?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -87,7 +86,7 @@ export type GetMinistriesQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetMinistriesQuery = { __typename?: 'Query', ministries: Array<{ __typename?: 'Ministry', id: number, name: string, description?: string | null, headId?: number | null }> };
 
 export type GetMinistryQueryVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: Scalars['Int']['input'];
 }>;
 
 
@@ -98,9 +97,10 @@ export type CreateMinistryMutationVariables = Exact<{
 }>;
 
 
-export type CreateMinistryMutation = { __typename?: 'Mutation', createMinistry: { __typename?: 'Ministry', id: number, name: string } };
+export type CreateMinistryMutation = { __typename?: 'Mutation', createMinistry: { __typename?: 'Ministry', id: number, name: string, description?: string | null } };
 
 export type UpdateMinistryMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
   input: UpdateMinistryInput;
 }>;
 
@@ -108,14 +108,14 @@ export type UpdateMinistryMutationVariables = Exact<{
 export type UpdateMinistryMutation = { __typename?: 'Mutation', updateMinistry: { __typename?: 'Ministry', id: number, name: string, description?: string | null } };
 
 export type DeleteMinistryMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: Scalars['Int']['input'];
 }>;
 
 
 export type DeleteMinistryMutation = { __typename?: 'Mutation', deleteMinistry: { __typename?: 'Ministry', id: number } };
 
 
-export const GetMinistriesDocument = gql`
+export const GetMinistriesDocument = `
     query GetMinistries {
   ministries {
     id
@@ -125,8 +125,8 @@ export const GetMinistriesDocument = gql`
   }
 }
     `;
-export const GetMinistryDocument = gql`
-    query GetMinistry($id: ID!) {
+export const GetMinistryDocument = `
+    query GetMinistry($id: Int!) {
   ministry(id: $id) {
     id
     name
@@ -135,25 +135,26 @@ export const GetMinistryDocument = gql`
   }
 }
     `;
-export const CreateMinistryDocument = gql`
+export const CreateMinistryDocument = `
     mutation CreateMinistry($input: CreateMinistryInput!) {
   createMinistry(input: $input) {
-    id
-    name
-  }
-}
-    `;
-export const UpdateMinistryDocument = gql`
-    mutation UpdateMinistry($input: UpdateMinistryInput!) {
-  updateMinistry(input: $input) {
     id
     name
     description
   }
 }
     `;
-export const DeleteMinistryDocument = gql`
-    mutation DeleteMinistry($id: ID!) {
+export const UpdateMinistryDocument = `
+    mutation UpdateMinistry($id: Int!, $input: UpdateMinistryInput!) {
+  updateMinistry(id: $id, input: $input) {
+    id
+    name
+    description
+  }
+}
+    `;
+export const DeleteMinistryDocument = `
+    mutation DeleteMinistry($id: Int!) {
   deleteMinistry(id: $id) {
     id
   }
