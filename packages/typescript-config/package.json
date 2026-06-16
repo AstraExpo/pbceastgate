@@ -7,7 +7,6 @@
     "access": "public"
   },
   "exports": {
-    "./nextjs.json": "./nextjs.json",
     "./nest.json": "./nest.json",
     "./tanstack.json": "./tanstack.json",
     "./react-library.json": "./react-library.json",

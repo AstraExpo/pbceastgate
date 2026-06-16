@@ -1,0 +1,35 @@
+{
+  "name": "@eastgate/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "codegen": "graphql-codegen --config codegen.ts",
+    "codegen:watch": "graphql-codegen --config codegen.ts --watch",
+    "lint": "eslint .",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "graphql": "^16.10.0",
+    "graphql-request": "^7.1.2"
+  },
+  "devDependencies": {
+    "@eastgate/eslint-config": "workspace:*",
+    "@eastgate/typescript-config": "workspace:*",
+    "@graphql-codegen/cli": "^5.0.5",
+    "@graphql-codegen/typescript": "^4.1.4",
+    "@graphql-codegen/typescript-graphql-request": "^6.2.0",
+    "@graphql-codegen/typescript-operations": "^4.4.1",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.2",
+    "@types/node": "^22.19.17",
+    "eslint": "^9.39.4",
+    "typescript": "^6.0.3"
+  }
+}
