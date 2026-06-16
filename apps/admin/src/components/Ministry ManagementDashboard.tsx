@@ -4,6 +4,7 @@ import {
   useGetMinistries,
   useUpdateMinistry,
 } from "@/hooks/ministry";
+import { Button } from "@eastgate/ui/components/button";
 import { useState } from "react";
 
 export function MinistryManagementDashboard() {
@@ -203,18 +204,19 @@ export function MinistryManagementDashboard() {
                   </div>
 
                   <div className="flex items-center gap-x-2 sm:self-center self-end">
-                    <button
+                    <Button
+                      size="sm"
                       onClick={() => handleEditSetup(validatedMinistry)}
-                      className="border text-xs px-2.5 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
                     >
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
                       onClick={() => handleDelete(validatedMinistry.id)}
-                      className="border border-red-500/30 text-red-500 text-xs px-2.5 py-1 rounded hover:bg-red-500 hover:text-white transition-colors font-medium"
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 </div>
               );
