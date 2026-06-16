@@ -28,3 +28,4 @@ allowedDeprecatedVersions:
   inflight: "*"
   node-domexception: "*"
   subscriptions-transport-ws: "*"
+  recharts: "*"
