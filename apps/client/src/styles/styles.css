@@ -1,1 +1,5 @@
-@import "tailwindcss" source("../");
+/* Import the shared UI base layout, plugins, tokens, and tailwind core */
+@import "@eastgate/ui/styles.css";
+
+/* Explicitly scan the shared UI package source files for utility generation */
+@source "../../../../packages/ui/src";

@@ -4,15 +4,14 @@
   "rsc": true,
   "tsx": true,
   "tailwind": {
-    "config": "tailwind.config.js",
     "css": "src/globals.css",
     "baseColor": "slate",
     "cssVariables": true,
     "prefix": ""
   },
   "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui"
+    "components": "@eastgate/ui/components",
+    "utils": "@eastgate/ui/lib/utils",
+    "ui": "@eastgate/ui/components"
   }
 }
