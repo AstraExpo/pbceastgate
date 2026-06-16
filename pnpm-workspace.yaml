@@ -2,17 +2,29 @@ packages:
   - "apps/*"
   - "packages/*"
 allowBuilds:
-  '@apollo/protobufjs': true
-  '@nestjs/core': true
-  '@prisma/engines': true
+  "@apollo/protobufjs": true
+  "@nestjs/core": true
+  "@prisma/engines": true
   esbuild: true
   prisma: true
   sharp: true
   unrs-resolver: true
+
 peerDependencyRules:
-  ignoreMissing:
-    - "@apollo/server"
-packageExtensions:
-  "@apollo/server-plugin-landing-page-graphql-playground@4.0.1":
-    peerDependencies:
-      "@apollo/server": "^4.0.0 || ^5.0.0"
+  allowedVersions:
+    crossws: "0.4.x"
+    "@apollo/server": "5.x"
+
+overrides:
+  "@types/graphql-depth-limit>graphql": "^16.0.0"
+
+allowedDeprecatedVersions:
+  "@apollo/server-plugin-landing-page-graphql-playground": "*"
+  "@babel/plugin-proposal-class-properties": "*"
+  "@babel/plugin-proposal-object-rest-spread": "*"
+  "@graphql-tools/prisma-loader": "*"
+  glob: "*"
+  graphql: "*"
+  inflight: "*"
+  node-domexception: "*"
+  subscriptions-transport-ws: "*"
