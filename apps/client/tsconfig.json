@@ -1,0 +1,17 @@
+{
+  "extends": "@eastgate/typescript-config/tanstack.json",
+  "compilerOptions": {
+    "paths": {
+      "~/*": ["./app/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts", 
+    "src/**/*.tsx", 
+    "app/**/*.ts", 
+    "app/**/*.tsx",
+    ".tanstack/router/routeTree.gen.ts"
+  ],
+  "exclude": ["node_modules", ".output", "dist"]
+}
