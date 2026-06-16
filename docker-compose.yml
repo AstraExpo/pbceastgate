@@ -10,7 +10,7 @@ services:
       - "5454:5432"
     volumes:
       - ./.data/postgres:/var/lib/postgresql/data
-    restart: always
+    restart: unless-stopped
 
 volumes:
   postgres:

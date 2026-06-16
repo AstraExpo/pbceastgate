@@ -1,0 +1,39 @@
+query GetMinistries {
+  ministries {
+    id
+    name
+    description
+    headId
+  }
+}
+
+query GetMinistry($id: Int!) {
+  ministry(id: $id) {
+    id
+    name
+    description
+    headId
+  }
+}
+
+mutation CreateMinistry($input: CreateMinistryInput!) {
+  createMinistry(input: $input) {
+    id
+    name
+    description
+  }
+}
+
+mutation UpdateMinistry($id: Int!, $input: UpdateMinistryInput!) {
+  updateMinistry(id: $id, input: $input) {
+    id
+    name
+    description
+  }
+}
+
+mutation DeleteMinistry($id: Int!) {
+  deleteMinistry(id: $id) {
+    id
+  }
+}

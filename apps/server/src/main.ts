@@ -3,7 +3,6 @@ import { AppModule } from "./app.module.js";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS so your TanStack Start web app can fetch data from here
   app.enableCors();
 
   await app.listen(4000);

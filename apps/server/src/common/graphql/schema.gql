@@ -1,0 +1,42 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateMinistryInput {
+  description: String
+  headId: Int
+  name: String!
+}
+
+type Ministry {
+  description: String
+  headId: Int
+  id: Int!
+  name: String!
+}
+
+type Mutation {
+  createMinistry(input: CreateMinistryInput!): Ministry!
+  deleteMinistry(id: Int!): Ministry!
+  updateMinistry(id: Int!, input: UpdateMinistryInput!): Ministry!
+}
+
+type Query {
+  ministries: [Ministry!]!
+  ministry(id: Int!): Ministry
+  sermons: [Sermon!]!
+}
+
+type Sermon {
+  date: String!
+  id: ID!
+  preacher: String!
+  title: String!
+  videoUrl: String
+}
+
+input UpdateMinistryInput {
+  description: String
+  headId: Int
+  name: String
+}
