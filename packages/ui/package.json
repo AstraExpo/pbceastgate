@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
+    "./styles.css": "./src/globals.css",
     "./components/*": "./src/components/ui/*.tsx",
     "./lib/*": "./src/lib/*.ts",
     "./package.json": "./package.json"
@@ -19,6 +20,7 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "^9.39.4",
+    "tailwindcss": "^4.3.1",
     "typescript": "6.0.3"
   },
   "dependencies": {
