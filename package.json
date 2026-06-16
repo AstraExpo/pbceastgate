@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "docker compose up -d && until docker exec eastgate-local-postgres pg_isready -p 5432; do sleep 1; done && turbo run dev",
+    "dev": "turbo run dev",
+    "ignite": "docker compose up -d && until docker exec eastgate-local-postgres pg_isready -p 5432; do sleep 1; done && turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "codegen": "pnpm --filter @eastgate/shared codegen",
