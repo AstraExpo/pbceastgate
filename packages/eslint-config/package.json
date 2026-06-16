@@ -7,7 +7,6 @@
     "./base": "./base.js",
     "./nest": "./nest.js",
     "./tanstack": "./tanstack.js",
-    "./next-js": "./next.js",
     "./react-internal": "./react-internal.js"
   },
   "devDependencies": {
