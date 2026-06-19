@@ -42,3 +42,6 @@ yarn-error.log*
 # Database data
 *.data/*
 /packages/database/client/
+
+# IDE
+.vscode/
