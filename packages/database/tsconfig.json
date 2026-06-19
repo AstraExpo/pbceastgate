@@ -8,5 +8,12 @@
     "declarationMap": false
   },
   "include": ["index.ts", "index.d.ts", "client/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "dist/**",
+    ".turbo/**",
+    "build/**",
+    ".next/**",
+    "prisma/**/*"
+  ]
 }
