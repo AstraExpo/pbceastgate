@@ -1,8 +1,15 @@
 import { config } from "@eastgate/eslint-config/react-internal";
 
 export default [
-  ...config,
   {
-    ignores: ["node_modules/**", "src/generated/**"],
+    ignores: [
+      "node_modules/**",
+      "src/generated/**",
+      "dist/**",
+      ".turbo/**",
+      "build/**",
+      ".next/**",
+    ],
   },
+  ...config,
 ];
