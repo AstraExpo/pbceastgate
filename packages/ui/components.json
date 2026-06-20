@@ -12,6 +12,8 @@
   "aliases": {
     "components": "@eastgate/ui/components",
     "utils": "@eastgate/ui/lib/utils",
-    "ui": "@eastgate/ui/components"
+    "ui": "@eastgate/ui/components",
+    "theme": "@eastgate/ui/theme",
+    "hooks": "@eastgate/ui/hooks"
   }
 }

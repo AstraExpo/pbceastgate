@@ -7,8 +7,13 @@ import {
 import appCss from "./../styles/styles.css?url";
 import { ApolloProvider } from "@apollo/client/react";
 import { apolloClient } from "../constant/apollo-client/client";
+import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
+import { getThemeFromCookie } from "@/server/theme.function";
 
 export const Route = createRootRoute({
+  loader: async () => {
+    return await getThemeFromCookie();
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -16,7 +21,7 @@ export const Route = createRootRoute({
         name: "viewport",
         content: "width=device-width, initial-scale=1",
       },
-      { title: "TanStack Start Starter" },
+      { title: "PBC EastGate Admin" },
     ],
     links: [
       {
@@ -30,15 +35,18 @@ export const Route = createRootRoute({
 });
 
 function RootLayout() {
+  const { theme } = Route.useLoaderData();
   return (
-    <html lang="en">
+    <html lang="en" className={theme}>
       <head>
         <HeadContent />
       </head>
       <body>
-        <ApolloProvider client={apolloClient}>
-          <Outlet />
-        </ApolloProvider>
+        <ThemeProvider defaultTheme={theme} storageKey="eastgate-admin-theme">
+          <ApolloProvider client={apolloClient}>
+            <Outlet />
+          </ApolloProvider>
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>
