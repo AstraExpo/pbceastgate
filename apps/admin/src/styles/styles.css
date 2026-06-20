@@ -3,3 +3,15 @@
 
 /* Explicitly scan the shared UI package source files for utility generation */
 @source "../../../../packages/ui/src";
+
+/* Define the compound dark mode variant */
+@custom-variant dark {
+  &:where(.dark, .dark *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(.system, .system *) {
+      @slot;
+    }
+  }
+}
