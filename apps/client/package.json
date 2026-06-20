@@ -24,7 +24,6 @@
   },
   "devDependencies": {
     "@eastgate/eslint-config": "workspace:*",
-    "@eastgate/ui": "workspace:*",
     "@eastgate/typescript-config": "workspace:*",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^22.19.21",
