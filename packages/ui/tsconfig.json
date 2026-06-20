@@ -10,15 +10,10 @@
       "@/*": ["./src/*"],
       "@eastgate/ui/components/*": ["./src/components/ui/*"],
       "@eastgate/ui/lib/*": ["./src/lib/*"],
-      "@eastgate/ui/hooks/*": ["./src/hooks/*"]
+      "@eastgate/ui/hooks/*": ["./src/hooks/*"],
+      "@eastgate/ui/theme/*": ["./src/theme/*"]
     }
   },
   "include": ["src"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo/**",
-    "build/**",
-    ".next/**"
-  ]
+  "exclude": ["node_modules", "dist", ".turbo/**", "build/**", ".next/**"]
 }

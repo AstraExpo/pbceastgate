@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MinistryManagementDashboard } from "@/components/Ministry ManagementDashboard";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_base/")({
   component: Home,
 });
 
