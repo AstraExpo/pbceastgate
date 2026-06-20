@@ -7,7 +7,7 @@ export const getThemeFromCookie = createServerFn({ method: "GET" }).handler(
     const request = getRequest();
     const cookieHeader = request?.headers.get("cookie") || "";
     
-    const match = cookieHeader.match(/eastgate-theme=([^;]+)/);
+    const match = cookieHeader.match(/eastgate-client-theme=([^;]+)/);
     const rawTheme = match ? match[1] : "system";
     
     // Type guard validation block to avoid 'any' or unsafe casting

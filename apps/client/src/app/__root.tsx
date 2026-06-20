@@ -42,7 +42,7 @@ function RootLayout() {
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider defaultTheme={theme} storageKey="eastgate-theme">
+        <ThemeProvider defaultTheme={theme} storageKey="eastgate-client-theme">
           <ApolloProvider client={apolloClient}>
             <Outlet />
           </ApolloProvider>
