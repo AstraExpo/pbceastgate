@@ -7,7 +7,7 @@ import {
 import appCss from "./../styles/styles.css?url";
 import { ApolloProvider } from "@apollo/client/react";
 import { apolloClient } from "../constant/apollo-client/client";
-import { getThemeFromCookie } from "@/server/theme.server";
+import { getThemeFromCookie } from "@/server/theme.function";
 import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
 
 export const Route = createRootRoute({
@@ -41,7 +41,7 @@ function RootLayout() {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="min-h-screen bg-background text-foreground flex flex-col antialiased">
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-client-theme">
           <ApolloProvider client={apolloClient}>
             <Outlet />

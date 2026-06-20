@@ -8,7 +8,7 @@ import appCss from "./../styles/styles.css?url";
 import { ApolloProvider } from "@apollo/client/react";
 import { apolloClient } from "../constant/apollo-client/client";
 import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
-import { getThemeFromCookie } from "@/server/theme.server";
+import { getThemeFromCookie } from "@/server/theme.function";
 
 export const Route = createRootRoute({
   loader: async () => {
