@@ -7,8 +7,8 @@
     "./styles.css": "./src/globals.css",
     "./components/*": "./src/components/ui/*.tsx",
     "./lib/*": "./src/lib/*.ts",
-    "./hooks/*": "./src/hooks/*.ts",
-    "./theme/*": "./src/theme/*.ts",
+    "./hooks/*": "./src/hooks/*.tsx",
+    "./theme/*": "./src/theme/*",
     "./package.json": "./package.json"
   },
   "scripts": {
