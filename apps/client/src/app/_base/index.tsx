@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MinistryManagementDashboard } from "@/components/Ministry ManagementDashboard";
+import { EastgateLanding } from "@/components/landing/EastgateLanding";
+import { mockHeroData } from "@/components/landing/layout/mock.data";
 
 export const Route = createFileRoute("/_base/")({
   component: Home,
@@ -7,8 +8,8 @@ export const Route = createFileRoute("/_base/")({
 
 function Home() {
   return (
-    <main className="min-h-dvh w-screen flex items-center justify-center flex-col gap-y-4 p-4">
-      <MinistryManagementDashboard />
-    </main>
+    <>
+      <EastgateLanding pageData={mockHeroData} />
+    </>
   );
 }
