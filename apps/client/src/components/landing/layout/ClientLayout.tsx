@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
+import { MOCK_NAV_TREE, MOCK_USER_PROFILE } from "./mock.data";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { MOCK_NAV_TREE, MOCK_USER_PROFILE } from "./mock.data";
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
   return (
