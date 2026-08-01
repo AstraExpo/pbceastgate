@@ -1,14 +1,9 @@
-import { HeroProps } from "./sections/Hero";
 import { Sections } from "./sections/Sections";
 
-interface EastgateLandingProps {
-  pageData: HeroProps;
-}
-
-export function EastgateLanding({ pageData }: EastgateLandingProps) {
+export function EastgateLanding() {
   return (
     <div className="w-full bg-background animate-fade-in">
-      <Sections pageConfigData={pageData} />
+      <Sections />
     </div>
   );
 }
