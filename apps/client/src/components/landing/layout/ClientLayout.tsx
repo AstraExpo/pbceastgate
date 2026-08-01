@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { MOCK_NAV_TREE, MOCK_USER_PROFILE } from "./mock.data";
+import { MOCK_NAV_TREE, MOCK_USER_PROFILE, mockFooterData } from "./mock.data";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
@@ -12,11 +12,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
         userProfile={MOCK_USER_PROFILE}
       />
       {children}
-      <Footer
-        isAuthenticated={true}
-        navTree={MOCK_NAV_TREE}
-        userProfile={MOCK_USER_PROFILE}
-      />
+      <Footer isLoading={false} data={mockFooterData} />
     </>
   );
 }
