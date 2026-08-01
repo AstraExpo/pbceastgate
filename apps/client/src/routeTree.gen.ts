@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './app/_auth'
 import { Route as BaseIndexRouteImport } from './app/_base/index'
 import { Route as ProtectedHomeRouteImport } from './app/_protected/home'
 import { Route as MerchShopRouteImport } from './app/_merch/shop'
+import { Route as BaseProfileRouteImport } from './app/_base/profile'
 import { Route as AuthSignUpRouteImport } from './app/_auth/signUp'
 import { Route as AuthLogInRouteImport } from './app/_auth/logIn'
 import { Route as AuthForgotPasswordRouteImport } from './app/_auth/forgotPassword'
@@ -51,6 +52,11 @@ const MerchShopRoute = MerchShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => MerchRoute,
 } as any)
+const BaseProfileRoute = BaseProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => BaseRoute,
+} as any)
 const AuthSignUpRoute = AuthSignUpRouteImport.update({
   id: '/signUp',
   path: '/signUp',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/forgotPassword': typeof AuthForgotPasswordRoute
   '/logIn': typeof AuthLogInRoute
   '/signUp': typeof AuthSignUpRoute
+  '/profile': typeof BaseProfileRoute
   '/shop': typeof MerchShopRoute
   '/home': typeof ProtectedHomeRoute
 }
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/forgotPassword': typeof AuthForgotPasswordRoute
   '/logIn': typeof AuthLogInRoute
   '/signUp': typeof AuthSignUpRoute
+  '/profile': typeof BaseProfileRoute
   '/shop': typeof MerchShopRoute
   '/home': typeof ProtectedHomeRoute
 }
@@ -92,15 +100,30 @@ export interface FileRoutesById {
   '/_auth/forgotPassword': typeof AuthForgotPasswordRoute
   '/_auth/logIn': typeof AuthLogInRoute
   '/_auth/signUp': typeof AuthSignUpRoute
+  '/_base/profile': typeof BaseProfileRoute
   '/_merch/shop': typeof MerchShopRoute
   '/_protected/home': typeof ProtectedHomeRoute
   '/_base/': typeof BaseIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/forgotPassword' | '/logIn' | '/signUp' | '/shop' | '/home'
+  fullPaths:
+    | '/'
+    | '/forgotPassword'
+    | '/logIn'
+    | '/signUp'
+    | '/profile'
+    | '/shop'
+    | '/home'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/forgotPassword' | '/logIn' | '/signUp' | '/shop' | '/home'
+  to:
+    | '/'
+    | '/forgotPassword'
+    | '/logIn'
+    | '/signUp'
+    | '/profile'
+    | '/shop'
+    | '/home'
   id:
     | '__root__'
     | '/_auth'
@@ -110,6 +133,7 @@ export interface FileRouteTypes {
     | '/_auth/forgotPassword'
     | '/_auth/logIn'
     | '/_auth/signUp'
+    | '/_base/profile'
     | '/_merch/shop'
     | '/_protected/home'
     | '/_base/'
@@ -173,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerchShopRouteImport
       parentRoute: typeof MerchRoute
     }
+    '/_base/profile': {
+      id: '/_base/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof BaseProfileRouteImport
+      parentRoute: typeof BaseRoute
+    }
     '/_auth/signUp': {
       id: '/_auth/signUp'
       path: '/signUp'
@@ -212,10 +243,12 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface BaseRouteChildren {
+  BaseProfileRoute: typeof BaseProfileRoute
   BaseIndexRoute: typeof BaseIndexRoute
 }
 
 const BaseRouteChildren: BaseRouteChildren = {
+  BaseProfileRoute: BaseProfileRoute,
   BaseIndexRoute: BaseIndexRoute,
 }
 
