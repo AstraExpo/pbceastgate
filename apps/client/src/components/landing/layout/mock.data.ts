@@ -1,5 +1,3 @@
-import { HeroProps } from "../sections/Hero";
-
 // Define the data contracts explicitly for type safety
 export interface SubLink {
   label: string;
@@ -22,10 +20,7 @@ export interface UserProfile {
  * all required primary pages and nested sub-menu dropdown modules.
  */
 export const MOCK_NAV_TREE: NavItem[] = [
-  {
-    label: "Home",
-    href: "/",
-  },
+  // Removed Home route
   {
     label: "About",
     children: [
@@ -49,10 +44,7 @@ export const MOCK_NAV_TREE: NavItem[] = [
     label: "Events",
     href: "/events",
   },
-  {
-    label: "Contact Us",
-    href: "/contact",
-  },
+  // Removed contuct us route
   {
     label: "Merchandise",
     href: "/merchandise",
@@ -101,6 +93,11 @@ export interface SlideItem {
 export interface AnnouncementItem {
   title: string;
   eventDate?: string;
+}
+
+export interface HeroProps {
+  slides: SlideItem[];
+  announcement?: AnnouncementItem;
 }
 
 export const mockHeroData: HeroProps = {
@@ -194,4 +191,43 @@ export const mockHeroData: HeroProps = {
     title: "Annual Leadership Synod & Budgetary Authorization Forum",
     eventDate: "October 14, 2026 at 09:00 AM EAT",
   },
+};
+
+export interface ServiceSchedule {
+  title: string;
+  slots: string[];
+}
+
+export interface ChurchInformation {
+  address: string;
+  phone: string;
+  email: string;
+}
+
+export interface FooterPayload {
+  services: ServiceSchedule[];
+  information: ChurchInformation;
+  campuses: string[];
+}
+
+export const mockFooterData: FooterPayload = {
+  services: [
+    {
+      title: "Sunday Services",
+      slots: [
+        "1st Service – 8:15 AM – 10:15 AM",
+        "2nd Service – 11:15 AM – 1:15 PM",
+      ],
+    },
+    {
+      title: "Wednesday Service",
+      slots: ["6:00 PM – 8:00 PM"],
+    },
+  ],
+  information: {
+    address: "Prof. Saitoti Ave. (off Ring Road Westlands) Kenya",
+    phone: "(+254) 722 845 401",
+    email: "reception@parklandsbaptist.org",
+  },
+  campuses: ["PBC Northgate", "PBC Eastgate"],
 };
