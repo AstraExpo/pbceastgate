@@ -1,212 +1,165 @@
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { NavItem, SubLink, UserProfile } from "./mock.data";
+import { MapPin, Phone, Mail, Church } from "lucide-react";
+import { Skeleton } from "@eastgate/ui/components/skeleton";
+import {
+  TypographyH4,
+  TypographySmall,
+  TypographyMuted,
+} from "@eastgate/ui/components/typography";
+import { FooterPayload } from "./mock.data";
 
-interface HeaderProps {
-  navTree: NavItem[];
-  isAuthenticated: boolean;
-  userProfile?: UserProfile;
+interface FooterProps {
+  isLoading: boolean;
+  data?: FooterPayload;
 }
 
-export function Footer({ navTree, isAuthenticated, userProfile }: HeaderProps) {
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-
+export function Footer({ isLoading, data }: FooterProps) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-md">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* LEFT: Logo Element */}
-          <div className="flex shrink-0">
-            <Link
-              to="/"
-              className="text-base sm:text-lg font-bold tracking-tight text-foreground"
-            >
-              PBC EASTGATE
-            </Link>
-          </div>
-
-          {/* CENTER: Desktop Navigation Blocks */}
-          <nav className="hidden md:flex items-center gap-x-6">
-            {navTree.map(item => (
-              <div
-                key={item.label}
-                className="relative"
-                onMouseEnter={() =>
-                  item.children && setActiveDropdown(item.label)
-                }
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
-                {item.children ? (
-                  <button
-                    type="button"
-                    className="flex items-center gap-x-1 text-sm text-muted-foreground hover:text-foreground cursor-pointer py-2"
-                  >
-                    {item.label}
-                  </button>
-                ) : (
-                  <Link
-                    to={item.href || "/"}
-                    className="text-sm text-muted-foreground hover:text-foreground py-2"
-                  >
-                    {item.label}
-                  </Link>
-                )}
-
-                {/* Desktop Multilevel Dropdown Panel */}
-                {item.children && activeDropdown === item.label && (
-                  <div className="absolute top-full left-0 w-48 rounded-md border border-border bg-popover p-2 shadow-md">
-                    {item.children.map((child: SubLink) => (
-                      <Link
-                        key={child.label}
-                        to={child.href}
-                        className="block rounded-sm px-3 py-1.5 text-xs sm:text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground"
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </nav>
-
-          {/* RIGHT: Dynamic CTA / User Auth Account Cluster */}
-          <div className="hidden md:flex items-center gap-x-4">
-            {isAuthenticated ? (
-              <Link
-                to="/profile"
-                className="flex items-center gap-x-2 text-sm text-foreground"
-              >
-                <div className="h-8 w-8 rounded-full bg-accent border border-border overflow-hidden">
-                  {userProfile?.avatarUrl && (
-                    <img
-                      src={userProfile.avatarUrl}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  )}
-                </div>
-                <span className="text-xs sm:text-sm">{userProfile?.name}</span>
-              </Link>
+    <footer className="w-full bg-background border-t border-border text-foreground">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          {/* COLUMN 1: OUR SERVICES */}
+          <div className="space-y-4">
+            {isLoading ? (
+              <Skeleton className="h-6 w-32" />
             ) : (
-              <>
-                <Link
-                  to="/"
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/"
-                  className="rounded-md bg-primary px-3.5 py-1.5 text-xs sm:text-sm text-primary-foreground font-medium hover:bg-primary/90"
-                >
-                  Join Congregation
-                </Link>
-              </>
+              <TypographyH4 className="text-left">Our Services</TypographyH4>
             )}
-          </div>
 
-          {/* Hamburger Icon Frame */}
-          <div className="flex md:hidden">
-            <button
-              type="button"
-              onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
-            >
-              <span className="sr-only">Open main menu</span>
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-              >
-                {isMobileOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                  />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* MOBILE PANEL COMPONENT SCALING */}
-      {isMobileOpen && (
-        <div className="border-b border-border bg-background px-4 py-4 md:hidden max-h-[calc(100dvh-4rem)] overflow-y-auto">
-          <nav className="flex flex-col gap-y-4">
-            {navTree.map(item => (
-              <div key={item.label} className="space-y-1">
-                <span className="text-sm font-semibold text-foreground block">
-                  {item.label}
-                </span>
-                {item.children ? (
-                  <div className="pl-4 border-l border-border flex flex-col gap-y-2 mt-1">
-                    {item.children.map((child: SubLink) => (
-                      <Link
-                        key={child.label}
-                        to={child.href}
-                        onClick={() => setIsMobileOpen(false)}
-                        className="text-xs sm:text-sm text-muted-foreground block"
-                      >
-                        {child.label}
-                      </Link>
+            <div className="space-y-3">
+              {isLoading ? (
+                <>
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-3.5 w-full" />
+                    <Skeleton className="h-3.5 w-5/6" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3.5 w-1/2" />
+                  </div>
+                </>
+              ) : (
+                data?.services.map((service, index) => (
+                  <div key={index} className="space-y-0.5">
+                    <TypographySmall className="text-foreground block">
+                      {service.title}
+                    </TypographySmall>
+                    {service.slots.map((slot, slotIndex) => (
+                      <TypographyMuted key={slotIndex} className="block">
+                        {slot}
+                      </TypographyMuted>
                     ))}
                   </div>
-                ) : (
-                  <Link
-                    to={item.href || "/"}
-                    onClick={() => setIsMobileOpen(false)}
-                    className="text-xs sm:text-sm text-muted-foreground block pl-4"
-                  >
-                    View Page
-                  </Link>
-                )}
-              </div>
-            ))}
-
-            {/* Mobile Auth Target Container */}
-            <div className="pt-4 border-t border-border flex flex-col gap-y-2">
-              {isAuthenticated ? (
-                <Link
-                  to="/profile"
-                  onClick={() => setIsMobileOpen(false)}
-                  className="text-sm text-foreground flex items-center gap-x-2"
-                >
-                  <span>Dashboard Profile ({userProfile?.name})</span>
-                </Link>
-              ) : (
-                <>
-                  <Link
-                    to="/"
-                    onClick={() => setIsMobileOpen(false)}
-                    className="text-sm text-center py-2 text-muted-foreground"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    to="/"
-                    onClick={() => setIsMobileOpen(false)}
-                    className="rounded-md bg-primary py-2 text-center text-sm text-primary-foreground font-medium"
-                  >
-                    Join Congregation
-                  </Link>
-                </>
+                ))
               )}
             </div>
-          </nav>
+          </div>
+
+          {/* COLUMN 2: PBC INFORMATION */}
+          <div className="space-y-4">
+            {isLoading ? (
+              <Skeleton className="h-6 w-36" />
+            ) : (
+              <TypographyH4 className="text-left">PBC Information</TypographyH4>
+            )}
+
+            <address className="not-italic space-y-2.5">
+              {isLoading ? (
+                <>
+                  <div className="flex items-start gap-2">
+                    <Skeleton className="h-4 w-4 shrink-0 rounded-full" />
+                    <Skeleton className="h-3.5 w-full" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4 shrink-0 rounded-full" />
+                    <Skeleton className="h-3.5 w-32" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4 shrink-0 rounded-full" />
+                    <Skeleton className="h-3.5 w-48" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-start gap-2">
+                    <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground" />
+                    <TypographyMuted>
+                      {data?.information.address}
+                    </TypographyMuted>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <a
+                      href={`tel:${data?.information.phone.replace(/\s+/g, "")}`}
+                      className="hover:text-foreground transition-colors"
+                    >
+                      <TypographyMuted>
+                        {data?.information.phone}
+                      </TypographyMuted>
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <a
+                      href={`mailto:${data?.information.email}`}
+                      className="hover:text-foreground transition-colors"
+                    >
+                      <TypographyMuted>
+                        {data?.information.email}
+                      </TypographyMuted>
+                    </a>
+                  </div>
+                </>
+              )}
+            </address>
+          </div>
+
+          {/* COLUMN 3: OTHER CAMPUSES */}
+          <div className="space-y-4">
+            {isLoading ? (
+              <Skeleton className="h-6 w-44" />
+            ) : (
+              <TypographyH4 className="text-left">
+                Other PBC Campuses
+              </TypographyH4>
+            )}
+
+            <ul className="space-y-2">
+              {isLoading ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4 shrink-0" />
+                    <Skeleton className="h-3.5 w-28" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4 shrink-0" />
+                    <Skeleton className="h-3.5 w-32" />
+                  </div>
+                </>
+              ) : (
+                data?.campuses.map((campus, index) => (
+                  <li key={index} className="flex items-center gap-2">
+                    <Church className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <TypographyMuted>{campus}</TypographyMuted>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
         </div>
-      )}
-    </header>
+
+        {/* BOTTOM COPYRIGHT SECTION */}
+        <div className="mt-12 border-t border-border pt-6 text-center">
+          {isLoading ? (
+            <Skeleton className="h-3.5 w-64 mx-auto" />
+          ) : (
+            <TypographyMuted>
+              &copy; {new Date().getFullYear()} Parklands Baptist Church. All
+              rights reserved.
+            </TypographyMuted>
+          )}
+        </div>
+      </div>
+    </footer>
   );
 }
