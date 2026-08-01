@@ -41,7 +41,7 @@ function RootLayout() {
       <head>
         <HeadContent />
       </head>
-      <body className="min-h-screen bg-background text-foreground flex flex-col antialiased">
+      <body>
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-client-theme">
           <ApolloProvider client={apolloClient}>
             <Outlet />
@@ -53,6 +53,7 @@ function RootLayout() {
   );
 }
 
+// Build and shift this component to the components folder.
 function NotFoundLayout() {
   return (
     <main className="min-h-dvh w-screen flex items-center justify-center flex-col gap-y-4 p-4 text-center">
