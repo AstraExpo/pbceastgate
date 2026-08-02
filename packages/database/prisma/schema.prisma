@@ -1,40 +1,55 @@
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
-  provider = "prisma-client-js"
-  output   = "../client"
+  provider        = "prisma-client-js"
+  output          = "../client"
+  binaryTargets   = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-musl-openssl-3.0.x", "linux-musl"]
+  previewFeatures = ["postgresqlExtensions"]
 }
 
-// Responsibility: Identity, Access Control, and Spiritual/Organizational Profiles
-// This group handles structural user authentication, authorization roles, and explicit records
-// mapping a person's advancement or occupational standing within the church hierarchy.
+datasource db {
+  provider   = "postgresql"
+  extensions = [pgvector(map: "vector")]
+}
+
+// =========================================================================================================================
+// AUTHENTICATION MODELS
+// =========================================================================================================================
 
 enum SystemRole {
-  SUPERADMIN
-  ADMIN
-  EDITOR
-  USER
+  System
+  Admin
+  Editor
+  User
 }
 
 enum MembershipStatus {
-  GUEST
-  MEMBER
+  Guest
+  Member
 }
 
 model User {
-  id                    Int                 @id @default(autoincrement())
-  email                 String              @unique
-  passwordHash          String
-  systemRole            SystemRole          @default(USER)
-  membershipStatus      MembershipStatus    @default(GUEST)
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  profile               Profile?
-  deaconProfile         DeaconProfile?
-  membershipProgress    MembershipProgress?
-  staffProfile          StaffProfile?
+  user          Int     @id @default(autoincrement())
+  id            String  @unique @default(uuid())
+  email         String  @unique
+  name          String
+  image         String?
+  password      String?
+  emailVerified Boolean @default(false)
+
+  banned     Boolean   @default(false)
+  banReason  String?
+  banExpires DateTime?
+
+  systemRole       SystemRole       @default(User)
+  membershipStatus MembershipStatus @default(Guest)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile            Profile?
+  deaconProfile      DeaconProfile?
+  membershipProgress MembershipProgress?
+  staffProfile       StaffProfile?
+
   ledMinistries         Ministry[]          @relation("MinistryHead")
   ledDepartments        Department[]        @relation("DepartmentHead")
   ministryMemberships   MinistryMember[]
@@ -47,45 +62,79 @@ model User {
   volunteerSignUps      VolunteerSignUp[]
   prayerRequests        PrayerRequest[]
   communityPosts        CommunityPost[]     @relation("ContentAuthor")
+
+  @@index([email])
+  @@map("user")
 }
 
 model Profile {
-  id          Int      @id @default(autoincrement())
-  userId      Int      @unique
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  firstName   String
-  lastName    String
+  profile     Int     @id @default(autoincrement())
+  id          String  @unique @default(uuid())
+  userId      String  @unique
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
   phoneNumber String?
-  avatarUrl   String?
-  joinedDate  DateTime @default(now())
-}
 
-model MembershipProgress {
-  id                  Int       @id @default(autoincrement())
-  userId              Int       @unique
-  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  isBaptized          Boolean   @default(false)
-  completedShapeClass Boolean   @default(false)
-  verifiedAt          DateTime?
+  avatarUrls     String[]
+  backgroundUrls String[]
+
+  joinedDate DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("profile")
 }
 
 model StaffProfile {
-  id       Int      @id @default(autoincrement())
-  userId   Int      @unique
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title    String
-  joinedAt DateTime @default(now())
+  staffProfile   Int      @id @default(autoincrement())
+  id             String   @unique @default(uuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  phoneNumber    String?
+  avatarUrls     String[]
+  backgroundUrls String[]
+  title          String
+  joinedAt       DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("staff_profile")
 }
 
 model DeaconProfile {
-  id             Int       @id @default(autoincrement())
-  userId         Int       @unique
+  deaconProfile  Int       @id @default(autoincrement())
+  id             String    @unique @default(uuid())
+  userId         String    @unique
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  phoneNumber    String?
+  avatarUrls     String[]
+  backgroundUrls String[]
   ordinationDate DateTime?
   isActive       Boolean   @default(true)
   pdbRole        String?
   termStartDate  DateTime?
   termEndDate    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("deacon_profile")
+}
+
+model MembershipProgress {
+  membershipProgress  Int       @id @default(autoincrement())
+  id                  String    @unique @default(uuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isBaptized          Boolean   @default(false)
+  completedShapeClass Boolean   @default(false)
+  verifiedAt          DateTime?
+
+  @@map("membership_progress")
 }
 
 // Responsibility: Community & Ministry Administration
@@ -93,10 +142,11 @@ model DeaconProfile {
 // including overarching ministries, broken-down internal departments, and direct member associations.
 
 model Ministry {
-  id                Int                @id @default(autoincrement())
+  ministry          Int                @id @default(autoincrement())
+  id                String             @unique @default(uuid())
   name              String             @unique
   description       String?            @db.Text
-  headId            Int?
+  headId            String?
   head              User?              @relation("MinistryHead", fields: [headId], references: [id], onDelete: SetNull)
   departments       Department[]
   members           MinistryMember[]
@@ -105,14 +155,17 @@ model Ministry {
   donations         Donation[]
   materialDonations MaterialDonation[]
   pledges           Pledge[]
+
+  @@map("ministry")
 }
 
 model Department {
-  id                Int                @id @default(autoincrement())
+  department        Int                @id @default(autoincrement())
+  id                String             @unique @default(uuid())
   name              String
-  ministryId        Int
+  ministryId        String
   ministry          Ministry           @relation(fields: [ministryId], references: [id], onDelete: Cascade)
-  headId            Int?
+  headId            String?
   head              User?              @relation("DepartmentHead", fields: [headId], references: [id], onDelete: SetNull)
   members           DepartmentMember[]
   products          Product[]
@@ -122,39 +175,47 @@ model Department {
   pledges           Pledge[]
 
   @@unique([name, ministryId])
+  @@map("department")
 }
 
 model MinistryMember {
-  id         Int      @id @default(autoincrement())
-  ministryId Int
-  parent     Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  joinedAt   DateTime @default(now())
+  ministryMember Int      @id @default(autoincrement())
+  id             String   @unique @default(uuid())
+  ministryId     String
+  parent         Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt       DateTime @default(now())
 
   @@unique([ministryId, userId])
+  @@map("ministry_member")
 }
 
 model DepartmentMember {
-  id           Int        @id @default(autoincrement())
-  departmentId Int
-  parent       Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  userId       Int
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  joinedAt     DateTime   @default(now())
+  departmentMember Int        @id @default(autoincrement())
+  id               String     @unique @default(uuid())
+  departmentId     String
+  parent           Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt         DateTime   @default(now())
 
   @@unique([departmentId, userId])
+  @@map("department_member")
 }
 
 model PrayerRequest {
-  id            Int      @id @default(autoincrement())
-  userId        Int?
+  prayerRequest Int      @id @default(autoincrement())
+  id            String   @unique @default(uuid())
+  userId        String?
   user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   requesterName String
   content       String   @db.Text
   isPublic      Boolean  @default(false)
   isResolved    Boolean  @default(false)
   createdAt     DateTime @default(now())
+
+  @@map("prayer_request")
 }
 
 // Responsibility: Content Management System (CMS)
@@ -177,39 +238,49 @@ enum AnnouncementAudience {
 }
 
 model CommunityPost {
-  id        Int          @id @default(autoincrement())
-  category  PostCategory
-  title     String
-  caption   String       @db.Text
-  themeText String?
-  mediaUrls String[]
-  eventId   Int?
-  event     Event?       @relation(fields: [eventId], references: [id], onDelete: SetNull)
-  authorId  Int
-  author    User         @relation("ContentAuthor", fields: [authorId], references: [id])
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  communityPost Int          @id @default(autoincrement())
+  id            String       @unique @default(uuid())
+  category      PostCategory
+  title         String
+  caption       String       @db.Text
+  themeText     String?
+  mediaUrls     String[]
+  eventId       String?
+  event         Event?       @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  authorId      String
+  author        User         @relation("ContentAuthor", fields: [authorId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@map("community_post")
 }
 
 model DailyVerse {
-  id          Int      @id @default(autoincrement())
+  dailyVerse  Int      @id @default(autoincrement())
+  id          String   @unique @default(uuid())
   verseLine   String
   reference   String
   publishDate DateTime @unique
   createdAt   DateTime @default(now())
+
+  @@map("daily_verse")
 }
 
 model SermonSeries {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?  @db.Text
-  coverUrl    String?
-  createdAt   DateTime @default(now())
-  sermons     Sermon[]
+  sermonSeries Int      @id @default(autoincrement())
+  id           String   @unique @default(uuid())
+  title        String
+  description  String?  @db.Text
+  coverUrl     String?
+  createdAt    DateTime @default(now())
+  sermons      Sermon[]
+
+  @@map("sermon_series")
 }
 
 model Sermon {
-  id           Int           @id @default(autoincrement())
+  sermon       Int           @id @default(autoincrement())
+  id           String        @unique @default(uuid())
   title        String
   description  String?       @db.Text
   videoUrl     String?
@@ -217,23 +288,28 @@ model Sermon {
   thumbnailUrl String?
   preacher     String
   preachedAt   DateTime
-  seriesId     Int?
+  seriesId     String?
   series       SermonSeries? @relation(fields: [seriesId], references: [id], onDelete: SetNull)
   slideUrls    String[]
   handoutUrls  String[]
   createdAt    DateTime      @default(now())
+
+  @@map("sermon")
 }
 
 model Announcement {
-  id        Int                  @id @default(autoincrement())
-  title     String
-  content   String               @db.Text
-  posterUrl String?
-  audience  AnnouncementAudience @default(CHURCH_WIDE)
-  isPinned  Boolean              @default(false)
-  expiresAt DateTime?
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
+  announcement Int                  @id @default(autoincrement())
+  id           String               @unique @default(uuid())
+  title        String
+  content      String               @db.Text
+  posterUrl    String?
+  audience     AnnouncementAudience @default(CHURCH_WIDE)
+  isPinned     Boolean              @default(false)
+  expiresAt    DateTime?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  @@map("announcement")
 }
 
 // Responsibility: Events & Volunteer Infrastructure
@@ -253,7 +329,8 @@ enum RegistrationStatus {
 }
 
 model Event {
-  id                     Int                        @id @default(autoincrement())
+  event                  Int                        @id @default(autoincrement())
+  id                     String                     @unique @default(uuid())
   title                  String
   description            String                     @db.Text
   location               String
@@ -263,11 +340,11 @@ model Event {
   posterUrl              String?
   scope                  EventScope                 @default(IN_HOUSE)
   price                  Decimal                    @default(0.00) @db.Decimal(10, 2)
-  ministryId             Int?
+  ministryId             String?
   ministry               Ministry?                  @relation(fields: [ministryId], references: [id], onDelete: SetNull)
-  departmentId           Int?
+  departmentId           String?
   department             Department?                @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  partnerId              Int?
+  partnerId              String?
   partner                ExternalPartner?           @relation(fields: [partnerId], references: [id], onDelete: SetNull)
   donations              Donation[]
   materialDonations      MaterialDonation[]
@@ -279,42 +356,51 @@ model Event {
   volunteerOpportunities VolunteerSignUp[]
   createdAt              DateTime                   @default(now())
   updatedAt              DateTime                   @updatedAt
+
+  @@map("event")
 }
 
 model ExternalPartner {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  contactName String?
-  email       String?
-  phoneNumber String?
-  events      Event[]
-  createdAt   DateTime @default(now())
+  externalPartner Int      @id @default(autoincrement())
+  id              String   @unique @default(uuid())
+  name            String   @unique
+  contactName     String?
+  email           String?
+  phoneNumber     String?
+  events          Event[]
+  createdAt       DateTime @default(now())
+
+  @@map("external_partner")
 }
 
 model EventRegistration {
-  id           Int                  @id @default(autoincrement())
-  eventId      Int
-  event        Event                @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  userId       Int
-  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status       RegistrationStatus   @default(CONFIRMED)
-  registeredAt DateTime             @default(now())
-  transactions PaymentTransaction[]
+  eventRegistration Int                  @id @default(autoincrement())
+  id                String               @unique @default(uuid())
+  eventId           String
+  event             Event                @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status            RegistrationStatus   @default(CONFIRMED)
+  registeredAt      DateTime             @default(now())
+  transactions      PaymentTransaction[]
 
   @@unique([eventId, userId])
+  @@map("event_registration")
 }
 
 model VolunteerSignUp {
-  id            Int      @id @default(autoincrement())
-  eventId       Int
-  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  userId        Int
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  preferredRole String?
-  notes         String?  @db.Text
-  signedUpAt    DateTime @default(now())
+  volunteerSignup Int      @id @default(autoincrement())
+  id              String   @unique @default(uuid())
+  eventId         String
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preferredRole   String?
+  notes           String?  @db.Text
+  signedUpAt      DateTime @default(now())
 
   @@unique([eventId, userId])
+  @@map("volunteer_signup")
 }
 
 // Responsibility: E-Commerce Engine
@@ -336,43 +422,53 @@ enum FulfillmentMethod {
 }
 
 model Category {
-  id       Int       @id @default(autoincrement())
+  category Int       @id @default(autoincrement())
+  id       String    @unique @default(uuid())
   name     String    @unique
   products Product[]
+
+  @@map("category")
 }
 
 model Product {
-  id           Int              @id @default(autoincrement())
+  product      Int              @id @default(autoincrement())
+  id           String           @unique @default(uuid())
   name         String
   description  String           @db.Text
   price        Decimal          @db.Decimal(10, 2)
-  categoryId   Int
+  categoryId   String
   category     Category         @relation(fields: [categoryId], references: [id])
   variants     ProductVariant[]
   orderItems   OrderItem[]
-  ministryId   Int?
+  ministryId   String?
   ministry     Ministry?        @relation(fields: [ministryId], references: [id], onDelete: SetNull)
-  departmentId Int?
+  departmentId String?
   department   Department?      @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  eventId      Int?
+  eventId      String?
   event        Event?           @relation(fields: [eventId], references: [id], onDelete: SetNull)
   createdAt    DateTime         @default(now())
+
+  @@map("product")
 }
 
 model ProductVariant {
-  id         Int         @id @default(autoincrement())
-  productId  Int
-  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  sku        String      @unique
-  size       String?
-  color      String?
-  stockCount Int         @default(0)
-  orderItems OrderItem[]
+  productVariant Int         @id @default(autoincrement())
+  id             String      @unique @default(uuid())
+  productId      String
+  product        Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku            String      @unique
+  size           String?
+  color          String?
+  stockCount     Int         @default(0)
+  orderItems     OrderItem[]
+
+  @@map("product_variant")
 }
 
 model Order {
-  id                Int                  @id @default(autoincrement())
-  userId            Int?
+  order             Int                  @id @default(autoincrement())
+  id                String               @unique @default(uuid())
+  userId            String?
   user              User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
   status            OrderStatus          @default(PENDING)
   totalAmount       Decimal              @db.Decimal(10, 2)
@@ -383,18 +479,23 @@ model Order {
   updatedAt         DateTime             @updatedAt
   items             OrderItem[]
   transactions      PaymentTransaction[]
+
+  @@map("order")
 }
 
 model OrderItem {
-  id               Int             @id @default(autoincrement())
-  orderId          Int
+  orderItem        Int             @id @default(autoincrement())
+  id               String          @unique @default(uuid())
+  orderId          String
   order            Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId        Int
+  productId        String
   product          Product         @relation(fields: [productId], references: [id])
-  productVariantId Int?
+  productVariantId String?
   variant          ProductVariant? @relation(fields: [productVariantId], references: [id])
-  quantity         Int
+  quantity         String
   priceAtPurchase  Decimal         @db.Decimal(10, 2)
+
+  @@map("order_item")
 }
 
 // Responsibility: Financial Ledger, Donations & Pledging
@@ -422,89 +523,101 @@ enum MaterialCategory {
 }
 
 model DonationCampaign {
-  id          Int        @id @default(autoincrement())
-  title       String
-  description String     @db.Text
-  targetGoal  Decimal?   @db.Decimal(12, 2)
-  isActive    Boolean    @default(true)
-  donations   Donation[]
-  pledges     Pledge[]
-  createdAt   DateTime   @default(now())
+  donationCampaign Int        @id @default(autoincrement())
+  id               String     @unique @default(uuid())
+  title            String
+  description      String     @db.Text
+  targetGoal       Decimal?   @db.Decimal(12, 2)
+  isActive         Boolean    @default(true)
+  donations        Donation[]
+  pledges          Pledge[]
+  createdAt        DateTime   @default(now())
+
+  @@map("donation_campaign")
 }
 
 model Donation {
-  id              Int                  @id @default(autoincrement())
-  userId          Int?
+  donation        Int                  @id @default(autoincrement())
+  id              String               @unique @default(uuid())
+  userId          String?
   user            User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
-  campaignId      Int?
+  campaignId      String?
   campaign        DonationCampaign?    @relation(fields: [campaignId], references: [id])
   purpose         FinancialPurpose     @default(GENERAL_FUND_ALLOCATION)
   amount          Decimal              @db.Decimal(12, 2)
   isAnonymous     Boolean              @default(false)
-  ministryId      Int?
+  ministryId      String?
   ministry        Ministry?            @relation(fields: [ministryId], references: [id], onDelete: SetNull)
-  departmentId    Int?
+  departmentId    String?
   department      Department?          @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  eventId         Int?
+  eventId         String?
   event           Event?               @relation(fields: [eventId], references: [id], onDelete: SetNull)
   isSchoolProject Boolean              @default(false)
-  pledgeId        Int?
+  pledgeId        String?
   pledge          Pledge?              @relation(fields: [pledgeId], references: [id], onDelete: SetNull)
   transactions    PaymentTransaction[]
   createdAt       DateTime             @default(now())
+
+  @@map("donation")
 }
 
 model MaterialDonationCampaign {
-  id          Int                            @id @default(autoincrement())
-  title       String
-  description String                         @db.Text
-  isActive    Boolean                        @default(true)
-  eventId     Int?
-  event       Event?                         @relation(fields: [eventId], references: [id], onDelete: SetNull)
-  items       MaterialDonationCampaignItem[]
-  donations   MaterialDonation[]
-  createdAt   DateTime                       @default(now())
+  materialDonationCampaign Int                            @id @default(autoincrement())
+  id                       String                         @unique @default(uuid())
+  title                    String
+  description              String                         @db.Text
+  isActive                 Boolean                        @default(true)
+  eventId                  String?
+  event                    Event?                         @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  items                    MaterialDonationCampaignItem[]
+  donations                MaterialDonation[]
+  createdAt                DateTime                       @default(now())
 
-  @@map("MaterialDonationCampaign")
+  @@map("material_donation_campaign")
 }
 
 model MaterialDonationCampaignItem {
-  id                 Int                      @id @default(autoincrement())
-  materialCampaignId Int
-  campaign           MaterialDonationCampaign @relation(fields: [materialCampaignId], references: [id], onDelete: Cascade)
-  itemName           String
-  targetQuantity     Int
-  unit               String
+  materialDonationCampaignItem Int                      @id @default(autoincrement())
+  id                           String                   @unique @default(uuid())
+  materialCampaignId           String
+  campaign                     MaterialDonationCampaign @relation(fields: [materialCampaignId], references: [id], onDelete: Cascade)
+  itemName                     String
+  targetQuantity               Int
+  unit                         String
 
-  @@map("MaterialDonationCampaignItem")
+  @@map("material_donation_campaign_item")
 }
 
 model MaterialDonation {
-  id                 Int                       @id @default(autoincrement())
-  userId             Int?
+  materialDonation   Int                       @id @default(autoincrement())
+  id                 String                    @unique @default(uuid())
+  userId             String?
   user               User?                     @relation(fields: [userId], references: [id], onDelete: SetNull)
   category           MaterialCategory
   itemDescription    String                    @db.Text
   quantityText       String
   dropOffDate        DateTime?
   isReceived         Boolean                   @default(false)
-  materialCampaignId Int?
+  materialCampaignId String?
   materialCampaign   MaterialDonationCampaign? @relation(fields: [materialCampaignId], references: [id], onDelete: SetNull)
-  ministryId         Int?
+  ministryId         String?
   ministry           Ministry?                 @relation(fields: [ministryId], references: [id], onDelete: SetNull)
-  departmentId       Int?
+  departmentId       String?
   department         Department?               @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  eventId            Int?
+  eventId            String?
   event              Event?                    @relation(fields: [eventId], references: [id], onDelete: SetNull)
   isSchoolProject    Boolean                   @default(false)
-  pledgeId           Int?
+  pledgeId           String?
   pledge             Pledge?                   @relation(fields: [pledgeId], references: [id], onDelete: SetNull)
   createdAt          DateTime                  @default(now())
+
+  @@map("material_donation")
 }
 
 model Pledge {
-  id                 Int                @id @default(autoincrement())
-  userId             Int
+  pledge             Int                @id @default(autoincrement())
+  id                 String             @unique @default(uuid())
+  userId             String
   user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   status             PledgeStatus       @default(PENDING)
   dueDate            DateTime?
@@ -514,21 +627,24 @@ model Pledge {
   pledgedItemQty     Int?
   pledgedItemUnit    String?
   materialDonations  MaterialDonation[]
-  donationCampaignId Int?
+  donationCampaignId String?
   donationCampaign   DonationCampaign?  @relation(fields: [donationCampaignId], references: [id], onDelete: SetNull)
-  ministryId         Int?
+  ministryId         String?
   ministry           Ministry?          @relation(fields: [ministryId], references: [id], onDelete: SetNull)
-  departmentId       Int?
+  departmentId       String?
   department         Department?        @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  eventId            Int?
+  eventId            String?
   event              Event?             @relation(fields: [eventId], references: [id], onDelete: SetNull)
   isSchoolProject    Boolean            @default(false)
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
+
+  @@map("pledge")
 }
 
 model PaymentTransaction {
-  id                  Int                @id @default(autoincrement())
+  paymentTransaction  Int                @id @default(autoincrement())
+  id                  String             @unique @default(uuid())
   gateway             String
   checkoutRequestId   String             @unique
   merchantRequestId   String
@@ -536,13 +652,15 @@ model PaymentTransaction {
   status              String
   amount              Decimal            @db.Decimal(12, 2)
   rawGatewayResponse  String?            @db.Text
-  orderId             Int?
+  orderId             String?
   order               Order?             @relation(fields: [orderId], references: [id], onDelete: SetNull)
-  donationId          Int?
+  donationId          String?
   donation            Donation?          @relation(fields: [donationId], references: [id], onDelete: SetNull)
-  eventRegistrationId Int?
+  eventRegistrationId String?
   eventRegistration   EventRegistration? @relation(fields: [eventRegistrationId], references: [id], onDelete: SetNull)
   createdAt           DateTime           @default(now())
+
+  @@map("payment_transaction")
 }
 
 // Responsibility: Communications & Auditing
@@ -550,18 +668,24 @@ model PaymentTransaction {
 // user outbound message metrics, and external mailing list profiles.
 
 model EmailSubscriber {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
-  isActive     Boolean  @default(true)
-  subscribedAt DateTime @default(now())
+  emailSubscriber Int      @id @default(autoincrement())
+  id              String   @unique @default(uuid())
+  email           String   @unique
+  isActive        Boolean  @default(true)
+  subscribedAt    DateTime @default(now())
+
+  @@map("email_subscriber")
 }
 
 model NotificationLog {
-  id        Int      @id @default(autoincrement())
-  recipient String
-  title     String
-  body      String   @db.Text
-  sentType  String
-  status    String
-  sentAt    DateTime @default(now())
+  notificationLog Int      @id @default(autoincrement())
+  id              String   @unique @default(uuid())
+  recipient       String
+  title           String
+  body            String   @db.Text
+  sentType        String
+  status          String
+  sentAt          DateTime @default(now())
+
+  @@map("notification_log")
 }
