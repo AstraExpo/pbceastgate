@@ -24,13 +24,11 @@ interface OriginalError {
 
 @Module({
   imports: [
-    // Initialize global configuration resolution
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ".env",
     }),
 
-    // Implement asymmetric multi-tier rate limiting
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService<ServerEnv, true>) => [
@@ -82,12 +80,6 @@ interface OriginalError {
         introspection:
           configService.get("APP_ENV", { infer: true }) !== "production",
         playground: false, // Force disabled in favor of sandboxed landing page
-
-        // Map data integrity scalars across the runtime engine
-        // Disabled due to the fact that I don't have any resolvers that apply these scalers yet
-        // resolvers: { JSON: GraphQLJSON, UUID: GraphQLUUID },
-
-        // Real-time protocol pipeline configurations
         subscriptions: {
           "graphql-ws": {
             keepAlive: 60000,
@@ -96,7 +88,6 @@ interface OriginalError {
           },
         },
 
-        // Prevent DoS nesting resource-drain exploits
         validationRules: [depthLimit(14)],
 
         formatError: (error) => {
