@@ -1,7 +1,7 @@
-import { CreateMinistryInput } from '#/common/dto/ministry/create.dto.js';
-import { UpdateMinistryInput } from '#/common/dto/ministry/update.dto.js';
-import { PrismaService } from '#/common/prisma/prisma.service.js';
-import { Injectable } from '@nestjs/common';
+import { CreateMinistryInput } from "@/common/dto/ministry/create.dto";
+import { UpdateMinistryInput } from "@/common/dto/ministry/update.dto";
+import { PrismaService } from "@/common/prisma/prisma.service";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class MinistryService {
@@ -9,11 +9,11 @@ export class MinistryService {
 
   async findAll() {
     return this.prisma.ministry.findMany({
-      orderBy: { id: 'asc' },
+      orderBy: { id: "asc" },
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return this.prisma.ministry.findUnique({
       where: { id },
     });
@@ -24,23 +24,23 @@ export class MinistryService {
       data: {
         name: input.name,
         description: input.description,
-        headId: input.headId ? Number(input.headId) : null,
+        headId: input.headId ? String(input.headId) : null,
       },
     });
   }
 
-  async update(id: number, input: UpdateMinistryInput) {
+  async update(id: string, input: UpdateMinistryInput) {
     return this.prisma.ministry.update({
       where: { id },
       data: {
         name: input.name,
         description: input.description,
-        headId: input.headId ? Number(input.headId) : null,
+        headId: input.headId ? String(input.headId) : null,
       },
     });
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     return this.prisma.ministry.delete({
       where: { id },
     });
