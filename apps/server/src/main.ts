@@ -1,12 +1,12 @@
 import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module.js";
-import { initializeApp, cert } from 'firebase-admin/app';
+import { AppModule } from "./app.module";
+import { initializeApp, cert } from "firebase-admin/app";
 
 async function bootstrap() {
   const serviceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID as string,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL as string,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n') as string,
+    privateKey: process.env.FIRBASE_PRIVATE_KEY as string,
   };
 
   initializeApp({
@@ -16,7 +16,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: ['http://localhost:3000'], 
+    origin: ["http://localhost:3000"],
     credentials: true,
   });
 
