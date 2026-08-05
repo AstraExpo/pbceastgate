@@ -1,14 +1,12 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
-  "globalEnv": [
-    "DATABASE_URL"
-  ],
+  "globalEnv": ["DATABASE_URL", "APP_ENV"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "dist/**", ".output/**"]
+      "outputs": [".next/**", ".tanstack/**", "dist/**", ".output/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -17,8 +15,18 @@
       "dependsOn": ["^check-types"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:deploy": {
+      "cache": false
     }
   }
 }
