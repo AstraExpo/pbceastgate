@@ -1,6 +1,12 @@
-import { PrismaService } from '#/common/prisma/prisma.service.js';
-import { Injectable, ConflictException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { CreateUserInput } from "@/common/dto/user/create.dto";
+import { UpdateUserInput } from "@/common/dto/user/update.dto";
+import { PrismaService } from "@/common/prisma/prisma.service";
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from "@nestjs/common";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
@@ -10,38 +16,88 @@ export class UserService {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
-  // Used for Native Email/Password Registration
-  async createWithEmailAndPassword(email: string, passwordPlain: string, firstName: string) {
+  async findById(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      include: { profile: true }, // Include the lean profile we created via nested writes
+    });
+  }
+
+  async createWithEmailAndPassword(
+    email: string,
+    passwordPlain: string,
+    firstName: string,
+  ) {
     const existing = await this.findByEmail(email);
-    if (existing) throw new ConflictException('Email already in use');
+    if (existing) throw new ConflictException("Email already in use");
 
     const hashedPassword = await bcrypt.hash(passwordPlain, 10);
 
     return this.prisma.user.create({
       data: {
+        name: firstName,
         email,
         password: hashedPassword,
-        profile: {
-          create: { firstName, lastName: '' }
-        }
       },
-      include: { profile: true }
     });
   }
 
-  // Used for Google, Apple, Microsoft (No password required)
-  async upsertProviderUser(email: string, firstName: string, avatarUrl?: string) {
+  async upsertProviderUser(
+    email: string,
+    firstName: string,
+    avatarUrl?: string,
+  ) {
     return this.prisma.user.upsert({
       where: { email },
       update: {},
       create: {
+        name: firstName,
         email,
         emailVerified: true,
-        profile: {
-          create: { firstName, lastName: '', avatarUrl }
-        }
       },
-      include: { profile: true }
     });
+  }
+
+  async createUser(data: CreateUserInput) {
+    const existing = await this.findByEmail(data.email);
+    if (existing) throw new ConflictException("Email already in use");
+
+    let hashedPassword = null;
+    if (data.password) {
+      hashedPassword = await bcrypt.hash(data.password, 10);
+    }
+
+    return this.prisma.user.create({
+      data: {
+        email: data.email,
+        name: data.name,
+        password: hashedPassword,
+      },
+    });
+  }
+
+  async updateUserDetails(id: string, data: UpdateUserInput) {
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
+
+    try {
+      return await this.prisma.user.update({
+        where: { id },
+        data,
+      });
+    } catch (error) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+  }
+
+  async deleteUser(id: string) {
+    try {
+      return await this.prisma.user.delete({
+        where: { id },
+      });
+    } catch (error) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
   }
 }
