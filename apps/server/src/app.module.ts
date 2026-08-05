@@ -6,10 +6,9 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { ThrottlerModule } from "@nestjs/throttler";
 import depthLimit from "graphql-depth-limit";
 import { Request, Response } from "express";
-
-import { ServiceModule } from "./service/service.module.js";
-import { CommonModule } from "./common/common.module.js";
-import { ServerEnv } from "./common/config/env.config.js";
+import { ServerEnv } from "./common/config/env.config";
+import { ServiceModule } from "./service/service.module";
+import { CommonModule } from "./common/common.module";
 
 export interface GraphQLContext {
   req: Request;
@@ -90,10 +89,9 @@ interface OriginalError {
 
         validationRules: [depthLimit(14)],
 
-        formatError: (error) => {
+        formatError: error => {
           const originalError = error.extensions?.originalError as
-            | OriginalError
-            | undefined;
+            OriginalError | undefined;
           return {
             message: originalError?.message
               ? Array.isArray(originalError.message)
