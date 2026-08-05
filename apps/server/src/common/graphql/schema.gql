@@ -17,13 +17,13 @@ type Ministry {
 
 type Mutation {
   createMinistry(input: CreateMinistryInput!): Ministry!
-  deleteMinistry(id: Int!): Ministry!
-  updateMinistry(id: Int!, input: UpdateMinistryInput!): Ministry!
+  deleteMinistry(id: ID!): Ministry!
+  updateMinistry(id: ID!, input: UpdateMinistryInput!): Ministry!
 }
 
 type Query {
   ministries: [Ministry!]!
-  ministry(id: Int!): Ministry
+  ministry(id: ID!): Ministry
   sermons: [Sermon!]!
 }
 
