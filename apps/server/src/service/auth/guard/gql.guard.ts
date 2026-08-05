@@ -1,7 +1,12 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
-import { CustomJwtService } from '../../service/auth/custom-jwt.service';
-import { Request } from 'express';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
+import { GqlExecutionContext } from "@nestjs/graphql";
+import { Request } from "express";
+import { CustomJwtService } from "../strategy/jwt.service";
 
 @Injectable()
 export class GqlAuthGuard implements CanActivate {
@@ -14,22 +19,21 @@ export class GqlAuthGuard implements CanActivate {
 
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException('Authentication token missing');
+      throw new UnauthorizedException("Authentication token missing");
     }
 
     try {
       const payload = this.jwtService.verifyToken(token);
       // Attach the decoded payload to the request object
       // This makes it available to the @CurrentUser() decorator later
-      request['user'] = payload;
     } catch {
-      throw new UnauthorizedException('Invalid or expired token');
+      throw new UnauthorizedException("Invalid or expired token");
     }
     return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    const [type, token] = request.headers.authorization?.split(" ") ?? [];
+    return type === "Bearer" ? token : undefined;
   }
 }
