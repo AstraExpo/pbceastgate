@@ -1,14 +1,9 @@
 {
   "name": "@eastgate/server",
   "version": "0.1.0",
+  "description": "PBC Eastgate Server",
+  "author": "Richard Kisivii",
   "private": true,
-  "type": "module",
-  "imports": {
-    "#/*": {
-      "types": "./src/*",
-      "default": "./dist/*"
-    }
-  },
   "scripts": {
     "dev": "nest start --watch --exec \"node --import dotenv/config\"",
     "build": "nest build",
@@ -17,6 +12,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@eastgate/database": "workspace:*",
     "@apollo/server": "^5.5.0",
     "@as-integrations/express5": "^1.1.2",
     "@nestjs/apollo": "^13.2.1",
@@ -44,7 +40,6 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@eastgate/database": "workspace:*",
     "@eastgate/eslint-config": "workspace:*",
     "@eastgate/typescript-config": "workspace:*",
     "@nestjs/cli": "^11.0.5",
