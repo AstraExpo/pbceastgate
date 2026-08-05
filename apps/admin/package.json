@@ -13,6 +13,7 @@
   "dependencies": {
     "@apollo/client": "^4.2.3",
     "@eastgate/ui": "workspace:*",
+    "@eastgate/auth": "workspace:*",
     "@tanstack/react-router": "latest",
     "@tanstack/react-start": "latest",
     "graphql": "^16.14.2",
