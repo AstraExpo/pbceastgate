@@ -2,7 +2,7 @@ import { Field, Int, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
 export class Ministry {
-  @Field(() => Int)
+  @Field(() => String)
   id!: number;
 
   @Field(() => String)
@@ -11,6 +11,6 @@ export class Ministry {
   @Field(() => String, { nullable: true })
   description!: string | null;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => String, { nullable: true })
   headId!: number | null;
 }
