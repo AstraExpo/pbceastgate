@@ -18,19 +18,40 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: { input: string; output: string; }
+};
+
+export type AuthResponse = {
+  __typename?: 'AuthResponse';
+  /** The JWT access token */
+  accessToken: Scalars['String']['output'];
+  /** The authenticated user profile */
+  user: User;
 };
 
 export type CreateMinistryInput = {
   description?: InputMaybe<Scalars['String']['input']>;
-  headId?: InputMaybe<Scalars['Int']['input']>;
+  headId?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
 };
+
+export type LoginInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+/** The church membership status of the user */
+export enum MembershipStatus {
+  Guest = 'Guest',
+  Member = 'Member'
+}
 
 export type Ministry = {
   __typename?: 'Ministry';
   description?: Maybe<Scalars['String']['output']>;
-  headId?: Maybe<Scalars['Int']['output']>;
-  id: Scalars['Int']['output'];
+  headId?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
   name: Scalars['String']['output'];
 };
 
@@ -38,6 +59,9 @@ export type Mutation = {
   __typename?: 'Mutation';
   createMinistry: Ministry;
   deleteMinistry: Ministry;
+  loginWithEmail: AuthResponse;
+  loginWithProvider: User;
+  registerWithEmail: AuthResponse;
   updateMinistry: Ministry;
 };
 
@@ -48,12 +72,27 @@ export type MutationCreateMinistryArgs = {
 
 
 export type MutationDeleteMinistryArgs = {
-  id: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationLoginWithEmailArgs = {
+  data: LoginInput;
+};
+
+
+export type MutationLoginWithProviderArgs = {
+  firebaseToken: Scalars['String']['input'];
+};
+
+
+export type MutationRegisterWithEmailArgs = {
+  data: RegisterInput;
 };
 
 
 export type MutationUpdateMinistryArgs = {
-  id: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
   input: UpdateMinistryInput;
 };
 
@@ -66,59 +105,143 @@ export type Query = {
 
 
 export type QueryMinistryArgs = {
-  id: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
+};
+
+export type RegisterInput = {
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type Sermon = {
   __typename?: 'Sermon';
   date: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
+  id: Scalars['String']['output'];
   preacher: Scalars['String']['output'];
   title: Scalars['String']['output'];
   videoUrl?: Maybe<Scalars['String']['output']>;
 };
 
+/** The system access level of the user */
+export enum SystemRole {
+  Admin = 'Admin',
+  Editor = 'Editor',
+  System = 'System',
+  User = 'User'
+}
+
 export type UpdateMinistryInput = {
   description?: InputMaybe<Scalars['String']['input']>;
-  headId?: InputMaybe<Scalars['Int']['input']>;
+  headId?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
 };
+
+/** The core user entity */
+export type User = {
+  __typename?: 'User';
+  banExpires?: Maybe<Scalars['DateTime']['output']>;
+  banReason?: Maybe<Scalars['String']['output']>;
+  banned: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  emailVerified: Scalars['Boolean']['output'];
+  firebaseUid: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  membershipStatus: MembershipStatus;
+  name: Scalars['String']['output'];
+  systemRole: SystemRole;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type AuthenticateAdminMutationVariables = Exact<{
+  firebaseToken: Scalars['String']['input'];
+}>;
+
+
+export type AuthenticateAdminMutation = { __typename?: 'Mutation', loginWithProvider: { __typename?: 'User', id: string, firebaseUid: string, name: string, email: string, image?: string | null, emailVerified: boolean, banned: boolean, banReason?: string | null, banExpires?: string | null, systemRole: SystemRole, membershipStatus: MembershipStatus, createdAt: string, updatedAt: string } };
 
 export type GetMinistriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMinistriesQuery = { __typename?: 'Query', ministries: Array<{ __typename?: 'Ministry', id: number, name: string, description?: string | null, headId?: number | null }> };
+export type GetMinistriesQuery = { __typename?: 'Query', ministries: Array<{ __typename?: 'Ministry', id: string, name: string, description?: string | null, headId?: string | null }> };
 
 export type GetMinistryQueryVariables = Exact<{
-  id: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 }>;
 
 
-export type GetMinistryQuery = { __typename?: 'Query', ministry?: { __typename?: 'Ministry', id: number, name: string, description?: string | null, headId?: number | null } | null };
+export type GetMinistryQuery = { __typename?: 'Query', ministry?: { __typename?: 'Ministry', id: string, name: string, description?: string | null, headId?: string | null } | null };
 
 export type CreateMinistryMutationVariables = Exact<{
   input: CreateMinistryInput;
 }>;
 
 
-export type CreateMinistryMutation = { __typename?: 'Mutation', createMinistry: { __typename?: 'Ministry', id: number, name: string, description?: string | null } };
+export type CreateMinistryMutation = { __typename?: 'Mutation', createMinistry: { __typename?: 'Ministry', id: string, name: string, description?: string | null } };
 
 export type UpdateMinistryMutationVariables = Exact<{
-  id: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
   input: UpdateMinistryInput;
 }>;
 
 
-export type UpdateMinistryMutation = { __typename?: 'Mutation', updateMinistry: { __typename?: 'Ministry', id: number, name: string, description?: string | null } };
+export type UpdateMinistryMutation = { __typename?: 'Mutation', updateMinistry: { __typename?: 'Ministry', id: string, name: string, description?: string | null } };
 
 export type DeleteMinistryMutationVariables = Exact<{
-  id: Scalars['Int']['input'];
+  id: Scalars['String']['input'];
 }>;
 
 
-export type DeleteMinistryMutation = { __typename?: 'Mutation', deleteMinistry: { __typename?: 'Ministry', id: number } };
+export type DeleteMinistryMutation = { __typename?: 'Mutation', deleteMinistry: { __typename?: 'Ministry', id: string } };
 
 
+export const AuthenticateAdminDocument = gql`
+    mutation AuthenticateAdmin($firebaseToken: String!) {
+  loginWithProvider(firebaseToken: $firebaseToken) {
+    id
+    firebaseUid
+    name
+    email
+    image
+    emailVerified
+    banned
+    banReason
+    banExpires
+    systemRole
+    membershipStatus
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type AuthenticateAdminMutationFn = Apollo.MutationFunction<AuthenticateAdminMutation, AuthenticateAdminMutationVariables>;
+
+/**
+ * __useAuthenticateAdminMutation__
+ *
+ * To run a mutation, you first call `useAuthenticateAdminMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAuthenticateAdminMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [authenticateAdminMutation, { data, loading, error }] = useAuthenticateAdminMutation({
+ *   variables: {
+ *      firebaseToken: // value for 'firebaseToken'
+ *   },
+ * });
+ */
+export function useAuthenticateAdminMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AuthenticateAdminMutation, AuthenticateAdminMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<AuthenticateAdminMutation, AuthenticateAdminMutationVariables>(AuthenticateAdminDocument, options);
+      }
+export type AuthenticateAdminMutationHookResult = ReturnType<typeof useAuthenticateAdminMutation>;
+export type AuthenticateAdminMutationResult = Apollo.MutationResult<AuthenticateAdminMutation>;
+export type AuthenticateAdminMutationOptions = Apollo.BaseMutationOptions<AuthenticateAdminMutation, AuthenticateAdminMutationVariables>;
 export const GetMinistriesDocument = gql`
     query GetMinistries {
   ministries {
@@ -165,7 +288,7 @@ export type GetMinistriesLazyQueryHookResult = ReturnType<typeof useGetMinistrie
 export type GetMinistriesSuspenseQueryHookResult = ReturnType<typeof useGetMinistriesSuspenseQuery>;
 export type GetMinistriesQueryResult = Apollo.QueryResult<GetMinistriesQuery, GetMinistriesQueryVariables>;
 export const GetMinistryDocument = gql`
-    query GetMinistry($id: Int!) {
+    query GetMinistry($id: String!) {
   ministry(id: $id) {
     id
     name
@@ -246,7 +369,7 @@ export type CreateMinistryMutationHookResult = ReturnType<typeof useCreateMinist
 export type CreateMinistryMutationResult = Apollo.MutationResult<CreateMinistryMutation>;
 export type CreateMinistryMutationOptions = Apollo.BaseMutationOptions<CreateMinistryMutation, CreateMinistryMutationVariables>;
 export const UpdateMinistryDocument = gql`
-    mutation UpdateMinistry($id: Int!, $input: UpdateMinistryInput!) {
+    mutation UpdateMinistry($id: String!, $input: UpdateMinistryInput!) {
   updateMinistry(id: $id, input: $input) {
     id
     name
@@ -282,7 +405,7 @@ export type UpdateMinistryMutationHookResult = ReturnType<typeof useUpdateMinist
 export type UpdateMinistryMutationResult = Apollo.MutationResult<UpdateMinistryMutation>;
 export type UpdateMinistryMutationOptions = Apollo.BaseMutationOptions<UpdateMinistryMutation, UpdateMinistryMutationVariables>;
 export const DeleteMinistryDocument = gql`
-    mutation DeleteMinistry($id: Int!) {
+    mutation DeleteMinistry($id: String!) {
   deleteMinistry(id: $id) {
     id
   }

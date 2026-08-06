@@ -2,41 +2,99 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthResponse {
+  """The JWT access token"""
+  accessToken: String!
+
+  """The authenticated user profile"""
+  user: User!
+}
+
 input CreateMinistryInput {
   description: String
-  headId: Int
+  headId: String
   name: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+"""The church membership status of the user"""
+enum MembershipStatus {
+  Guest
+  Member
 }
 
 type Ministry {
   description: String
-  headId: Int
-  id: Int!
+  headId: String
+  id: String!
   name: String!
 }
 
 type Mutation {
   createMinistry(input: CreateMinistryInput!): Ministry!
-  deleteMinistry(id: ID!): Ministry!
-  updateMinistry(id: ID!, input: UpdateMinistryInput!): Ministry!
+  deleteMinistry(id: String!): Ministry!
+  loginWithEmail(data: LoginInput!): AuthResponse!
+  loginWithProvider(firebaseToken: String!): User!
+  registerWithEmail(data: RegisterInput!): AuthResponse!
+  updateMinistry(id: String!, input: UpdateMinistryInput!): Ministry!
 }
 
 type Query {
   ministries: [Ministry!]!
-  ministry(id: ID!): Ministry
+  ministry(id: String!): Ministry
   sermons: [Sermon!]!
+}
+
+input RegisterInput {
+  email: String!
+  firstName: String!
+  password: String!
 }
 
 type Sermon {
   date: String!
-  id: ID!
+  id: String!
   preacher: String!
   title: String!
   videoUrl: String
 }
 
+"""The system access level of the user"""
+enum SystemRole {
+  Admin
+  Editor
+  System
+  User
+}
+
 input UpdateMinistryInput {
   description: String
-  headId: Int
+  headId: String
   name: String
+}
+
+"""The core user entity"""
+type User {
+  banExpires: DateTime
+  banReason: String
+  banned: Boolean!
+  createdAt: DateTime!
+  email: String!
+  emailVerified: Boolean!
+  firebaseUid: String!
+  id: String!
+  image: String
+  membershipStatus: MembershipStatus!
+  name: String!
+  systemRole: SystemRole!
+  updatedAt: DateTime!
 }
