@@ -4,7 +4,7 @@ import { ApolloSDK } from "@/graphql";
  * Hook to retrieve a single ministry by its ID.
  * Explicitly types the variables payload to satisfy the non-optional baseOptions schema requirement.
  */
-export function useGetMinistry(ministryId: number) {
+export function useGetMinistry(ministryId: string) {
   const queryVariables: ApolloSDK.GetMinistryQueryVariables = {
     id: ministryId,
   };
@@ -82,7 +82,7 @@ export function useUpdateMinistry() {
     ApolloSDK.useUpdateMinistryMutation();
 
   const updateMinistry = async (
-    id: number,
+    id: string,
     input: ApolloSDK.UpdateMinistryInput,
   ) => {
     const mutationVariables: ApolloSDK.UpdateMinistryMutationVariables = {
@@ -110,7 +110,7 @@ export function useDeleteMinistry() {
   const [deleteMinistryMutation, { loading, error }] =
     ApolloSDK.useDeleteMinistryMutation();
 
-  const deleteMinistry = async (id: number) => {
+  const deleteMinistry = async (id: string) => {
     const mutationVariables: ApolloSDK.DeleteMinistryMutationVariables = {
       id,
     };
