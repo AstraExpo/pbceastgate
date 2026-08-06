@@ -9,6 +9,13 @@ import { ApolloProvider } from "@apollo/client/react";
 import { apolloClient } from "../constant/apollo-client/client";
 import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
 import { getThemeFromCookie } from "@/server/theme.function";
+import { AuthProvider } from "@eastgate/auth";
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+};
 
 export const Route = createRootRoute({
   loader: async () => {
@@ -43,9 +50,11 @@ function RootLayout() {
       </head>
       <body>
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-admin-theme">
-          <ApolloProvider client={apolloClient}>
-            <Outlet />
-          </ApolloProvider>
+          <AuthProvider firebaseConfig={firebaseConfig}>
+            <ApolloProvider client={apolloClient}>
+              <Outlet />
+            </ApolloProvider>
+          </AuthProvider>
         </ThemeProvider>
         <Scripts />
       </body>
