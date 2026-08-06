@@ -8,8 +8,9 @@ import {
 } from "@apollo/client";
 import { ErrorLink } from "@apollo/client/link/error";
 import { createIsomorphicFn } from "@tanstack/react-start";
+import { SetContextLink } from "@apollo/client/link/context";
+import { getAuthToken } from "@eastgate/auth";
 
-// Load development tracking bundles strictly in browser development environments
 if (clientEnv.get("VITE_APP_ENV") === "development" && !clientEnv.isServer) {
   import("@apollo/client/dev").then(
     ({ loadDevMessages, loadErrorMessages }) => {
@@ -19,7 +20,6 @@ if (clientEnv.get("VITE_APP_ENV") === "development" && !clientEnv.isServer) {
   );
 }
 
-// Global exception and network fault logger
 const errorLink = new ErrorLink(({ error }) => {
   if (error) {
     if (CombinedGraphQLErrors.is(error)) {
@@ -34,37 +34,42 @@ const errorLink = new ErrorLink(({ error }) => {
   }
 });
 
-// Isomorphic link separating browser storage tracking from server-side rendering execution
 const createAuthLink = createIsomorphicFn()
   .server(() => {
     return new ApolloLink((operation, forward) => forward(operation));
   })
   .client(() => {
-    return new ApolloLink((operation, forward) => {
-      const token = localStorage.getItem("auth_token");
-      operation.setContext(({ headers = {} }) => ({
+    return new SetContextLink(async prevContext => {
+      const token = await getAuthToken();
+
+      return {
         headers: {
-          ...headers,
+          ...prevContext.headers,
           authorization: token ? `Bearer ${token}` : "",
         },
-      }));
-      return forward(operation);
+      };
     });
   });
 
-    const httpLink = new HttpLink({
-    uri: clientEnv.get("VITE_GRAPHQL_URL"),
-  });
+const debugLink = new ApolloLink((operation, forward) => {
+  const context = operation.getContext();
+  console.log("📡 [Apollo Outgoing Request]:", operation.operationName);
+  console.log("🔑 [Apollo Headers Sent]:", context.headers);
+  return forward(operation);
+});
 
-// --- Apollo Client instance ---
+const httpLink = new HttpLink({
+  uri: clientEnv.get("VITE_GRAPHQL_URL"),
+});
+
 export const apolloClient = new ApolloClient({
-    ssrMode: clientEnv.isServer,
-    cache: new InMemoryCache(),
-    link: ApolloLink.from([createAuthLink(), errorLink, httpLink]),
-    defaultOptions: {
-      watchQuery: { errorPolicy: "all" },
-      query: { errorPolicy: "all" },
-      mutate: { errorPolicy: "all" },
-    },
-    devtools: { enabled: clientEnv.get("VITE_APP_ENV") === "development" },
-  });
+  ssrMode: clientEnv.isServer,
+  cache: new InMemoryCache(),
+  link: ApolloLink.from([createAuthLink(), debugLink, errorLink, httpLink]),
+  defaultOptions: {
+    watchQuery: { errorPolicy: "all" },
+    query: { errorPolicy: "all" },
+    mutate: { errorPolicy: "all" },
+  },
+  devtools: { enabled: clientEnv.get("VITE_APP_ENV") === "development" },
+});
