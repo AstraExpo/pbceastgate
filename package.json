@@ -11,6 +11,7 @@
     "check-types": "turbo run check-types",
     "clean": "rm -rf pnpm-lock.yaml node_modules .turbo && pnpm -r exec rm -rf node_modules .next dist .output .turbo",
     "db:migrate": "pnpm --filter @eastgate/database db:migrate",
+    "db:reset": "pnpm --filter @eastgate/database db:reset",
     "db:studio": "pnpm --filter @eastgate/database db:studio",
     "db:generate": "pnpm --filter @eastgate/database db:generate",
     "build:deps": "pnpm turbo run build --filter @eastgate/database"
