@@ -19,7 +19,12 @@ export class UserService {
   async findById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
-      include: { profile: true }, // Include the lean profile we created via nested writes
+    });
+  }
+
+  async findByFirebaseUid(firebaseUid: string) {
+    return this.prisma.user.findUniqueOrThrow({
+      where: { firebaseUid },
     });
   }
 
@@ -37,7 +42,7 @@ export class UserService {
       data: {
         name: firstName,
         email,
-        password: hashedPassword,
+        firebaseUid: "",
       },
     });
   }
@@ -54,6 +59,7 @@ export class UserService {
         name: firstName,
         email,
         emailVerified: true,
+        firebaseUid: "",
       },
     });
   }
@@ -71,7 +77,7 @@ export class UserService {
       data: {
         email: data.email,
         name: data.name,
-        password: hashedPassword,
+        firebaseUid: "",
       },
     });
   }
