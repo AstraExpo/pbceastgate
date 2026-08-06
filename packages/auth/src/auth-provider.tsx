@@ -23,7 +23,7 @@ interface AuthContextType {
   getToken: () => Promise<string | null>;
 }
 
-const AuthContext = createContext(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -34,7 +34,6 @@ export function AuthProvider({ children, firebaseConfig }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize Firebase safely (prevents double initialization in Next.js/TanStack Start SSR)
   const app =
     getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   const auth = getAuth(app);
@@ -62,10 +61,15 @@ export function AuthProvider({ children, firebaseConfig }: AuthProviderProps) {
     return await auth.currentUser.getIdToken();
   };
 
-  return { children };
+  return (
+    <AuthContext.Provider
+      value={{ user, loading, signInWithGoogle, signOut, getToken }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-// Custom hook to consume the auth state in your apps
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
