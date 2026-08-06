@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, ID } from "@nestjs/graphql";
+import { Resolver, Query, Mutation, Args } from "@nestjs/graphql";
 import { MinistryService } from "./ministry.service";
 import { Ministry } from "@/common/entity/ministry.entity";
 import { CreateMinistryInput } from "@/common/dto/ministry/create.dto";
@@ -14,7 +14,7 @@ export class MinistryResolver {
   }
 
   @Query(() => Ministry, { name: "ministry", nullable: true })
-  async getMinistry(@Args("id", { type: () => ID }) id: string) {
+  async getMinistry(@Args("id") id: string) {
     return this.ministryService.findOne(id);
   }
 
@@ -25,14 +25,14 @@ export class MinistryResolver {
 
   @Mutation(() => Ministry)
   async updateMinistry(
-    @Args("id", { type: () => ID }) id: string,
+    @Args("id") id: string,
     @Args("input") input: UpdateMinistryInput,
   ) {
     return this.ministryService.update(id, input);
   }
 
   @Mutation(() => Ministry)
-  async deleteMinistry(@Args("id", { type: () => ID }) id: string) {
+  async deleteMinistry(@Args("id") id: string) {
     return this.ministryService.delete(id);
   }
 }
