@@ -1,19 +1,19 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
 export class Sermon {
-  @Field(() => ID)
-  id!: string
+  @Field(() => String)
+  id!: string;
 
   @Field()
-  title!: string
+  title!: string;
 
   @Field()
-  preacher!: string
+  preacher!: string;
 
   @Field()
-  date!: string
+  date!: string;
 
   @Field({ nullable: true })
-  videoUrl?: string
+  videoUrl?: string;
 }
