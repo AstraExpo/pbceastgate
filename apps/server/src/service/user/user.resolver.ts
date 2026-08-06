@@ -20,6 +20,11 @@ export class UserResolver {
     return this.userService.findById(id);
   }
 
+  @Query(() => User)
+  async getUserByFirebaseUid(@Args("firebaseUid") firebaseUid: string) {
+    return this.userService.findByFirebaseUid(firebaseUid);
+  }
+
   // --- MUTATIONS ---
 
   @Mutation(() => User, { name: "createUser" })
