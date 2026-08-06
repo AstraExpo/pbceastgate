@@ -14,6 +14,6 @@ export class CreateMinistryInput {
 
   @IsInt()
   @IsOptional()
-  @Field(() => Int, { nullable: true })
+  @Field(() => String, { nullable: true })
   headId?: number;
 }
