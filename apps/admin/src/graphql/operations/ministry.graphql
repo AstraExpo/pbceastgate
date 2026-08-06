@@ -7,7 +7,7 @@ query GetMinistries {
   }
 }
 
-query GetMinistry($id: Int!) {
+query GetMinistry($id: String!) {
   ministry(id: $id) {
     id
     name
@@ -24,7 +24,7 @@ mutation CreateMinistry($input: CreateMinistryInput!) {
   }
 }
 
-mutation UpdateMinistry($id: Int!, $input: UpdateMinistryInput!) {
+mutation UpdateMinistry($id: String!, $input: UpdateMinistryInput!) {
   updateMinistry(id: $id, input: $input) {
     id
     name
@@ -32,7 +32,7 @@ mutation UpdateMinistry($id: Int!, $input: UpdateMinistryInput!) {
   }
 }
 
-mutation DeleteMinistry($id: Int!) {
+mutation DeleteMinistry($id: String!) {
   deleteMinistry(id: $id) {
     id
   }
