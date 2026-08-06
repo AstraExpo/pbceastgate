@@ -1,6 +1,5 @@
 import { MembershipStatus, SystemRole } from "@eastgate/database";
 import { ObjectType, Field, registerEnumType } from "@nestjs/graphql";
-import { GraphQLUUID } from "graphql-scalars";
 
 registerEnumType(SystemRole, {
   name: "SystemRole",
@@ -14,8 +13,11 @@ registerEnumType(MembershipStatus, {
 
 @ObjectType({ description: "The core user entity" })
 export class User {
-  @Field(() => GraphQLUUID, { description: "Public facing UUID" })
+  @Field(() => String)
   id!: string;
+
+  @Field(() => String)
+  firebaseUid!: string;
 
   @Field(() => String)
   email!: string;
