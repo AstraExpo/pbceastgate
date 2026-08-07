@@ -12,6 +12,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
 
   public user = prisma.user;
   public ministry = prisma.ministry;
+  public profile = prisma.profile;
 
   async onModuleInit() {
     try {
