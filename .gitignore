@@ -18,4 +18,4 @@
 
 # Database data
 **/.data/
-**/generated/
+packages/database/**/generated/
