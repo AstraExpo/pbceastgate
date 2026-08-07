@@ -1,22 +1,11 @@
 import { Module } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
-import { UserService } from "../user/user.service";
-import { CustomJwtService } from "./strategy/jwt.service";
 import { AuthService } from "./auth.service";
 import { AuthResolver } from "./auth.resolver";
+import { UserModule } from "../user/user.module";
 
 @Module({
-  imports: [
-    // In a production app, you'd want to use JwtModule.registerAsync
-    // to load the secret from your environment variables via ConfigModule.
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || "super-secret-fallback-key",
-      signOptions: {
-        expiresIn: "15m", // Short lived access token
-      },
-    }),
-  ],
-  providers: [AuthResolver, AuthService, CustomJwtService, UserService],
-  exports: [CustomJwtService],
+  imports: [UserModule],
+  providers: [AuthResolver, AuthService],
+  exports: [],
 })
 export class AuthModule {}
