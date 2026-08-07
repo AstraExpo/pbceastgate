@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { gql } from '@apollo/client';
-import type * as Apollo from '@apollo/client';
+import * as ApolloReactCommon from '@apollo/client/react';
 import * as ApolloReactHooks from '@apollo/client/react';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -22,23 +22,19 @@ export type Scalars = {
   DateTime: { input: string; output: string; }
 };
 
-export type AuthResponse = {
-  __typename?: 'AuthResponse';
-  /** The JWT access token */
-  accessToken: Scalars['String']['output'];
-  /** The authenticated user profile */
-  user: User;
-};
-
 export type CreateMinistryInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   headId?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
 };
 
-export type LoginInput = {
+export type CreateUserInput = {
   email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+  firebaseUid: Scalars['String']['input'];
+  image?: InputMaybe<Scalars['String']['input']>;
+  membershipStatus?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  systemRole?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** The church membership status of the user */
@@ -48,7 +44,7 @@ export enum MembershipStatus {
 }
 
 export type Ministry = {
-  __typename?: 'Ministry';
+  __typename: 'Ministry';
   description?: Maybe<Scalars['String']['output']>;
   headId?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -56,13 +52,16 @@ export type Ministry = {
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
+  __typename: 'Mutation';
+  authenticateAdmin: User;
+  authenticateUsers: User;
   createMinistry: Ministry;
+  createUser: User;
   deleteMinistry: Ministry;
-  loginWithEmail: AuthResponse;
-  loginWithProvider: User;
-  registerWithEmail: AuthResponse;
+  deleteUser: User;
+  signUpUser: User;
   updateMinistry: Ministry;
+  updateUser: User;
 };
 
 
@@ -71,23 +70,23 @@ export type MutationCreateMinistryArgs = {
 };
 
 
+export type MutationCreateUserArgs = {
+  input: CreateUserInput;
+};
+
+
 export type MutationDeleteMinistryArgs = {
   id: Scalars['String']['input'];
 };
 
 
-export type MutationLoginWithEmailArgs = {
-  data: LoginInput;
+export type MutationDeleteUserArgs = {
+  userId: Scalars['String']['input'];
 };
 
 
-export type MutationLoginWithProviderArgs = {
+export type MutationSignUpUserArgs = {
   firebaseToken: Scalars['String']['input'];
-};
-
-
-export type MutationRegisterWithEmailArgs = {
-  data: RegisterInput;
 };
 
 
@@ -96,11 +95,66 @@ export type MutationUpdateMinistryArgs = {
   input: UpdateMinistryInput;
 };
 
+
+export type MutationUpdateUserArgs = {
+  input: UpdateUserInput;
+  userId: Scalars['String']['input'];
+};
+
 export type Query = {
-  __typename?: 'Query';
+  __typename: 'Query';
+  getAdminUsers: Array<User>;
+  getEditorUsers: Array<User>;
+  getGuestUsers: Array<User>;
+  getMemberUsers: Array<User>;
+  getNormalUsers: Array<User>;
+  getUserByEmail: User;
+  getUserByFirebaseUid: User;
+  getUserById: User;
+  getUsers: Array<User>;
   ministries: Array<Ministry>;
   ministry?: Maybe<Ministry>;
   sermons: Array<Sermon>;
+};
+
+
+export type QueryGetAdminUsersArgs = {
+  adminRole: Scalars['String']['input'];
+};
+
+
+export type QueryGetEditorUsersArgs = {
+  editorRole: Scalars['String']['input'];
+};
+
+
+export type QueryGetGuestUsersArgs = {
+  guestStatus: Scalars['String']['input'];
+};
+
+
+export type QueryGetMemberUsersArgs = {
+  memberStatus: Scalars['String']['input'];
+};
+
+
+export type QueryGetNormalUsersArgs = {
+  userRole: Scalars['String']['input'];
+};
+
+
+export type QueryGetUserByEmailArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type QueryGetUserByFirebaseUidArgs = {
+  firebaseUid: Scalars['String']['input'];
+};
+
+
+export type QueryGetUserByIdArgs = {
+  userId: Scalars['String']['input'];
 };
 
 
@@ -108,14 +162,8 @@ export type QueryMinistryArgs = {
   id: Scalars['String']['input'];
 };
 
-export type RegisterInput = {
-  email: Scalars['String']['input'];
-  firstName: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-};
-
 export type Sermon = {
-  __typename?: 'Sermon';
+  __typename: 'Sermon';
   date: Scalars['String']['output'];
   id: Scalars['String']['output'];
   preacher: Scalars['String']['output'];
@@ -137,9 +185,18 @@ export type UpdateMinistryInput = {
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateUserInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  firebaseUid?: InputMaybe<Scalars['String']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
+  membershipStatus?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  systemRole?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** The core user entity */
 export type User = {
-  __typename?: 'User';
+  __typename: 'User';
   banExpires?: Maybe<Scalars['DateTime']['output']>;
   banReason?: Maybe<Scalars['String']['output']>;
   banned: Scalars['Boolean']['output'];
@@ -158,21 +215,21 @@ export type User = {
 export type GetMinistriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMinistriesQuery = { __typename?: 'Query', ministries: Array<{ __typename?: 'Ministry', id: string, name: string, description?: string | null, headId?: string | null }> };
+export type GetMinistriesQuery = { ministries: Array<{ __typename: 'Ministry', id: string, name: string, description?: string | null, headId?: string | null }> };
 
 export type GetMinistryQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type GetMinistryQuery = { __typename?: 'Query', ministry?: { __typename?: 'Ministry', id: string, name: string, description?: string | null, headId?: string | null } | null };
+export type GetMinistryQuery = { ministry?: { __typename: 'Ministry', id: string, name: string, description?: string | null, headId?: string | null } | null };
 
 export type CreateMinistryMutationVariables = Exact<{
   input: CreateMinistryInput;
 }>;
 
 
-export type CreateMinistryMutation = { __typename?: 'Mutation', createMinistry: { __typename?: 'Ministry', id: string, name: string, description?: string | null } };
+export type CreateMinistryMutation = { createMinistry: { __typename: 'Ministry', id: string, name: string, description?: string | null } };
 
 export type UpdateMinistryMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -180,14 +237,14 @@ export type UpdateMinistryMutationVariables = Exact<{
 }>;
 
 
-export type UpdateMinistryMutation = { __typename?: 'Mutation', updateMinistry: { __typename?: 'Ministry', id: string, name: string, description?: string | null } };
+export type UpdateMinistryMutation = { updateMinistry: { __typename: 'Ministry', id: string, name: string, description?: string | null } };
 
 export type DeleteMinistryMutationVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
-export type DeleteMinistryMutation = { __typename?: 'Mutation', deleteMinistry: { __typename?: 'Ministry', id: string } };
+export type DeleteMinistryMutation = { deleteMinistry: { __typename: 'Ministry', id: string } };
 
 
 export const GetMinistriesDocument = gql`
@@ -234,7 +291,7 @@ export function useGetMinistriesSuspenseQuery(baseOptions?: ApolloReactHooks.Ski
 export type GetMinistriesQueryHookResult = ReturnType<typeof useGetMinistriesQuery>;
 export type GetMinistriesLazyQueryHookResult = ReturnType<typeof useGetMinistriesLazyQuery>;
 export type GetMinistriesSuspenseQueryHookResult = ReturnType<typeof useGetMinistriesSuspenseQuery>;
-export type GetMinistriesQueryResult = Apollo.QueryResult<GetMinistriesQuery, GetMinistriesQueryVariables>;
+export type GetMinistriesQueryResult = ApolloReactCommon.QueryResult<GetMinistriesQuery, GetMinistriesQueryVariables>;
 export const GetMinistryDocument = gql`
     query GetMinistry($id: String!) {
   ministry(id: $id) {
@@ -280,7 +337,7 @@ export function useGetMinistrySuspenseQuery(baseOptions?: ApolloReactHooks.SkipT
 export type GetMinistryQueryHookResult = ReturnType<typeof useGetMinistryQuery>;
 export type GetMinistryLazyQueryHookResult = ReturnType<typeof useGetMinistryLazyQuery>;
 export type GetMinistrySuspenseQueryHookResult = ReturnType<typeof useGetMinistrySuspenseQuery>;
-export type GetMinistryQueryResult = Apollo.QueryResult<GetMinistryQuery, GetMinistryQueryVariables>;
+export type GetMinistryQueryResult = ApolloReactCommon.QueryResult<GetMinistryQuery, GetMinistryQueryVariables>;
 export const CreateMinistryDocument = gql`
     mutation CreateMinistry($input: CreateMinistryInput!) {
   createMinistry(input: $input) {
@@ -290,7 +347,7 @@ export const CreateMinistryDocument = gql`
   }
 }
     `;
-export type CreateMinistryMutationFn = Apollo.MutationFunction<CreateMinistryMutation, CreateMinistryMutationVariables>;
+export type CreateMinistryMutationFn = ApolloReactCommon.MutationFunction<CreateMinistryMutation, CreateMinistryMutationVariables>;
 
 /**
  * __useCreateMinistryMutation__
@@ -314,8 +371,8 @@ export function useCreateMinistryMutation(baseOptions?: ApolloReactHooks.Mutatio
         return ApolloReactHooks.useMutation<CreateMinistryMutation, CreateMinistryMutationVariables>(CreateMinistryDocument, options);
       }
 export type CreateMinistryMutationHookResult = ReturnType<typeof useCreateMinistryMutation>;
-export type CreateMinistryMutationResult = Apollo.MutationResult<CreateMinistryMutation>;
-export type CreateMinistryMutationOptions = Apollo.BaseMutationOptions<CreateMinistryMutation, CreateMinistryMutationVariables>;
+export type CreateMinistryMutationResult = ApolloReactCommon.MutationResult<CreateMinistryMutation>;
+export type CreateMinistryMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateMinistryMutation, CreateMinistryMutationVariables>;
 export const UpdateMinistryDocument = gql`
     mutation UpdateMinistry($id: String!, $input: UpdateMinistryInput!) {
   updateMinistry(id: $id, input: $input) {
@@ -325,7 +382,7 @@ export const UpdateMinistryDocument = gql`
   }
 }
     `;
-export type UpdateMinistryMutationFn = Apollo.MutationFunction<UpdateMinistryMutation, UpdateMinistryMutationVariables>;
+export type UpdateMinistryMutationFn = ApolloReactCommon.MutationFunction<UpdateMinistryMutation, UpdateMinistryMutationVariables>;
 
 /**
  * __useUpdateMinistryMutation__
@@ -350,8 +407,8 @@ export function useUpdateMinistryMutation(baseOptions?: ApolloReactHooks.Mutatio
         return ApolloReactHooks.useMutation<UpdateMinistryMutation, UpdateMinistryMutationVariables>(UpdateMinistryDocument, options);
       }
 export type UpdateMinistryMutationHookResult = ReturnType<typeof useUpdateMinistryMutation>;
-export type UpdateMinistryMutationResult = Apollo.MutationResult<UpdateMinistryMutation>;
-export type UpdateMinistryMutationOptions = Apollo.BaseMutationOptions<UpdateMinistryMutation, UpdateMinistryMutationVariables>;
+export type UpdateMinistryMutationResult = ApolloReactCommon.MutationResult<UpdateMinistryMutation>;
+export type UpdateMinistryMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateMinistryMutation, UpdateMinistryMutationVariables>;
 export const DeleteMinistryDocument = gql`
     mutation DeleteMinistry($id: String!) {
   deleteMinistry(id: $id) {
@@ -359,7 +416,7 @@ export const DeleteMinistryDocument = gql`
   }
 }
     `;
-export type DeleteMinistryMutationFn = Apollo.MutationFunction<DeleteMinistryMutation, DeleteMinistryMutationVariables>;
+export type DeleteMinistryMutationFn = ApolloReactCommon.MutationFunction<DeleteMinistryMutation, DeleteMinistryMutationVariables>;
 
 /**
  * __useDeleteMinistryMutation__
@@ -383,5 +440,5 @@ export function useDeleteMinistryMutation(baseOptions?: ApolloReactHooks.Mutatio
         return ApolloReactHooks.useMutation<DeleteMinistryMutation, DeleteMinistryMutationVariables>(DeleteMinistryDocument, options);
       }
 export type DeleteMinistryMutationHookResult = ReturnType<typeof useDeleteMinistryMutation>;
-export type DeleteMinistryMutationResult = Apollo.MutationResult<DeleteMinistryMutation>;
-export type DeleteMinistryMutationOptions = Apollo.BaseMutationOptions<DeleteMinistryMutation, DeleteMinistryMutationVariables>;
+export type DeleteMinistryMutationResult = ApolloReactCommon.MutationResult<DeleteMinistryMutation>;
+export type DeleteMinistryMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteMinistryMutation, DeleteMinistryMutationVariables>;
