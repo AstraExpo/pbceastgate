@@ -1,64 +1,52 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { getAuth } from "firebase-admin/auth";
-import * as bcrypt from "bcrypt";
 import { UserService } from "../user/user.service";
-import { CustomJwtService } from "./strategy/jwt.service";
+import { CreateUserInput } from "@/common/dto/user/create.dto";
+import {
+  MembershipStatus,
+  SystemRole,
+} from "@/common/graphql/generated/apollo.types";
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userService: UserService,
-    private jwtService: CustomJwtService,
-  ) {}
+  constructor(private userService: UserService) {}
 
-  async loginWithEmail(email: string, passwordPlain: string) {
-    const user = await this.userService.findByEmail(email);
-
-    if (!user) {
-      throw new UnauthorizedException("Invalid credentials");
-    }
-
-    const accessToken = this.jwtService.signToken({
-      sub: user.id,
-      role: user.systemRole,
-    });
-    return { accessToken, user };
-  }
-
-  async registerWithEmail(
-    email: string,
-    passwordPlain: string,
-    firstName: string,
-  ) {
-    const user = await this.userService.createWithEmailAndPassword(
-      email,
-      passwordPlain,
-      firstName,
-    );
-    const accessToken = this.jwtService.signToken({
-      sub: user.id,
-      role: user.systemRole,
-    });
-    return { accessToken, user };
-  }
-
-  async loginWithFirebaseToken(firebaseToken: string) {
+  async signUpNewUser(firebaseToken: string) {
     try {
       const decodedToken = await getAuth().verifyIdToken(firebaseToken);
-      const { email, uid } = decodedToken;
+      const { email, name, picture, uid } = decodedToken;
 
       if (!email)
         throw new UnauthorizedException("No email provided by provider");
 
-      const user = await this.userService.findByFirebaseUid(uid);
+      const existingUser = await this.userService.getByFirebaseUid(uid);
 
-      if (!user) throw new UnauthorizedException("User doesn't exist");
+      if (existingUser) {
+        throw new ConflictException(
+          "An account with this email already exists. Please sign in instead.",
+        );
+      }
 
-      return { user };
+      const createUserInput: CreateUserInput = {
+        email: email,
+        name: name || email.split("@")[0],
+        firebaseUid: uid,
+        image: picture,
+        systemRole: SystemRole.User,
+        membershipStatus: MembershipStatus.Guest,
+      };
+
+      const newUser = await this.userService.createUser(createUserInput);
+
+      return newUser;
     } catch (error) {
-      throw new UnauthorizedException(
-        `Invalid or expired provider token: ${error}`,
-      );
+      if (error instanceof ConflictException) throw error;
+
+      throw new UnauthorizedException(`Sign up failed: ${error}`);
     }
   }
 }
