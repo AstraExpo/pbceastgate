@@ -1,109 +1,114 @@
 import { CreateUserInput } from "@/common/dto/user/create.dto";
 import { UpdateUserInput } from "@/common/dto/user/update.dto";
+import {
+  MembershipStatus,
+  SystemRole,
+} from "@/common/graphql/generated/apollo.types";
 import { PrismaService } from "@/common/prisma/prisma.service";
 import {
   Injectable,
   ConflictException,
   NotFoundException,
 } from "@nestjs/common";
-import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async findByEmail(email: string) {
-    return this.prisma.user.findUnique({ where: { email } });
+  async getUsers() {
+    return this.prisma.user.findMany();
   }
 
-  async findById(id: string) {
-    return this.prisma.user.findUnique({
-      where: { id },
+  async getAdminUsers(adminRole: SystemRole.Admin) {
+    if (!adminRole) return null;
+    return this.prisma.user.findMany({ where: { systemRole: adminRole } });
+  }
+
+  async getEditorUsers(editorRole: SystemRole.Editor) {
+    if (!editorRole) return null;
+    return this.prisma.user.findMany({ where: { systemRole: editorRole } });
+  }
+
+  async getNormalUsers(userRole: SystemRole.User) {
+    if (!userRole) return null;
+    return this.prisma.user.findMany({ where: { systemRole: userRole } });
+  }
+
+  async getMemberUsers(memberStatus: MembershipStatus.Member) {
+    if (!memberStatus) return null;
+    return this.prisma.user.findMany({
+      where: { membershipStatus: memberStatus },
     });
   }
 
-  async findByFirebaseUid(firebaseUid: string) {
+  async getGuestUsers(guestStatus: MembershipStatus.Guest) {
+    if (!guestStatus) return null;
+    return this.prisma.user.findMany({
+      where: { membershipStatus: guestStatus },
+    });
+  }
+
+  async getByEmail(email: string) {
+    return this.prisma.user.findUniqueOrThrow({ where: { email } });
+  }
+
+  async getById(userId: string) {
+    return this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
+  }
+
+  async getByFirebaseUid(firebaseUid: string) {
     return this.prisma.user.findUniqueOrThrow({
       where: { firebaseUid },
     });
   }
 
-  async createWithEmailAndPassword(
-    email: string,
-    passwordPlain: string,
-    firstName: string,
-  ) {
-    const existing = await this.findByEmail(email);
+  async createUser(input: CreateUserInput) {
+    const existing = await this.getByEmail(input.email);
     if (existing) throw new ConflictException("Email already in use");
-
-    const hashedPassword = await bcrypt.hash(passwordPlain, 10);
 
     return this.prisma.user.create({
       data: {
-        name: firstName,
-        email,
-        firebaseUid: "",
+        email: input.email,
+        name: input.name,
+        firebaseUid: input.firebaseUid,
+        image: input.image,
+        systemRole: input.systemRole,
+        membershipStatus: input.membershipStatus,
+
+        profile: {
+          create: {
+            name: input.name,
+            avatarUrls: input.image ? [input.image] : [],
+            backgroundUrls: input.image ? [input.image] : [],
+          },
+        },
+      },
+      include: {
+        profile: true,
       },
     });
   }
 
-  async upsertProviderUser(
-    email: string,
-    firstName: string,
-    avatarUrl?: string,
-  ) {
-    return this.prisma.user.upsert({
-      where: { email },
-      update: {},
-      create: {
-        name: firstName,
-        email,
-        emailVerified: true,
-        firebaseUid: "",
-      },
-    });
-  }
-
-  async createUser(data: CreateUserInput) {
-    const existing = await this.findByEmail(data.email);
-    if (existing) throw new ConflictException("Email already in use");
-
-    let hashedPassword = null;
-    if (data.password) {
-      hashedPassword = await bcrypt.hash(data.password, 10);
-    }
-
-    return this.prisma.user.create({
-      data: {
-        email: data.email,
-        name: data.name,
-        firebaseUid: "",
-      },
-    });
-  }
-
-  async updateUserDetails(id: string, data: UpdateUserInput) {
-    if (data.password) {
-      data.password = await bcrypt.hash(data.password, 10);
-    }
-
+  async updateUserDetails(userId: string, input: UpdateUserInput) {
     try {
       return await this.prisma.user.update({
-        where: { id },
-        data,
+        where: { id: userId },
+        data: input,
       });
     } catch (error) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`User with ID ${userId} not found ${error}`);
     }
   }
 
-  async deleteUser(id: string) {
+  async deleteUser(userId: string) {
     try {
       return await this.prisma.user.delete({
-        where: { id },
+        where: { id: userId },
       });
     } catch (error) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`User with ID ${userId} not found ${error}`);
     }
   }
 }
