@@ -7,26 +7,23 @@ export const Route = createFileRoute("/_auth")({
 });
 
 function AuthLayout() {
-  const { user, loading, getToken } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("🛡️ [_auth layout] State Check:", { loading, hasUser: !!user });
-
     if (!loading && user) {
-      console.log(
-        "✅ [_auth layout] User already logged in! Redirecting to Dashboard...",
-      );
-
-      getToken().then(token => {
-        console.log("🔑 [_auth layout] JWT Token acquired:", token);
-      });
-
       navigate({ to: "/" });
     }
-  }, [user, loading, navigate, getToken]);
+  }, [user, loading, navigate]);
 
-  if (loading) return <div>Loading auth state...</div>;
+  // Hold rendering entirely until Firebase resolves initial state, preventing layout shifts
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        <p className="opacity-70">Initializing session...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
