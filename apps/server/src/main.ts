@@ -6,7 +6,7 @@ async function bootstrap() {
   const serviceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID as string,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL as string,
-    privateKey: process.env.FIRBASE_PRIVATE_KEY as string,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY as string,
   };
 
   initializeApp({
