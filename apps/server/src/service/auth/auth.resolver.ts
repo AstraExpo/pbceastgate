@@ -3,8 +3,8 @@ import { AuthService } from "./auth.service";
 import { User } from "@/common/entity/user.entity";
 import { RequireRoles } from "./decorators/roles.decorators";
 import { SystemRole } from "@/common/graphql/generated/apollo.types";
-import { CurrentUser } from "@/common/decorators/user.decorators";
 import { Public } from "./decorators/public.decorators";
+import { CurrentUser } from "./decorators/user.decorators";
 
 @Resolver()
 export class AuthResolver {
