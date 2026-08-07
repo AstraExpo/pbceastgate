@@ -9,6 +9,8 @@ import { Request, Response } from "express";
 import { ServerEnv } from "./common/config/env.config";
 import { ServiceModule } from "./service/service.module";
 import { CommonModule } from "./common/common.module";
+import { APP_GUARD } from "@nestjs/core";
+import { FirebaseAuthGuard } from "./service/auth/guard/firebase-auth.guard";
 
 export interface GraphQLContext {
   req: Request;
@@ -108,6 +110,12 @@ interface OriginalError {
     }),
     ServiceModule,
     CommonModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: FirebaseAuthGuard,
+    },
   ],
 })
 export class AppModule {}
