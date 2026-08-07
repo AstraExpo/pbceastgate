@@ -1,17 +1,21 @@
-mutation AuthenticateAdmin($firebaseToken: String!) {
-  loginWithProvider(firebaseToken: $firebaseToken) {
-    id
-    firebaseUid
-    name
-    email
-    image
-    emailVerified
-    banned
-    banReason
-    banExpires
-    systemRole
-    membershipStatus
-    createdAt
-    updatedAt
+fragment UserFields on User {
+  id
+  firebaseUid
+  name
+  email
+  image
+  emailVerified
+  banned
+  banReason
+  banExpires
+  systemRole
+  membershipStatus
+  createdAt
+  updatedAt
+}
+
+mutation AuthenticateAdmin {
+  authenticateAdmin {
+    ...UserFields
   }
 }
