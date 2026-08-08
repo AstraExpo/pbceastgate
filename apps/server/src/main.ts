@@ -1,22 +1,34 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { initializeApp, cert } from "firebase-admin/app";
+import { ConfigService } from "@nestjs/config";
+import { EnvironmentVariables } from "./common/config/env.validate"; // Adjust path if needed
 
 async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  const configService =
+    app.get<ConfigService<EnvironmentVariables, true>>(ConfigService);
+
   const serviceAccount = {
-    projectId: process.env.FIREBASE_PROJECT_ID as string,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL as string,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY as string,
+    projectId: configService.get("FIREBASE_PROJECT_ID", { infer: true }),
+    clientEmail: configService.get("FIREBASE_CLIENT_EMAIL", { infer: true }),
+    privateKey: configService.get("FIREBASE_PRIVATE_KEY", { infer: true }),
   };
 
   initializeApp({
     credential: cert(serviceAccount),
   });
 
-  const app = await NestFactory.create(AppModule);
+  const allowedOriginsString = configService.get("ALLOWED_ORIGINS", {
+    infer: true,
+  });
+  const allowedOrigins = allowedOriginsString
+    ? allowedOriginsString.split(",")
+    : [];
 
   app.enableCors({
-    origin: ["http://localhost:3000"],
+    origin: allowedOrigins,
     credentials: true,
   });
 

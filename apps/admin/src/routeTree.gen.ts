@@ -9,17 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/__root'
+import { Route as IndexRouteImport } from './app/index'
 import { Route as AuthRouteImport } from './app/_auth'
-import { Route as ProtectedRouteImport } from './app/_protected'
+import { Route as PbcadminRouteImport } from './app/_pbcadmin'
 import { Route as AuthLoginRouteImport } from './app/_auth/login'
-import { Route as ProtectedIndexRouteImport } from './app/_protected/index'
+import { Route as PbcadminDashboardRouteImport } from './app/_pbcadmin/dashboard'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProtectedRoute = ProtectedRouteImport.update({
-  id: '/_protected',
+const PbcadminRoute = PbcadminRouteImport.update({
+  id: '/_pbcadmin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -27,42 +33,59 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
-const ProtectedIndexRoute = ProtectedIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ProtectedRoute,
+const PbcadminDashboardRoute = PbcadminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => PbcadminRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof ProtectedIndexRoute
+  '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
+  '/dashboard': typeof PbcadminDashboardRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof ProtectedIndexRoute
+  '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
+  '/dashboard': typeof PbcadminDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
-  '/_protected': typeof ProtectedRouteWithChildren
+  '/_pbcadmin': typeof PbcadminRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
-  '/_protected/': typeof ProtectedIndexRoute
+  '/_pbcadmin/dashboard': typeof PbcadminDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths: '/' | '/login' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/_auth' | '/_protected' | '/_auth/login' | '/_protected/'
+  to: '/' | '/login' | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/_pbcadmin'
+    | '/_auth/login'
+    | '/_pbcadmin/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
-  ProtectedRoute: typeof ProtectedRouteWithChildren
+  PbcadminRoute: typeof PbcadminRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -70,11 +93,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_protected': {
-      id: '/_protected'
+    '/_pbcadmin': {
+      id: '/_pbcadmin'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof ProtectedRouteImport
+      preLoaderRoute: typeof PbcadminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/login': {
@@ -84,12 +107,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_protected/': {
-      id: '/_protected/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof ProtectedIndexRouteImport
-      parentRoute: typeof ProtectedRoute
+    '/_pbcadmin/dashboard': {
+      id: '/_pbcadmin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof PbcadminDashboardRouteImport
+      parentRoute: typeof PbcadminRoute
     }
   }
 }
@@ -104,21 +127,22 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface ProtectedRouteChildren {
-  ProtectedIndexRoute: typeof ProtectedIndexRoute
+interface PbcadminRouteChildren {
+  PbcadminDashboardRoute: typeof PbcadminDashboardRoute
 }
 
-const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedIndexRoute: ProtectedIndexRoute,
+const PbcadminRouteChildren: PbcadminRouteChildren = {
+  PbcadminDashboardRoute: PbcadminDashboardRoute,
 }
 
-const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
-  ProtectedRouteChildren,
+const PbcadminRouteWithChildren = PbcadminRoute._addFileChildren(
+  PbcadminRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
-  ProtectedRoute: ProtectedRouteWithChildren,
+  PbcadminRoute: PbcadminRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -12,6 +12,7 @@ import {
   User,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithEmailAndPassword,
   signOut as firebaseSignOut,
 } from "firebase/auth";
 
@@ -19,6 +20,8 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  // ✨ Add the new email/password signature
+  signInWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   getToken: () => Promise<string | null>;
 }
@@ -52,6 +55,11 @@ export function AuthProvider({ children, firebaseConfig }: AuthProviderProps) {
     await signInWithPopup(auth, provider);
   };
 
+  // ✨ Implement the new method
+  const signInWithEmail = async (email: string, password: string) => {
+    await signInWithEmailAndPassword(auth, email, password);
+  };
+
   const signOut = async () => {
     await firebaseSignOut(auth);
   };
@@ -63,7 +71,14 @@ export function AuthProvider({ children, firebaseConfig }: AuthProviderProps) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signInWithGoogle, signOut, getToken }}
+      value={{
+        user,
+        loading,
+        signInWithGoogle,
+        signInWithEmail,
+        signOut,
+        getToken,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -6,11 +6,11 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { ThrottlerModule } from "@nestjs/throttler";
 import depthLimit from "graphql-depth-limit";
 import { Request, Response } from "express";
-import { ServerEnv } from "./common/config/env.config";
 import { ServiceModule } from "./service/service.module";
 import { CommonModule } from "./common/common.module";
 import { APP_GUARD } from "@nestjs/core";
 import { FirebaseAuthGuard } from "./service/auth/guard/firebase-auth.guard";
+import { validate, EnvironmentVariables } from "./common/config/env.validate";
 
 export interface GraphQLContext {
   req: Request;
@@ -28,11 +28,14 @@ interface OriginalError {
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ".env",
+      validate,
     }),
 
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService<ServerEnv, true>) => [
+      useFactory: (
+        configService: ConfigService<EnvironmentVariables, true>,
+      ) => [
         {
           name: "short",
           ttl: Number(configService.get("THROTTLE_TTL", { infer: true })),
@@ -61,7 +64,9 @@ interface OriginalError {
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       inject: [ConfigService],
-      useFactory: (configService: ConfigService<ServerEnv, true>) => ({
+      useFactory: (
+        configService: ConfigService<EnvironmentVariables, true>,
+      ) => ({
         // Dynamic file output: builds to disk in dev only; runs purely in-memory elsewhere
         autoSchemaFile:
           configService.get("APP_ENV", { infer: true }) === "development"

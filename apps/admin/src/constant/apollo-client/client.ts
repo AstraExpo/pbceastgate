@@ -1,4 +1,4 @@
-import { clientEnv } from "@/config/admin.env";
+import { adminEnv } from "@/config/admin.env";
 import {
   ApolloLink,
   InMemoryCache,
@@ -11,7 +11,7 @@ import { createIsomorphicFn } from "@tanstack/react-start";
 import { SetContextLink } from "@apollo/client/link/context";
 import { getAuthToken } from "@eastgate/auth";
 
-if (clientEnv.get("VITE_APP_ENV") === "development" && !clientEnv.isServer) {
+if (adminEnv.get("VITE_APP_ENV") === "development" && !adminEnv.isServer) {
   import("@apollo/client/dev").then(
     ({ loadDevMessages, loadErrorMessages }) => {
       loadErrorMessages();
@@ -52,18 +52,16 @@ const createAuthLink = createIsomorphicFn()
   });
 
 const debugLink = new ApolloLink((operation, forward) => {
-  const context = operation.getContext();
   console.log("📡 [Apollo Outgoing Request]:", operation.operationName);
-  console.log("🔑 [Apollo Headers Sent]:", context.headers);
   return forward(operation);
 });
 
 const httpLink = new HttpLink({
-  uri: clientEnv.get("VITE_GRAPHQL_URL"),
+  uri: adminEnv.get("VITE_GRAPHQL_URL"),
 });
 
 export const apolloClient = new ApolloClient({
-  ssrMode: clientEnv.isServer,
+  ssrMode: adminEnv.isServer,
   cache: new InMemoryCache(),
   link: ApolloLink.from([createAuthLink(), debugLink, errorLink, httpLink]),
   defaultOptions: {
@@ -71,5 +69,5 @@ export const apolloClient = new ApolloClient({
     query: { errorPolicy: "all" },
     mutate: { errorPolicy: "all" },
   },
-  devtools: { enabled: clientEnv.get("VITE_APP_ENV") === "development" },
+  devtools: { enabled: adminEnv.get("VITE_APP_ENV") === "development" },
 });

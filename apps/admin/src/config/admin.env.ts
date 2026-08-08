@@ -7,7 +7,6 @@ enum EnvMode {
   Production = "production",
 }
 
-/** WebSocket Endpoint Format Constraint Verification */
 const wsUrlSchema = z
   .string()
   .refine(
@@ -15,19 +14,27 @@ const wsUrlSchema = z
     "WebSocket URL must start with 'ws://' or 'wss://'",
   );
 
-/** Client-Side Bounded Context Environment Schema */
-export const ClientEnvSchema = z.object({
+export const AdminEnvSchema = z.object({
   VITE_APP_ENV: z.enum(["development", "staging", "production"]),
   VITE_APP_BASE_URL: z.string().url(),
   VITE_API_URL: z.string().url(),
   VITE_GRAPHQL_URL: z.string().url(),
   VITE_SUBSCRIPTION_URL: wsUrlSchema,
+  VITE_FIREBASE_API_KEY: z.string().min(1, "Firebase API Key is missing"),
+  VITE_FIREBASE_AUTH_DOMAIN: z
+    .string()
+    .min(1, "Firebase Auth Domain is missing"),
+  VITE_FIREBASE_PROJECT_ID: z.string().min(1, "Firebase Project ID is missing"),
 });
 
-type EnvConfig = z.infer<typeof ClientEnvSchema>;
+type HardcodedConfig = Omit<
+  z.infer<typeof AdminEnvSchema>,
+  | "VITE_FIREBASE_API_KEY"
+  | "VITE_FIREBASE_AUTH_DOMAIN"
+  | "VITE_FIREBASE_PROJECT_ID"
+>;
 
-/** Concrete Hardcoded Fallbacks per Deployment Node Target */
-const config: Record<EnvMode, EnvConfig> = {
+const config: Record<EnvMode, HardcodedConfig> = {
   [EnvMode.Development]: {
     VITE_APP_ENV: "development",
     VITE_APP_BASE_URL: "http://localhost:3000",
@@ -58,20 +65,23 @@ function getModeFromStr(str: string): EnvMode {
   throw new Error(`❌ Invalid application compilation execution mode: ${str}`);
 }
 
-export function createClientEnvFactory<TClient extends z.ZodRawShape>(
-  clientSchema: TClient,
+export function createAdminEnvFactory<TAdmin extends z.ZodRawShape>(
+  adminSchema: TAdmin,
 ) {
-  const isClient = typeof window !== "undefined";
+  const isAdmin = typeof window !== "undefined";
   const mode = import.meta.env.MODE || "development";
   const envMode = getModeFromStr(mode);
 
-  // Choose exact configuration mapping node matching target build profile
-  const runtimeTargetConfig = config[envMode];
-  const envCache = {} as z.infer<z.ZodObject<TClient>>;
+  const runtimeTargetConfig = {
+    ...config[envMode],
+    VITE_FIREBASE_API_KEY: import.meta.env.VITE_FIREBASE_API_KEY,
+    VITE_FIREBASE_AUTH_DOMAIN: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    VITE_FIREBASE_PROJECT_ID: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  };
 
-  const validationResult = z
-    .object(clientSchema)
-    .safeParse(runtimeTargetConfig);
+  const envCache = {} as z.infer<z.ZodObject<TAdmin>>;
+
+  const validationResult = z.object(adminSchema).safeParse(runtimeTargetConfig);
 
   if (!validationResult.success) {
     console.error(
@@ -86,14 +96,11 @@ export function createClientEnvFactory<TClient extends z.ZodRawShape>(
   Object.assign(envCache, validationResult.data);
 
   return {
-    isServer: !isClient,
+    isServer: !isAdmin,
     mode: envMode,
-    /**
-     * Retrieve a verified client-safe configuration property
-     */
-    get<Key extends keyof z.infer<z.ZodObject<TClient>>>(
+    get<Key extends keyof z.infer<z.ZodObject<TAdmin>>>(
       key: Key,
-    ): z.infer<z.ZodObject<TClient>>[Key] {
+    ): z.infer<z.ZodObject<TAdmin>>[Key] {
       if (!(key in envCache)) {
         throw new Error(
           `❌ Target key error: Property '${String(key)}' is missing in cached lookup context.`,
@@ -104,5 +111,4 @@ export function createClientEnvFactory<TClient extends z.ZodRawShape>(
   };
 }
 
-/** Pure Type-Safe Structural Output instance */
-export const clientEnv = createClientEnvFactory(ClientEnvSchema.shape);
+export const adminEnv = createAdminEnvFactory(AdminEnvSchema.shape);

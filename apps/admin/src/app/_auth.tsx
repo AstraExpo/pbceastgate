@@ -1,5 +1,5 @@
+import { useAdminAuth } from "@/components/AuthProvider/auth.context";
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@eastgate/auth";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/_auth")({
@@ -7,17 +7,15 @@ export const Route = createFileRoute("/_auth")({
 });
 
 function AuthLayout() {
-  const { user, loading } = useAuth();
+  const { serverUser, isInitializing } = useAdminAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!isInitializing && serverUser) {
       navigate({ to: "/" });
     }
-  }, [user, loading, navigate]);
-
-  // Hold rendering entirely until Firebase resolves initial state, preventing layout shifts
-  if (loading) {
+  }, [serverUser, isInitializing, navigate]);
+  if (isInitializing) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <p className="opacity-70">Initializing session...</p>

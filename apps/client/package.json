@@ -12,8 +12,9 @@
   },
   "dependencies": {
     "@apollo/client": "^4.2.3",
-    "@eastgate/ui": "workspace:*",
     "@eastgate/auth": "workspace:*",
+    "@eastgate/ui": "workspace:*",
+    "@tanstack/react-form": "^1.33.3",
     "@tanstack/react-query": "^5.101.0",
     "@tanstack/react-router": "latest",
     "@tanstack/react-start": "latest",
