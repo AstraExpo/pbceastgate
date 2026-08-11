@@ -6,15 +6,20 @@
   "private": true,
   "scripts": {
     "dev": "nest start --watch --exec \"node --import dotenv/config\"",
-    "build": "nest build",
+    "build": "prisma generate && nest build",
     "start": "node dist/main",
     "lint": "eslint . --max-warnings 0",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:reset": "prisma migrate reset",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@eastgate/database": "workspace:*",
     "@apollo/server": "^5.5.0",
     "@as-integrations/express5": "^1.1.2",
+    "@eastgate/env": "workspace:*",
     "@nestjs/apollo": "^13.2.1",
     "@nestjs/common": "^11.1.6",
     "@nestjs/config": "^4.0.4",
@@ -24,6 +29,7 @@
     "@nestjs/platform-express": "^11.1.6",
     "@nestjs/throttler": "^6.5.0",
     "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.4",
@@ -31,13 +37,13 @@
     "firebase-admin": "^14.2.0",
     "graphql": "^16.10.0",
     "graphql-depth-limit": "^1.1.0",
-    "graphql-request": "^7.4.0",
     "graphql-scalars": "^1.25.0",
-    "graphql-tag": "^2.12.6",
     "graphql-ws": "^6.0.8",
     "pg": "^8.21.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "source-map-support": "^0.5.21",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@eastgate/eslint-config": "workspace:*",
@@ -50,8 +56,9 @@
     "@types/graphql-depth-limit": "^1.1.6",
     "@types/node": "^22.19.17",
     "@types/pg": "^8.20.0",
+    "@types/ws": "^8.5.13",
     "eslint": "^9.39.4",
-    "source-map-support": "^0.5.21",
+    "prisma": "^7.8.0",
     "typescript": "6.0.3",
     "typescript-eslint": "^8.59.2"
   }
