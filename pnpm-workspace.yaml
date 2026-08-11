@@ -3,14 +3,12 @@ packages:
   - "packages/*"
 allowBuilds:
   "@apollo/protobufjs": true
-  '@firebase/util': true
-  "@nestjs/core": true
+  "@firebase/util": true
   "@prisma/engines": true
   bcrypt: true
   esbuild: true
   prisma: true
   protobufjs: true
-  sharp: true
   unrs-resolver: true
 
 peerDependencyRules:
@@ -34,3 +32,4 @@ allowedDeprecatedVersions:
   node-domexception: "*"
   subscriptions-transport-ws: "*"
   recharts: "*"
+  uuid: "*"
