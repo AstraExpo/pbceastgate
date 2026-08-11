@@ -1,27 +1,16 @@
-import { join } from "node:path";
 import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { ThrottlerModule } from "@nestjs/throttler";
-import depthLimit from "graphql-depth-limit";
-import { Request, Response } from "express";
 import { ServiceModule } from "./service/service.module";
 import { CommonModule } from "./common/common.module";
 import { APP_GUARD } from "@nestjs/core";
 import { FirebaseAuthGuard } from "./service/auth/guard/firebase-auth.guard";
-import { validate, EnvironmentVariables } from "./common/config/env.validate";
-
-export interface GraphQLContext {
-  req: Request;
-  res: Response;
-}
-
-interface OriginalError {
-  statusCode?: number;
-  message?: string | string[];
-  error?: string;
-}
+import { validate } from "./common/config/env.validate";
+import { createGraphQLConfig } from "./common/config/graphql.config";
+import { AppConfigService } from "./common/config/app-config.service";
+import { createThrottlerConfig } from "./common/config/throttler.config";
 
 @Module({
   imports: [
@@ -30,91 +19,19 @@ interface OriginalError {
       envFilePath: ".env",
       validate,
     }),
+    CommonModule,
 
     ThrottlerModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (
-        configService: ConfigService<EnvironmentVariables, true>,
-      ) => [
-        {
-          name: "short",
-          ttl: Number(configService.get("THROTTLE_TTL", { infer: true })),
-          limit: Number(configService.get("THROTTLE_LIMIT", { infer: true })),
-        },
-        {
-          name: "medium",
-          ttl: Number(
-            configService.get("THROTTLE_MEDIUM_TTL", { infer: true }),
-          ),
-          limit: Number(
-            configService.get("THROTTLE_MEDIUM_LIMIT", { infer: true }),
-          ),
-        },
-        {
-          name: "long",
-          ttl: Number(configService.get("THROTTLE_LONG_TTL", { infer: true })),
-          limit: Number(
-            configService.get("THROTTLE_LONG_LIMIT", { infer: true }),
-          ),
-        },
-      ],
+      inject: [AppConfigService],
+      useFactory: createThrottlerConfig,
     }),
 
-    // Construct the production-grade Apollo Driver configuration
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      inject: [ConfigService],
-      useFactory: (
-        configService: ConfigService<EnvironmentVariables, true>,
-      ) => ({
-        // Dynamic file output: builds to disk in dev only; runs purely in-memory elsewhere
-        autoSchemaFile:
-          configService.get("APP_ENV", { infer: true }) === "development"
-            ? join(process.cwd(), "src/common/graphql/schema.gql")
-            : true,
-
-        sortSchema: true,
-        context: ({
-          req,
-          res,
-        }: {
-          req: Request;
-          res: Response;
-        }): GraphQLContext => ({ req, res }),
-        csrfPrevention: true,
-        debug: configService.get("APP_ENV", { infer: true }) !== "production",
-        introspection:
-          configService.get("APP_ENV", { infer: true }) !== "production",
-        playground: false, // Force disabled in favor of sandboxed landing page
-        subscriptions: {
-          "graphql-ws": {
-            keepAlive: 60000,
-            lazyCloseTimeout: 5000,
-            path: "/graphql",
-          },
-        },
-
-        validationRules: [depthLimit(14)],
-
-        formatError: error => {
-          const originalError = error.extensions?.originalError as
-            OriginalError | undefined;
-          return {
-            message: originalError?.message
-              ? Array.isArray(originalError.message)
-                ? originalError.message.join(", ")
-                : originalError.message
-              : error.message,
-            extensions: {
-              code: error.extensions?.code || "INTERNAL_SERVER_ERROR",
-              statusCode: originalError?.statusCode || 500,
-            },
-          };
-        },
-      }),
+      inject: [AppConfigService],
+      useFactory: createGraphQLConfig,
     }),
     ServiceModule,
-    CommonModule,
   ],
   providers: [
     {
