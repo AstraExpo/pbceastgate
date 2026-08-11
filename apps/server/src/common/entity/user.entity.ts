@@ -1,4 +1,4 @@
-import { MembershipStatus, SystemRole } from "@eastgate/database";
+import { MembershipStatus, SystemRole } from "@/generated/prisma/enums";
 import { ObjectType, Field, registerEnumType } from "@nestjs/graphql";
 
 registerEnumType(SystemRole, {
