@@ -11,7 +11,6 @@ export class EnvironmentVariables {
   @IsEnum(Environment)
   APP_ENV!: Environment;
 
-  // Throttling
   @IsNumber()
   THROTTLE_TTL!: number;
 
@@ -30,7 +29,6 @@ export class EnvironmentVariables {
   @IsNumber()
   THROTTLE_LONG_LIMIT!: number;
 
-  // Firebase
   @IsString()
   FIREBASE_PROJECT_ID!: string;
 
@@ -40,9 +38,11 @@ export class EnvironmentVariables {
   @IsString()
   FIREBASE_PRIVATE_KEY!: string;
 
-  // CORS
   @IsString()
   ALLOWED_ORIGINS!: string;
+
+  @IsString()
+  DATABASE_URL!: string;
 }
 
 export function validate(config: Record<string, unknown>) {
