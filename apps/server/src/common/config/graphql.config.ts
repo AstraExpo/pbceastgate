@@ -9,12 +9,6 @@ export interface GraphQLContext {
   res: Response;
 }
 
-interface OriginalError {
-  statusCode?: number;
-  message?: string | string[];
-  error?: string;
-}
-
 export function createGraphQLConfig(
   configService: AppConfigService,
 ): ApolloDriverConfig {
@@ -43,20 +37,8 @@ export function createGraphQLConfig(
       },
     },
     validationRules: [depthLimit(14)],
-    formatError: error => {
-      const originalError = error.extensions?.originalError as
-        OriginalError | undefined;
-      return {
-        message: originalError?.message
-          ? Array.isArray(originalError.message)
-            ? originalError.message.join(", ")
-            : originalError.message
-          : error.message,
-        extensions: {
-          code: error.extensions?.code || "INTERNAL_SERVER_ERROR",
-          statusCode: originalError?.statusCode || 500,
-        },
-      };
+    formatError: formattedError => {
+      return formattedError;
     },
   };
 }
