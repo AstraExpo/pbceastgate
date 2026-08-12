@@ -21,9 +21,9 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@apollo/client": "^4.2.8",
-    "@apollo/client-integration-tanstack-start": "^0.14.4-rc.0",
-    "graphql": "^16.10.0",
+    "@apollo/client": "^4.2.10",
+    "@apollo/client-integration-tanstack-start": "^0.14.5-rc.0",
+    "graphql": "^16.14.2",
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
