@@ -25,38 +25,45 @@ export class FirebaseAuthGuard implements CanActivate {
 
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
-
     const authHeader = req.headers["authorization"];
 
-    if (isPublic && (!authHeader || !authHeader.startsWith("Bearer "))) {
-      req.user = null;
-      return true;
-    }
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader?.startsWith("Bearer ")) {
+      if (isPublic) {
+        req.user = null;
+        req.firebaseUser = null;
+        return true;
+      }
       throw new UnauthorizedException("No authorization token provided");
     }
 
     const token = authHeader.split(" ")[1];
+    const decodedToken = await getAuth()
+      .verifyIdToken(token)
+      .catch(() => null);
 
-    try {
-      const decodedToken = await getAuth().verifyIdToken(token);
-
-      const dbUser = await this.prismaService.user.findUnique({
-        where: { firebaseUid: decodedToken.uid },
-      });
-
-      if (!dbUser) {
-        await getAuth().deleteUser(decodedToken.uid);
-        throw new UnauthorizedException(
-          "Access denied. Rogue account removed.",
-        );
+    if (!decodedToken) {
+      if (isPublic) {
+        req.user = null;
+        req.firebaseUser = null;
+        return true;
       }
-
-      req.user = dbUser;
-      return true;
-    } catch (error) {
-      throw new UnauthorizedException(`Invalid or expired token: ${error}`);
+      throw new UnauthorizedException("Invalid or expired token");
     }
+
+    req.firebaseUser = decodedToken;
+
+    const dbUser = await this.prismaService.user.findUnique({
+      where: { firebaseUid: decodedToken.uid },
+    });
+
+    req.user = dbUser ?? null;
+
+    if (!dbUser && !isPublic) {
+      throw new UnauthorizedException(
+        "No matching account found. Please complete sign-up.",
+      );
+    }
+
+    return true;
   }
 }
