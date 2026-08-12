@@ -37,12 +37,12 @@ type Ministry {
 
 type Mutation {
   authenticateAdmin: User!
-  authenticateUsers: User!
+  authenticateCongregant: User!
   createMinistry(input: CreateMinistryInput!): Ministry!
   createUser(input: CreateUserInput!): User!
   deleteMinistry(id: String!): Ministry!
   deleteUser(userId: String!): User!
-  signUpUser(firebaseToken: String!): User!
+  signUpCongregant: User!
   updateMinistry(id: String!, input: UpdateMinistryInput!): Ministry!
   updateUser(input: UpdateUserInput!, userId: String!): User!
 }
