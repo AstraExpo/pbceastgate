@@ -6,11 +6,10 @@ import {
   InMemoryCache,
 } from "@apollo/client-integration-tanstack-start";
 import { ErrorLink } from "@apollo/client/link/error";
-import { SetContextLink } from "@apollo/client/link/context";
 
 export interface CreateApolloClientOptions {
   uri: string;
-  getAuthToken?: () => Promise<string | null> | string | null;
+  authLink?: ApolloLink;
   isDevelopment?: boolean;
   enableDevtools?: boolean;
 }
@@ -18,25 +17,16 @@ export interface CreateApolloClientOptions {
 export function createApolloClient(options: CreateApolloClientOptions) {
   const {
     uri,
-    getAuthToken,
+    authLink,
     isDevelopment = false,
     enableDevtools = false,
   } = options;
 
-  const authLink = getAuthToken
-    ? new SetContextLink(async prevContext => {
-        const token = await getAuthToken();
-
-        return {
-          headers: {
-            ...prevContext.headers,
-            authorization: token ? `Bearer ${token}` : "",
-          },
-        };
-      })
-    : new ApolloLink((operation, forward) => {
-        return forward(operation);
-      });
+  const authenticationLink =
+    authLink ??
+    new ApolloLink((operation, forward) => {
+      return forward(operation);
+    });
 
   const errorLink = new ErrorLink(({ error }) => {
     if (!error) {
@@ -66,7 +56,12 @@ export function createApolloClient(options: CreateApolloClientOptions) {
     uri,
   });
 
-  const link = ApolloLink.from([authLink, debugLink, errorLink, httpLink]);
+  const link = ApolloLink.from([
+    authenticationLink,
+    debugLink,
+    errorLink,
+    httpLink,
+  ]);
 
   return new ApolloClient({
     cache: new InMemoryCache(),
