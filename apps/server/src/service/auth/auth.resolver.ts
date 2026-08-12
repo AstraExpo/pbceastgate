@@ -1,10 +1,12 @@
-import { Resolver, Mutation, Args } from "@nestjs/graphql";
+import { Resolver, Mutation } from "@nestjs/graphql";
 import { AuthService } from "./auth.service";
 import { User } from "@/common/entity/user.entity";
 import { RequireRoles } from "./decorators/roles.decorators";
 import { SystemRole } from "@/common/graphql/generated/apollo.types";
 import { Public } from "./decorators/public.decorators";
 import { CurrentUser } from "./decorators/user.decorators";
+import { CurrentFirebaseUser } from "./decorators/firebase-user.decorator";
+import { type DecodedIdToken } from "firebase-admin/auth";
 
 @Resolver()
 export class AuthResolver {
@@ -17,13 +19,13 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
-  async authenticateUsers(@CurrentUser() user: User) {
+  async authenticateCongregant(@CurrentUser() user: User) {
     return user;
   }
 
   @Public()
   @Mutation(() => User)
-  async signUpUser(@Args("firebaseToken") firebaseToken: string) {
-    return this.authService.signUpNewUser(firebaseToken);
+  async signUpCongregant(@CurrentFirebaseUser() firebaseUser: DecodedIdToken) {
+    return this.authService.signUpNewCongregant(firebaseUser);
   }
 }
