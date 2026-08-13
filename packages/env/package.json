@@ -10,7 +10,7 @@
   "devDependencies": {
     "@eastgate/typescript-config": "workspace:*",
     "@eastgate/eslint-config": "workspace:*",
-    "eslint": "^9.39.4",
-    "typescript": "6.0.3"
+    "eslint": "catalog:",
+    "typescript": "catalog:"
   }
 }
