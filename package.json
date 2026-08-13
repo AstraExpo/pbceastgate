@@ -6,9 +6,9 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "codegen": "pnpm --filter @eastgate/shared codegen",
+    "codegen": "pnpm --filter @eastgate/graphql codegen",
     "check-types": "turbo run check-types",
-    "clean": "rm -rf pnpm-lock.yaml node_modules .turbo && pnpm -r exec rm -rf node_modules .next dist .output .turbo",
+    "clean": "rm -rf pnpm-lock.yaml node_modules .turbo && rm -rf node_modules .next dist .output .turbo",
     "db:migrate": "pnpm --filter @eastgate/server db:migrate",
     "db:reset": "pnpm --filter @eastgate/server db:reset",
     "db:studio": "pnpm --filter @eastgate/server db:studio",
@@ -16,9 +16,9 @@
     "db:m:deploy": "pnpm --filter @eastgate/server db:migrate:deploy"
   },
   "devDependencies": {
-    "prettier": "^3.8.3",
-    "turbo": "^2.9.8",
-    "typescript": "^6.0.3"
+    "prettier": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:"
   },
   "packageManager": "pnpm@11.5.3",
   "engines": {
