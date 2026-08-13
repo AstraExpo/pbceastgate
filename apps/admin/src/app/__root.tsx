@@ -8,7 +8,6 @@ import type { ApolloClientIntegration } from "@apollo/client-integration-tanstac
 import appCss from "./../styles/styles.css?url";
 import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
 import { getThemeFromCookie } from "@/server/theme.function";
-import { AdminAuthProvider } from "@/components/AuthProvider/AdminAuthProvider";
 
 export const Route =
   createRootRouteWithContext<ApolloClientIntegration.RouterContext>()({
@@ -44,9 +43,7 @@ function RootLayout() {
       </head>
       <body>
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-admin-theme">
-          <AdminAuthProvider>
-            <Outlet />
-          </AdminAuthProvider>
+          <Outlet />
         </ThemeProvider>
         <Scripts />
       </body>
