@@ -15,7 +15,7 @@ export function MinistryManagementDashboard() {
   // Operational Custom Hooks
   const {
     ministries,
-    isPending: loadingFetch,
+    loading: loadingFetch,
     error: errorFetch,
   } = useGetMinistries();
   const { createMinistry, isPending: loadingCreate } = useCreateMinistry();

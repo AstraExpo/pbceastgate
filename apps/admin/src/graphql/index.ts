@@ -1,3 +1,3 @@
-import * as ApolloSDK from "./generated/apollo.types";
+import * as ApolloSDK from "./generated/admin.graphql";
 
 export { ApolloSDK };
