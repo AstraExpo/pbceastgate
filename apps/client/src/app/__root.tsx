@@ -6,8 +6,6 @@ import {
 } from "@tanstack/react-router";
 import type { ApolloClientIntegration } from "@apollo/client-integration-tanstack-start";
 import appCss from "./../styles/styles.css?url";
-import { ApolloProvider } from "@apollo/client/react";
-import { apolloClient } from "../constant/apollo-client/client";
 import { getThemeFromCookie } from "@/server/theme.function";
 import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
 
@@ -45,9 +43,7 @@ function RootLayout() {
       </head>
       <body>
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-client-theme">
-          <ApolloProvider client={apolloClient}>
-            <Outlet />
-          </ApolloProvider>
+          <Outlet />
         </ThemeProvider>
         <Scripts />
       </body>

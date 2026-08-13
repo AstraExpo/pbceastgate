@@ -6,8 +6,6 @@ import {
 } from "@tanstack/react-router";
 import type { ApolloClientIntegration } from "@apollo/client-integration-tanstack-start";
 import appCss from "./../styles/styles.css?url";
-import { ApolloProvider } from "@apollo/client/react";
-import { apolloClient } from "../constant/apollo-client/client";
 import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
 import { getThemeFromCookie } from "@/server/theme.function";
 import { AdminAuthProvider } from "@/components/AuthProvider/AdminAuthProvider";
@@ -46,11 +44,9 @@ function RootLayout() {
       </head>
       <body>
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-admin-theme">
-          <ApolloProvider client={apolloClient}>
-            <AdminAuthProvider>
-              <Outlet />
-            </AdminAuthProvider>
-          </ApolloProvider>
+          <AdminAuthProvider>
+            <Outlet />
+          </AdminAuthProvider>
         </ThemeProvider>
         <Scripts />
       </body>
