@@ -36,7 +36,7 @@ const config: CodegenConfig = {
         rootDir,
         "../../apps/client/src/graphql/operations/**/*.graphql",
       ),
-      plugins: ["typescript", "typescript-operations", "typed-document-node"],
+      plugins: ["typescript-operations", "typed-document-node"],
       config: {
         scalars,
         nonOptionalTypename: true,
@@ -49,7 +49,7 @@ const config: CodegenConfig = {
         rootDir,
         "../../apps/admin/src/graphql/operations/**/*.graphql",
       ),
-      plugins: ["typescript", "typescript-operations", "typed-document-node"],
+      plugins: ["typescript-operations", "typed-document-node"],
       config: {
         scalars,
         nonOptionalTypename: true,
