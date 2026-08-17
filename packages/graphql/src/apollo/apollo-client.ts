@@ -7,11 +7,19 @@ import {
 } from "@apollo/client-integration-tanstack-start";
 import { ErrorLink } from "@apollo/client/link/error";
 
+export interface GraphQLClientError {
+  message: string;
+  code?: string;
+  statusCode?: number;
+}
+
 export interface CreateApolloClientOptions {
   uri: string;
   authLink?: ApolloLink;
   isDevelopment?: boolean;
   enableDevtools?: boolean;
+  onGraphQLError?: (error: GraphQLClientError) => void;
+  onNetworkError?: (error: Error) => void;
 }
 
 export function createApolloClient(options: CreateApolloClientOptions) {
@@ -36,9 +44,27 @@ export function createApolloClient(options: CreateApolloClientOptions) {
     if (CombinedGraphQLErrors.is(error)) {
       for (const graphQLError of error.errors) {
         console.error("[GraphQL Fault]", graphQLError);
+
+        options.onGraphQLError?.({
+          message: graphQLError.message,
+          code:
+            typeof graphQLError.extensions?.code === "string"
+              ? graphQLError.extensions.code
+              : undefined,
+          statusCode:
+            typeof graphQLError.extensions?.statusCode === "number"
+              ? graphQLError.extensions.statusCode
+              : undefined,
+        });
       }
-    } else {
-      console.error("[Network Exception]", error);
+
+      return;
+    }
+
+    console.error("[Network Exception]", error);
+
+    if (error instanceof Error) {
+      options.onNetworkError?.(error);
     }
   });
 
