@@ -13,11 +13,12 @@
   "dependencies": {
     "@apollo/client": "catalog:",
     "@apollo/client-integration-tanstack-start": "catalog:",
-    "@graphql-typed-document-node/core": "catalog:",
     "@apollo/client-react-streaming": "catalog:",
     "@eastgate/auth": "workspace:*",
     "@eastgate/graphql": "workspace:*",
     "@eastgate/ui": "workspace:*",
+    "@graphql-typed-document-node/core": "catalog:",
+    "@hookform/resolvers": "^5.9.0",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-router": "latest",
     "@tanstack/react-start": "latest",
@@ -26,6 +27,7 @@
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-hook-form": "^7.85.0",
     "rxjs": "catalog:",
     "vite": "catalog:",
     "zod": "catalog:"
