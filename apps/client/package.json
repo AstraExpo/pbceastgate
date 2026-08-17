@@ -14,6 +14,7 @@
     "@apollo/client": "catalog:",
     "@apollo/client-integration-tanstack-start": "catalog:",
     "@graphql-typed-document-node/core": "catalog:",
+    "@apollo/client-react-streaming": "catalog:",
     "@eastgate/auth": "workspace:*",
     "@eastgate/graphql": "workspace:*",
     "@eastgate/ui": "workspace:*",

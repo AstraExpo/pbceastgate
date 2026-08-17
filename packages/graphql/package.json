@@ -20,13 +20,20 @@
     "lint": "eslint .",
     "check-types": "tsc --noEmit"
   },
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
     "@apollo/client": "catalog:",
     "@apollo/client-integration-tanstack-start": "catalog:",
+    "@apollo/client-react-streaming": "catalog:",
     "graphql": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@apollo/client": "catalog:",
+    "@apollo/client-integration-tanstack-start": "catalog:",
+    "@apollo/client-react-streaming": "catalog:",
+    "graphql": "catalog:",
+    "rxjs": "catalog:",
     "@eastgate/eslint-config": "workspace:*",
     "@eastgate/typescript-config": "workspace:*",
     "@graphql-codegen/cli": "^6.0.0",
