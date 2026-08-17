@@ -2,6 +2,9 @@ import { initializeApp, getApps, FirebaseOptions } from "firebase/app";
 import {
   getAuth,
   GoogleAuthProvider,
+  FacebookAuthProvider,
+  TwitterAuthProvider,
+  GithubAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
