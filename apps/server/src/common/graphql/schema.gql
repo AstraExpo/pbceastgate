@@ -22,7 +22,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-"""The church membership status of the user"""
 enum MembershipStatus {
   Guest
   Member
@@ -48,11 +47,12 @@ type Mutation {
 }
 
 type Query {
-  getAdminUsers(adminRole: String!): [User!]!
-  getEditorUsers(editorRole: String!): [User!]!
-  getGuestUsers(guestStatus: String!): [User!]!
-  getMemberUsers(memberStatus: String!): [User!]!
-  getNormalUsers(userRole: String!): [User!]!
+  currentUser: User
+  getAdminUsers(adminRole: SystemRole!): [User!]!
+  getEditorUsers(editorRole: SystemRole!): [User!]!
+  getGuestUsers(guestStatus: MembershipStatus!): [User!]!
+  getMemberUsers(memberStatus: MembershipStatus!): [User!]!
+  getNormalUsers(userRole: SystemRole!): [User!]!
   getUserByEmail(email: String!): User!
   getUserByFirebaseUid(firebaseUid: String!): User!
   getUserById(userId: String!): User!
@@ -70,7 +70,6 @@ type Sermon {
   videoUrl: String
 }
 
-"""The system access level of the user"""
 enum SystemRole {
   Admin
   Editor
@@ -93,7 +92,6 @@ input UpdateUserInput {
   systemRole: String = "User"
 }
 
-"""The core user entity"""
 type User {
   banExpires: DateTime
   banReason: String
