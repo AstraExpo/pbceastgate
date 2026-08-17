@@ -9,7 +9,7 @@ import {
 import { ErrorLink } from "@apollo/client/link/error";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { SetContextLink } from "@apollo/client/link/context";
-import { getAuthToken } from "@eastgate/auth";
+import { getToken } from "@eastgate/auth";
 
 if (adminEnv.get("VITE_APP_ENV") === "development" && !adminEnv.isServer) {
   import("@apollo/client/dev").then(
@@ -40,7 +40,7 @@ const createAuthLink = createIsomorphicFn()
   })
   .client(() => {
     return new SetContextLink(async prevContext => {
-      const token = await getAuthToken();
+      const token = await getToken();
 
       return {
         headers: {

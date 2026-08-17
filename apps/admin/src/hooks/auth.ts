@@ -3,12 +3,17 @@ import { useMutation } from "@apollo/client/react";
 
 export function useAuthenticateAdmin() {
   const [mutate, result] = useMutation(ApolloSDK.AuthenticateAdminDocument);
+
+  const authenticateAdmin = async () => {
+    const mutationResult = await mutate();
+
+    return {
+      user: mutationResult.data?.authenticateAdmin ?? null,
+    };
+  };
+
   return {
-    authenticateAdmin: async () => {
-      const result = await mutate();
-      return result.data?.authenticateAdmin;
-    },
+    authenticateAdmin,
     loading: result.loading,
-    error: result.error,
   };
 }
