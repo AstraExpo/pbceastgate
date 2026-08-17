@@ -10,8 +10,8 @@
 
 import { Route as rootRouteImport } from './app/__root'
 import { Route as IndexRouteImport } from './app/index'
-import { Route as AuthRouteImport } from './app/_auth'
-import { Route as PbcadminRouteImport } from './app/_pbcadmin'
+import { Route as AuthRouteRouteImport } from './app/_auth/route'
+import { Route as PbcadminRouteRouteImport } from './app/_pbcadmin/route'
 import { Route as AuthLoginRouteImport } from './app/_auth/login'
 import { Route as PbcadminDashboardRouteImport } from './app/_pbcadmin/dashboard'
 
@@ -20,23 +20,23 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
+const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PbcadminRoute = PbcadminRouteImport.update({
+const PbcadminRouteRoute = PbcadminRouteRouteImport.update({
   id: '/_pbcadmin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const PbcadminDashboardRoute = PbcadminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => PbcadminRoute,
+  getParentRoute: () => PbcadminRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -52,8 +52,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_auth': typeof AuthRouteWithChildren
-  '/_pbcadmin': typeof PbcadminRouteWithChildren
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/_pbcadmin': typeof PbcadminRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_pbcadmin/dashboard': typeof PbcadminDashboardRoute
 }
@@ -73,8 +73,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRouteWithChildren
-  PbcadminRoute: typeof PbcadminRouteWithChildren
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  PbcadminRouteRoute: typeof PbcadminRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -90,14 +90,14 @@ declare module '@tanstack/react-router' {
       id: '/_auth'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof AuthRouteImport
+      preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_pbcadmin': {
       id: '/_pbcadmin'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof PbcadminRouteImport
+      preLoaderRoute: typeof PbcadminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/login': {
@@ -105,44 +105,46 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthRouteRoute
     }
     '/_pbcadmin/dashboard': {
       id: '/_pbcadmin/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof PbcadminDashboardRouteImport
-      parentRoute: typeof PbcadminRoute
+      parentRoute: typeof PbcadminRouteRoute
     }
   }
 }
 
-interface AuthRouteChildren {
+interface AuthRouteRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
 }
 
-const AuthRouteChildren: AuthRouteChildren = {
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
 }
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
 
-interface PbcadminRouteChildren {
+interface PbcadminRouteRouteChildren {
   PbcadminDashboardRoute: typeof PbcadminDashboardRoute
 }
 
-const PbcadminRouteChildren: PbcadminRouteChildren = {
+const PbcadminRouteRouteChildren: PbcadminRouteRouteChildren = {
   PbcadminDashboardRoute: PbcadminDashboardRoute,
 }
 
-const PbcadminRouteWithChildren = PbcadminRoute._addFileChildren(
-  PbcadminRouteChildren,
+const PbcadminRouteRouteWithChildren = PbcadminRouteRoute._addFileChildren(
+  PbcadminRouteRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRouteWithChildren,
-  PbcadminRoute: PbcadminRouteWithChildren,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  PbcadminRouteRoute: PbcadminRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

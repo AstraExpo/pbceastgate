@@ -4,35 +4,43 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import type { ApolloClientIntegration } from "@apollo/client-integration-tanstack-start";
 import appCss from "./../styles/styles.css?url";
 import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
 import { getThemeFromCookie } from "@/server/theme.function";
+import { RouterContext } from "@/hooks/auth/types";
+import { getCurrentAdminFn } from "@/server/auth.function";
 
-export const Route =
-  createRootRouteWithContext<ApolloClientIntegration.RouterContext>()({
-    loader: async () => {
-      return await getThemeFromCookie();
-    },
-    head: () => ({
-      meta: [
-        { charSet: "utf-8" },
-        {
-          name: "viewport",
-          content: "width=device-width, initial-scale=1",
-        },
-        { title: "PBC EastGate Admin" },
-      ],
-      links: [
-        {
-          rel: "stylesheet",
-          href: appCss,
-        },
-      ],
-    }),
-    component: RootLayout,
-    notFoundComponent: NotFoundLayout,
-  });
+export const Route = createRootRouteWithContext<RouterContext>()({
+  beforeLoad: async () => {
+    const auth = await getCurrentAdminFn();
+
+    return {
+      auth,
+    };
+  },
+
+  loader: async () => {
+    return await getThemeFromCookie();
+  },
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
+      },
+      { title: "PBC EastGate Admin" },
+    ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: appCss,
+      },
+    ],
+  }),
+  component: RootLayout,
+  notFoundComponent: NotFoundLayout,
+});
 
 function RootLayout() {
   const { theme } = Route.useLoaderData();
