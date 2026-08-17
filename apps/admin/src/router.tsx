@@ -7,6 +7,7 @@ import { routeTree } from "./routeTree.gen";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { ApolloLink } from "@apollo/client";
 import { SetContextLink } from "@apollo/client/link/context";
+import { handleGraphQLError } from "./lib/graphql-errors";
 
 const createAuthLink = createIsomorphicFn()
   .server(() => {
@@ -33,6 +34,7 @@ export function getRouter() {
     authLink: createAuthLink(),
     isDevelopment: adminEnv.get("VITE_APP_ENV") === "development",
     enableDevtools: adminEnv.get("VITE_APP_ENV") === "development",
+    onGraphQLError: handleGraphQLError,
   });
 
   console.log("[Apollo] client created:", apolloClient);
