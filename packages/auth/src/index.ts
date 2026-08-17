@@ -1,4 +1,4 @@
-import { initializeApp, getApps, FirebaseOptions } from "firebase/app";
+import { initializeApp, getApps, type FirebaseOptions } from "firebase/app";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -9,52 +9,104 @@ import {
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  User,
+  type User,
+  type Auth,
+  type Unsubscribe,
+  OAuthProvider,
+  sendPasswordResetEmail,
+  verifyPasswordResetCode,
+  confirmPasswordReset,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 
-export const initializeFirebaseAuth = (config: FirebaseOptions) => {
-  const app = getApps().length === 0 ? initializeApp(config) : getApps()[0];
+export function initializeFirebaseAuth(config: FirebaseOptions): Auth {
+  const app = getApps().length > 0 ? getApps()[0] : initializeApp(config);
+
   return getAuth(app);
-};
+}
 
-const getAuthInstance = () => {
+export function getAuthInstance(): Auth {
   const apps = getApps();
-  if (apps.length === 0)
+
+  if (apps.length === 0) {
     throw new Error(
-      "Firebase not initialized. Call initializeFirebaseAuth first.",
+      "Firebase Auth has not been initialized. Call initializeFirebaseAuth() first.",
     );
+  }
+
   return getAuth(apps[0]);
-};
+}
 
-export const signInWithGoogle = async () => {
-  const auth = getAuthInstance();
-  const provider = new GoogleAuthProvider();
-  return await signInWithPopup(auth, provider);
-};
+export function getCurrentUser(): User | null {
+  return getAuthInstance().currentUser;
+}
 
-export const signInWithEmail = async (email: string, password: string) => {
-  const auth = getAuthInstance();
-  return await signInWithEmailAndPassword(auth, email, password);
-};
+export async function signInWithGoogle() {
+  return signInWithPopup(getAuthInstance(), new GoogleAuthProvider());
+}
 
-export const signOut = async () => {
-  const auth = getAuthInstance();
-  await firebaseSignOut(auth);
-};
+export async function signInWithGithub() {
+  return signInWithPopup(getAuthInstance(), new GithubAuthProvider());
+}
 
-export const getToken = async () => {
-  const auth = getAuthInstance();
-  if (!auth.currentUser) return null;
-  return await auth.currentUser.getIdToken();
-};
+export async function signInWithFacebook() {
+  return signInWithPopup(getAuthInstance(), new FacebookAuthProvider());
+}
 
-export const subscribeToAuthChanges = (
+export async function signInWithEmail(email: string, password: string) {
+  return signInWithEmailAndPassword(getAuthInstance(), email, password);
+}
+
+export async function createUserWithEmail(email: string, password: string) {
+  return createUserWithEmailAndPassword(getAuthInstance(), email, password);
+}
+
+export async function signInWithTwitter() {
+  return signInWithPopup(getAuthInstance(), new TwitterAuthProvider());
+}
+
+export async function signInWithApple() {
+  const provider = new OAuthProvider("apple.com");
+  return signInWithPopup(getAuthInstance(), provider);
+}
+
+export async function signInWithMicrosoft() {
+  const provider = new OAuthProvider("microsoft.com");
+  return signInWithPopup(getAuthInstance(), provider);
+}
+
+export async function sendPasswordReset(email: string) {
+  return sendPasswordResetEmail(getAuthInstance(), email);
+}
+
+export async function verifyPasswordReset(actionCode: string) {
+  return verifyPasswordResetCode(getAuthInstance(), actionCode);
+}
+
+export async function confirmPasswordResetAction(
+  actionCode: string,
+  newPassword: string,
+) {
+  return confirmPasswordReset(getAuthInstance(), actionCode, newPassword);
+}
+
+export async function signOut() {
+  await firebaseSignOut(getAuthInstance());
+}
+
+export async function getToken(forceRefresh = false): Promise<string | null> {
+  const user = getCurrentUser();
+  if (!user) {
+    return null;
+  }
+  return user.getIdToken(forceRefresh);
+}
+
+export function subscribeToAuthChanges(
   callback: (user: User | null) => void,
-) => {
-  const auth = getAuthInstance();
-  return onAuthStateChanged(auth, callback);
-};
+): Unsubscribe {
+  return onAuthStateChanged(getAuthInstance(), callback);
+}
 
 export { AuthProvider, useAuth } from "./auth-provider.js";
 export type { User } from "firebase/auth";
-export { getAuthToken } from "./helper.js";
