@@ -2,7 +2,7 @@ import { routerWithApolloClient } from "@apollo/client-integration-tanstack-star
 import { createRouter } from "@tanstack/react-router";
 import { createApolloClient } from "@eastgate/graphql/apollo";
 import { adminEnv } from "@/config/admin.env";
-import { getAuthToken } from "@eastgate/auth";
+import { getToken } from "@eastgate/auth";
 import { routeTree } from "./routeTree.gen";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { ApolloLink } from "@apollo/client";
@@ -17,7 +17,7 @@ const createAuthLink = createIsomorphicFn()
   })
   .client(() => {
     return new SetContextLink(async prevContext => {
-      const token = await getAuthToken();
+      const token = await getToken();
 
       return {
         headers: {
