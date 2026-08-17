@@ -34,13 +34,24 @@ export function getRouter() {
     isDevelopment: adminEnv.get("VITE_APP_ENV") === "development",
     enableDevtools: adminEnv.get("VITE_APP_ENV") === "development",
   });
+
+  console.log("[Apollo] client created:", apolloClient);
+
   const router = createRouter({
     routeTree,
     context: {
       ...routerWithApolloClient.defaultContext,
+      auth: {
+        status: "loading",
+        user: null,
+      },
     },
     scrollRestoration: true,
   });
 
-  return routerWithApolloClient(router, apolloClient);
+  const wrappedRouter = routerWithApolloClient(router, apolloClient);
+
+  console.log("[Apollo] router wrapped:", wrappedRouter);
+
+  return wrappedRouter;
 }
