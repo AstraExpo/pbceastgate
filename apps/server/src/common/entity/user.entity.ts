@@ -3,15 +3,13 @@ import { ObjectType, Field, registerEnumType } from "@nestjs/graphql";
 
 registerEnumType(SystemRole, {
   name: "SystemRole",
-  description: "The system access level of the user",
 });
 
 registerEnumType(MembershipStatus, {
   name: "MembershipStatus",
-  description: "The church membership status of the user",
 });
 
-@ObjectType({ description: "The core user entity" })
+@ObjectType()
 export class User {
   @Field(() => String)
   id!: string;
@@ -26,7 +24,7 @@ export class User {
   name!: string;
 
   @Field(() => String, { nullable: true })
-  image?: string;
+  image?: string | null;
 
   @Field(() => Boolean)
   emailVerified!: boolean;
@@ -35,10 +33,10 @@ export class User {
   banned!: boolean;
 
   @Field(() => String, { nullable: true })
-  banReason?: string;
+  banReason?: string | null;
 
   @Field(() => Date, { nullable: true })
-  banExpires?: Date;
+  banExpires?: Date | null;
 
   @Field(() => SystemRole)
   systemRole!: SystemRole;
