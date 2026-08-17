@@ -14,26 +14,25 @@ export function mapPrismaError(
   exception: Prisma.PrismaClientKnownRequestError,
 ): GraphQLError {
   switch (exception.code) {
-    // --- User-actionable: bad input ---
-    case "P2000": // value too long for column
+    case "P2000":
       return new GraphQLError("One of the provided values is too long.", {
         extensions: {
           code: "BAD_USER_INPUT",
           field: exception.meta?.column_name,
         },
       });
-    case "P2002": // unique constraint
+    case "P2002":
       return new GraphQLError("This value already exists.", {
         extensions: { code: "BAD_USER_INPUT", field: exception.meta?.target },
       });
-    case "P2003": // foreign key constraint
+    case "P2003":
       return new GraphQLError("Referenced record does not exist.", {
         extensions: {
           code: "BAD_USER_INPUT",
           field: exception.meta?.field_name,
         },
       });
-    case "P2011": // null constraint
+    case "P2011":
       return new GraphQLError("A required field is missing.", {
         extensions: {
           code: "BAD_USER_INPUT",
@@ -41,16 +40,14 @@ export function mapPrismaError(
         },
       });
 
-    // --- Not found ---
-    case "P2001": // record in where condition doesn't exist
-    case "P2015": // related record not found
-    case "P2018": // required connected records not found
-    case "P2025": // depends on records that were required but not found
+    case "P2001":
+    case "P2015":
+    case "P2018":
+    case "P2025":
       return new GraphQLError("Record not found.", {
         extensions: { code: "NOT_FOUND" },
       });
 
-    // --- Everything else: infra-level, not the user's fault, don't leak details ---
     default:
       logger.error(
         `Unmapped Prisma error code: ${exception.code}`,
