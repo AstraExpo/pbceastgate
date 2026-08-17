@@ -9,6 +9,8 @@ import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
 import { getThemeFromCookie } from "@/server/theme.function";
 import { RouterContext } from "@/hooks/auth/types";
 import { getCurrentAdminFn } from "@/server/auth.function";
+import { Toaster } from "@eastgate/ui/components/sonner";
+import "@/lib/firebase";
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
@@ -52,6 +54,7 @@ function RootLayout() {
       <body>
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-admin-theme">
           <Outlet />
+          <Toaster />
         </ThemeProvider>
         <Scripts />
       </body>

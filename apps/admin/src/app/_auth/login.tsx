@@ -6,9 +6,5 @@ export const Route = createFileRoute("/_auth/login")({
 });
 
 function LoginPage() {
-  return (
-    <main className="flex-1 flex items-center justify-center p-4">
-      <LoginForm />
-    </main>
-  );
+  return <LoginForm />;
 }
