@@ -1,15 +1,12 @@
 import { CreateUserInput } from "@/common/dto/user/create.dto";
 import { UpdateUserInput } from "@/common/dto/user/update.dto";
-import {
-  MembershipStatus,
-  SystemRole,
-} from "@/common/graphql/generated/apollo.types";
 import { PrismaService } from "@/common/prisma/prisma.service";
 import {
   Injectable,
   ConflictException,
   NotFoundException,
 } from "@nestjs/common";
+import { MembershipStatus, SystemRole } from "@/generated/prisma/enums";
 
 @Injectable()
 export class UserService {
@@ -19,29 +16,29 @@ export class UserService {
     return this.prisma.user.findMany();
   }
 
-  async getAdminUsers(adminRole: SystemRole.Admin) {
+  async getAdminUsers(adminRole: SystemRole) {
     if (!adminRole) return null;
     return this.prisma.user.findMany({ where: { systemRole: adminRole } });
   }
 
-  async getEditorUsers(editorRole: SystemRole.Editor) {
+  async getEditorUsers(editorRole: SystemRole) {
     if (!editorRole) return null;
     return this.prisma.user.findMany({ where: { systemRole: editorRole } });
   }
 
-  async getNormalUsers(userRole: SystemRole.User) {
+  async getNormalUsers(userRole: SystemRole) {
     if (!userRole) return null;
     return this.prisma.user.findMany({ where: { systemRole: userRole } });
   }
 
-  async getMemberUsers(memberStatus: MembershipStatus.Member) {
+  async getMemberUsers(memberStatus: MembershipStatus) {
     if (!memberStatus) return null;
     return this.prisma.user.findMany({
       where: { membershipStatus: memberStatus },
     });
   }
 
-  async getGuestUsers(guestStatus: MembershipStatus.Guest) {
+  async getGuestUsers(guestStatus: MembershipStatus) {
     if (!guestStatus) return null;
     return this.prisma.user.findMany({
       where: { membershipStatus: guestStatus },

@@ -1,18 +1,31 @@
-import { Resolver, Query, Mutation, Args } from "@nestjs/graphql";
+import { Resolver, Query, Mutation, Args, Context } from "@nestjs/graphql";
 import { UserService } from "./user.service";
 import { User } from "@/common/entity/user.entity";
 import { CreateUserInput } from "@/common/dto/user/create.dto";
 import { UpdateUserInput } from "@/common/dto/user/update.dto";
-import {
-  MembershipStatus,
-  SystemRole,
-} from "@/common/graphql/generated/apollo.types";
+import { type GraphQLContext } from "@/common/config/graphql.config";
+import { Public } from "../auth/decorators/public.decorators";
+import { MembershipStatus, SystemRole } from "@/generated/prisma/enums";
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  // --- QUERIES ---
+  // --------------------------------------------------
+  // AUTHENTICATION
+  // --------------------------------------------------
+
+  @Public()
+  @Query(() => User, {
+    nullable: true,
+  })
+  currentUser(@Context() context: GraphQLContext): User | null {
+    return context.req.auth?.user ?? null;
+  }
+
+  // --------------------------------------------------
+  // QUERIES
+  // --------------------------------------------------
 
   @Query(() => [User])
   async getUsers() {
@@ -20,30 +33,41 @@ export class UserResolver {
   }
 
   @Query(() => [User])
-  async getAdminUsers(@Args("adminRole") adminRole: SystemRole.Admin) {
+  async getAdminUsers(
+    @Args("adminRole", { type: () => SystemRole })
+    adminRole: SystemRole,
+  ) {
     return this.userService.getAdminUsers(adminRole);
   }
 
   @Query(() => [User])
-  async getEditorUsers(@Args("editorRole") editorRole: SystemRole.Editor) {
+  async getEditorUsers(
+    @Args("editorRole", { type: () => SystemRole })
+    editorRole: SystemRole,
+  ) {
     return this.userService.getEditorUsers(editorRole);
   }
 
   @Query(() => [User])
-  async getNormalUsers(@Args("userRole") userRole: SystemRole.User) {
+  async getNormalUsers(
+    @Args("userRole", { type: () => SystemRole })
+    userRole: SystemRole,
+  ) {
     return this.userService.getNormalUsers(userRole);
   }
 
   @Query(() => [User])
   async getMemberUsers(
-    @Args("memberStatus") memberStatus: MembershipStatus.Member,
+    @Args("memberStatus", { type: () => MembershipStatus })
+    memberStatus: MembershipStatus,
   ) {
     return this.userService.getMemberUsers(memberStatus);
   }
 
   @Query(() => [User])
   async getGuestUsers(
-    @Args("guestStatus") guestStatus: MembershipStatus.Guest,
+    @Args("guestStatus", { type: () => MembershipStatus })
+    guestStatus: MembershipStatus,
   ) {
     return this.userService.getGuestUsers(guestStatus);
   }
@@ -63,7 +87,9 @@ export class UserResolver {
     return this.userService.getByFirebaseUid(firebaseUid);
   }
 
-  // --- MUTATIONS ---
+  // --------------------------------------------------
+  // MUTATIONS
+  // --------------------------------------------------
 
   @Mutation(() => User)
   async createUser(@Args("input") input: CreateUserInput) {
