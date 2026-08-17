@@ -10,7 +10,7 @@ import { useState } from "react";
 export function MinistryManagementDashboard() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Operational Custom Hooks
   const {
@@ -18,8 +18,8 @@ export function MinistryManagementDashboard() {
     loading: loadingFetch,
     error: errorFetch,
   } = useGetMinistries();
-  const { createMinistry, isPending: loadingCreate } = useCreateMinistry();
-  const { updateMinistry, isPending: loadingUpdate } = useUpdateMinistry();
+  const { createMinistry, loading: loadingCreate } = useCreateMinistry();
+  const { updateMinistry, loading: loadingUpdate } = useUpdateMinistry();
   const { deleteMinistry } = useDeleteMinistry();
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
@@ -47,7 +47,7 @@ export function MinistryManagementDashboard() {
   };
 
   const handleEditSetup = (ministry: {
-    id: number;
+    id: string;
     name: string;
     description?: string | null;
   }) => {
@@ -62,7 +62,7 @@ export function MinistryManagementDashboard() {
     setDescription("");
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Confirm record deletion?")) return;
     try {
       await deleteMinistry(id);
