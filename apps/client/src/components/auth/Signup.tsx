@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "@tanstack/react-router";
-import { createUserWithEmail } from "@eastgate/auth";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { createUserWithEmail, signOut } from "@eastgate/auth";
 import { Button } from "@eastgate/ui/components/button";
 import { Input } from "@eastgate/ui/components/input";
 import {
@@ -14,6 +13,7 @@ import {
 } from "@eastgate/ui/components/field";
 import { AuthCard } from "./AuthCard";
 import { AuthContainer } from "./AuthContainer";
+import { useSignUpCongregant } from "@/hooks/auth";
 
 const signupSchema = z
   .object({
@@ -32,7 +32,10 @@ const signupSchema = z
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
-  const [accountCreated, setAccountCreated] = useState(false);
+  const navigate = useNavigate();
+  const router = useRouter();
+  const { signUpCongregant, loading: signingUpCongregant } =
+    useSignUpCongregant();
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -43,31 +46,21 @@ export function SignupForm() {
     },
   });
 
+  const isLoading = form.formState.isSubmitting || signingUpCongregant;
+
   const onSubmit = async ({ email, password }: SignupFormValues) => {
     await createUserWithEmail(email, password);
 
-    /*
-     * Client backend integration point:
-     * Call the client registration/authentication mutation here once that
-     * hook exists. No GraphQL operation is assumed or invented here.
-     */
-    setAccountCreated(true);
-  };
+    const { user } = await signUpCongregant();
 
-  if (accountCreated) {
-    return (
-      <AuthContainer>
-        <AuthCard
-          title="Account created"
-          description="Your account is ready. You can now sign in."
-        >
-          <Button asChild className="w-full">
-            <Link to="/logIn">Continue to sign in</Link>
-          </Button>
-        </AuthCard>
-      </AuthContainer>
-    );
-  }
+    if (!user) {
+      await signOut();
+      return;
+    }
+
+    await router.invalidate();
+    await navigate({ to: "/home" });
+  };
 
   return (
     <AuthContainer>
@@ -89,7 +82,7 @@ export function SignupForm() {
                     type="email"
                     autoComplete="email"
                     placeholder="you@example.com"
-                    disabled={form.formState.isSubmitting}
+                    disabled={isLoading}
                   />
                   <FieldError
                     errors={fieldState.error ? [fieldState.error] : []}
@@ -109,7 +102,7 @@ export function SignupForm() {
                     id="password"
                     type="password"
                     autoComplete="new-password"
-                    disabled={form.formState.isSubmitting}
+                    disabled={isLoading}
                   />
                   <FieldError
                     errors={fieldState.error ? [fieldState.error] : []}
@@ -131,7 +124,7 @@ export function SignupForm() {
                     id="confirmPassword"
                     type="password"
                     autoComplete="new-password"
-                    disabled={form.formState.isSubmitting}
+                    disabled={isLoading}
                   />
                   <FieldError
                     errors={fieldState.error ? [fieldState.error] : []}
@@ -140,14 +133,8 @@ export function SignupForm() {
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting
-                ? "Creating account…"
-                : "Create account"}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creating account…" : "Create account"}
             </Button>
           </FieldGroup>
         </form>
