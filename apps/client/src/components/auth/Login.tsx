@@ -1,152 +1,189 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useAdminAuth } from "@/hooks/useAdminAuth";
-
-// Import your generated Shadcn components
+import { z } from "zod";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import {
+  signInWithApple,
+  signInWithEmail,
+  signInWithFacebook,
+  signInWithGoogle,
+  signInWithMicrosoft,
+  signOut,
+} from "@eastgate/auth";
 import { Button } from "@eastgate/ui/components/button";
 import { Input } from "@eastgate/ui/components/input";
-import { Label } from "@eastgate/ui/components/label";
-import { Separator } from "@eastgate/ui/components/separator";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@eastgate/ui/components/field";
+import { useAuthenticateCongregant } from "@/hooks/auth";
+import { AuthCard } from "./AuthCard";
+import { AppleIcon, GoogleIcon, MetaIcon, MicrosoftIcon } from "./Assets";
+import { AuthContainer } from "./AuthContainer";
 
-// ✨ Define the Yup Validation Schema
-const loginSchema = yup.object().shape({
-  email: yup
+const loginSchema = z.object({
+  email: z.email("Please enter a valid email."),
+  password: z
     .string()
-    .email("Please enter a valid email")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
+    .min(8, "Password must be at least 8 characters.")
+    .max(16, "Password must not exceed 16 characters."),
 });
 
-type LoginFormValues = yup.InferType<typeof loginSchema>;
+type LoginFormValues = z.infer<typeof loginSchema>;
+type FirebaseSignIn = () => Promise<unknown>;
 
-function LoginForm() {
-  const {
-    loginWithGoogleAdminCheck,
-    loginWithEmailAdminCheck,
-    isVerifyingServer,
-  } = useAdminAuth();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+export function LoginForm() {
   const navigate = useNavigate();
+  const router = useRouter();
+  const { authenticateCongregant, loading: authenticatingCongregant } =
+    useAuthenticateCongregant();
 
-  // ✨ Initialize React Hook Form
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: yupResolver(loginSchema),
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
   });
 
-  const handleEmailSubmit = async (data: LoginFormValues) => {
-    setErrorMessage(null);
-    try {
-      await loginWithEmailAdminCheck(data.email, data.password);
-      navigate({ to: "/" });
-    } catch (error: any) {
-      setErrorMessage(error.message || "Invalid credentials or access denied.");
+  const isLoading = form.formState.isSubmitting || authenticatingCongregant;
+
+  const completeCongregantLogin = async (signIn: FirebaseSignIn) => {
+    await signIn();
+
+    const { user } = await authenticateCongregant();
+
+    if (!user) {
+      await signOut();
+      return;
     }
+
+    await router.invalidate();
+    await navigate({ to: "/home" });
   };
 
-  const handleGoogleLogin = async () => {
-    setErrorMessage(null);
-    try {
-      await loginWithGoogleAdminCheck();
-      navigate({ to: "/" });
-    } catch (error: any) {
-      setErrorMessage(
-        error.message || "Google sign-in failed or access denied.",
-      );
-    }
+  const onSubmit = async ({ email, password }: LoginFormValues) => {
+    await completeCongregantLogin(() => signInWithEmail(email, password));
   };
 
   return (
-    <main className="flex-1 flex items-center justify-center p-4">
-      <div className="flex flex-col gap-6 p-8 border rounded-lg shadow-sm w-full max-w-md bg-card text-card-foreground">
-        <div className="flex flex-col space-y-1.5 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Admin Portal
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Enter your credentials to access the dashboard
-          </p>
-        </div>
-
-        {/* ✨ The Form */}
-        <form
-          onSubmit={handleSubmit(handleEmailSubmit)}
-          className="flex flex-col gap-4"
-        >
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="admin@eastgate.com"
-              {...register("email")}
-              disabled={isVerifyingServer}
+    <AuthContainer>
+      <AuthCard
+        title="Welcome back"
+        description="Sign in to continue to your account."
+      >
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FieldGroup>
+            <Controller
+              control={form.control}
+              name="email"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="email">Email address</FieldLabel>
+                  <Input
+                    {...field}
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    disabled={isLoading}
+                  />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : []}
+                  />
+                </Field>
+              )}
             />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              {...register("password")}
-              disabled={isVerifyingServer}
+            <Controller
+              control={form.control}
+              name="password"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <div className="flex items-center justify-between">
+                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <Link
+                      to="/forgotpassword"
+                      className="text-sm text-primary hover:underline"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <Input
+                    {...field}
+                    id="password"
+                    type="password"
+                    autoComplete="current-password"
+                    disabled={isLoading}
+                  />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : []}
+                  />
+                </Field>
+              )}
             />
-            {errors.password && (
-              <p className="text-sm text-destructive">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
 
-          <Button
-            type="submit"
-            disabled={isVerifyingServer}
-            className="w-full mt-2"
-          >
-            {isVerifyingServer ? "Verifying..." : "Sign in with Email"}
-          </Button>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Signing in…" : "Sign in"}
+            </Button>
+          </FieldGroup>
         </form>
 
-        {errorMessage && (
-          <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md text-center">
-            {errorMessage}
-          </div>
-        )}
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
+        <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          OR CONTINUE WITH
+          <span className="h-px flex-1 bg-border" />
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleGoogleLogin}
-          disabled={isVerifyingServer}
-          className="w-full"
-        >
-          Google
-        </Button>
-      </div>
-    </main>
+        <div className="grid grid-cols-4 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            disabled={isLoading}
+            onClick={() => completeCongregantLogin(signInWithGoogle)}
+            aria-label="Continue with Google"
+          >
+            <GoogleIcon />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            disabled={isLoading}
+            onClick={() => completeCongregantLogin(signInWithApple)}
+            aria-label="Continue with Apple"
+          >
+            <AppleIcon />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            disabled={isLoading}
+            onClick={() => completeCongregantLogin(signInWithFacebook)}
+            aria-label="Continue with Facebook"
+          >
+            <MetaIcon />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            disabled={isLoading}
+            onClick={() => completeCongregantLogin(signInWithMicrosoft)}
+            aria-label="Continue with Microsoft"
+          >
+            <MicrosoftIcon />
+          </Button>
+        </div>
+
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          New here?{" "}
+          <Link to="/signup" className="text-primary hover:underline">
+            Create an account
+          </Link>
+        </p>
+      </AuthCard>
+    </AuthContainer>
   );
 }

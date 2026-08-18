@@ -9,72 +9,72 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/__root'
-import { Route as AuthRouteImport } from './app/_auth'
-import { Route as BaseRouteImport } from './app/_base'
-import { Route as MerchRouteImport } from './app/_merch'
-import { Route as ProtectedRouteImport } from './app/_protected'
+import { Route as IndexRouteImport } from './app/index'
+import { Route as AuthRouteRouteImport } from './app/_auth/route'
+import { Route as BaseRouteRouteImport } from './app/_base/route'
+import { Route as MerchRouteRouteImport } from './app/_merch/route'
+import { Route as ProtectedRouteRouteImport } from './app/_protected/route'
 import { Route as AuthForgotpasswordRouteImport } from './app/_auth/forgotpassword'
 import { Route as AuthLogInRouteImport } from './app/_auth/logIn'
 import { Route as AuthSignupRouteImport } from './app/_auth/signup'
-import { Route as BaseIndexRouteImport } from './app/_base/index'
 import { Route as BaseProfileRouteImport } from './app/_base/profile'
 import { Route as MerchShopRouteImport } from './app/_merch/shop'
 import { Route as ProtectedHomeRouteImport } from './app/_protected/home'
 
-const AuthRoute = AuthRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BaseRoute = BaseRouteImport.update({
+const BaseRouteRoute = BaseRouteRouteImport.update({
   id: '/_base',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MerchRoute = MerchRouteImport.update({
+const MerchRouteRoute = MerchRouteRouteImport.update({
   id: '/_merch',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProtectedRoute = ProtectedRouteImport.update({
+const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
   id: '/_protected',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthForgotpasswordRoute = AuthForgotpasswordRouteImport.update({
   id: '/forgotpassword',
   path: '/forgotpassword',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthLogInRoute = AuthLogInRouteImport.update({
   id: '/logIn',
   path: '/logIn',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => AuthRoute,
-} as any)
-const BaseIndexRoute = BaseIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => BaseRoute,
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const BaseProfileRoute = BaseProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => BaseRoute,
+  getParentRoute: () => BaseRouteRoute,
 } as any)
 const MerchShopRoute = MerchShopRouteImport.update({
   id: '/shop',
   path: '/shop',
-  getParentRoute: () => MerchRoute,
+  getParentRoute: () => MerchRouteRoute,
 } as any)
 const ProtectedHomeRoute = ProtectedHomeRouteImport.update({
   id: '/home',
   path: '/home',
-  getParentRoute: () => ProtectedRoute,
+  getParentRoute: () => ProtectedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof BaseIndexRoute
+  '/': typeof IndexRoute
   '/forgotpassword': typeof AuthForgotpasswordRoute
   '/logIn': typeof AuthLogInRoute
   '/signup': typeof AuthSignupRoute
@@ -83,7 +83,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof ProtectedHomeRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof BaseIndexRoute
+  '/': typeof IndexRoute
   '/forgotpassword': typeof AuthForgotpasswordRoute
   '/logIn': typeof AuthLogInRoute
   '/signup': typeof AuthSignupRoute
@@ -93,17 +93,17 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_auth': typeof AuthRouteWithChildren
-  '/_base': typeof BaseRouteWithChildren
-  '/_merch': typeof MerchRouteWithChildren
-  '/_protected': typeof ProtectedRouteWithChildren
+  '/': typeof IndexRoute
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/_base': typeof BaseRouteRouteWithChildren
+  '/_merch': typeof MerchRouteRouteWithChildren
+  '/_protected': typeof ProtectedRouteRouteWithChildren
   '/_auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/_auth/logIn': typeof AuthLogInRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_base/profile': typeof BaseProfileRoute
   '/_merch/shop': typeof MerchShopRoute
   '/_protected/home': typeof ProtectedHomeRoute
-  '/_base/': typeof BaseIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -126,6 +126,7 @@ export interface FileRouteTypes {
     | '/home'
   id:
     | '__root__'
+    | '/'
     | '/_auth'
     | '/_base'
     | '/_merch'
@@ -136,44 +137,51 @@ export interface FileRouteTypes {
     | '/_base/profile'
     | '/_merch/shop'
     | '/_protected/home'
-    | '/_base/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthRoute: typeof AuthRouteWithChildren
-  BaseRoute: typeof BaseRouteWithChildren
-  MerchRoute: typeof MerchRouteWithChildren
-  ProtectedRoute: typeof ProtectedRouteWithChildren
+  IndexRoute: typeof IndexRoute
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  BaseRouteRoute: typeof BaseRouteRouteWithChildren
+  MerchRouteRoute: typeof MerchRouteRouteWithChildren
+  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof AuthRouteImport
+      preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_base': {
       id: '/_base'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof BaseRouteImport
+      preLoaderRoute: typeof BaseRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_merch': {
       id: '/_merch'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof MerchRouteImport
+      preLoaderRoute: typeof MerchRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_protected': {
       id: '/_protected'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof ProtectedRouteImport
+      preLoaderRoute: typeof ProtectedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/forgotpassword': {
@@ -181,106 +189,104 @@ declare module '@tanstack/react-router' {
       path: '/forgotpassword'
       fullPath: '/forgotpassword'
       preLoaderRoute: typeof AuthForgotpasswordRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthRouteRoute
     }
     '/_auth/logIn': {
       id: '/_auth/logIn'
       path: '/logIn'
       fullPath: '/logIn'
       preLoaderRoute: typeof AuthLogInRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthRouteRoute
     }
     '/_auth/signup': {
       id: '/_auth/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof AuthSignupRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/_base/': {
-      id: '/_base/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof BaseIndexRouteImport
-      parentRoute: typeof BaseRoute
+      parentRoute: typeof AuthRouteRoute
     }
     '/_base/profile': {
       id: '/_base/profile'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof BaseProfileRouteImport
-      parentRoute: typeof BaseRoute
+      parentRoute: typeof BaseRouteRoute
     }
     '/_merch/shop': {
       id: '/_merch/shop'
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof MerchShopRouteImport
-      parentRoute: typeof MerchRoute
+      parentRoute: typeof MerchRouteRoute
     }
     '/_protected/home': {
       id: '/_protected/home'
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof ProtectedHomeRouteImport
-      parentRoute: typeof ProtectedRoute
+      parentRoute: typeof ProtectedRouteRoute
     }
   }
 }
 
-interface AuthRouteChildren {
+interface AuthRouteRouteChildren {
   AuthForgotpasswordRoute: typeof AuthForgotpasswordRoute
   AuthLogInRoute: typeof AuthLogInRoute
   AuthSignupRoute: typeof AuthSignupRoute
 }
 
-const AuthRouteChildren: AuthRouteChildren = {
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthForgotpasswordRoute: AuthForgotpasswordRoute,
   AuthLogInRoute: AuthLogInRoute,
   AuthSignupRoute: AuthSignupRoute,
 }
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
 
-interface BaseRouteChildren {
+interface BaseRouteRouteChildren {
   BaseProfileRoute: typeof BaseProfileRoute
-  BaseIndexRoute: typeof BaseIndexRoute
 }
 
-const BaseRouteChildren: BaseRouteChildren = {
+const BaseRouteRouteChildren: BaseRouteRouteChildren = {
   BaseProfileRoute: BaseProfileRoute,
-  BaseIndexRoute: BaseIndexRoute,
 }
 
-const BaseRouteWithChildren = BaseRoute._addFileChildren(BaseRouteChildren)
+const BaseRouteRouteWithChildren = BaseRouteRoute._addFileChildren(
+  BaseRouteRouteChildren,
+)
 
-interface MerchRouteChildren {
+interface MerchRouteRouteChildren {
   MerchShopRoute: typeof MerchShopRoute
 }
 
-const MerchRouteChildren: MerchRouteChildren = {
+const MerchRouteRouteChildren: MerchRouteRouteChildren = {
   MerchShopRoute: MerchShopRoute,
 }
 
-const MerchRouteWithChildren = MerchRoute._addFileChildren(MerchRouteChildren)
+const MerchRouteRouteWithChildren = MerchRouteRoute._addFileChildren(
+  MerchRouteRouteChildren,
+)
 
-interface ProtectedRouteChildren {
+interface ProtectedRouteRouteChildren {
   ProtectedHomeRoute: typeof ProtectedHomeRoute
 }
 
-const ProtectedRouteChildren: ProtectedRouteChildren = {
+const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedHomeRoute: ProtectedHomeRoute,
 }
 
-const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
-  ProtectedRouteChildren,
+const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
+  ProtectedRouteRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  AuthRoute: AuthRouteWithChildren,
-  BaseRoute: BaseRouteWithChildren,
-  MerchRoute: MerchRouteWithChildren,
-  ProtectedRoute: ProtectedRouteWithChildren,
+  IndexRoute: IndexRoute,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  BaseRouteRoute: BaseRouteRouteWithChildren,
+  MerchRouteRoute: MerchRouteRouteWithChildren,
+  ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
