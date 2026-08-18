@@ -46,7 +46,10 @@ export class UserService {
   }
 
   async getByEmail(email: string) {
-    return this.prisma.user.findUniqueOrThrow({ where: { email } });
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user)
+      throw new NotFoundException(`User with email ${email} doesn't exist`);
+    return user;
   }
 
   async getById(userId: string) {
@@ -62,8 +65,11 @@ export class UserService {
   }
 
   async createUser(input: CreateUserInput) {
-    const existing = await this.getByEmail(input.email);
-    if (existing) throw new ConflictException("Email already in use");
+    const existing = await this.prisma.user.findUnique({
+      where: { email: input.email },
+    });
+    if (existing)
+      throw new ConflictException(`Email ${input.email} already in use`);
 
     return this.prisma.user.create({
       data: {
