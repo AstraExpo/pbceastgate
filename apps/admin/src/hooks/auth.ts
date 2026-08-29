@@ -1,5 +1,8 @@
 import { ApolloSDK } from "@/graphql";
+import { clearSessionFn, signOutEverywhereFn } from "@/server/auth.function";
 import { useMutation } from "@apollo/client/react";
+import { useRouter } from "@tanstack/react-router";
+import { signOut as firebaseSignOut } from "@eastgate/auth/client";
 
 export function useAuthenticateAdmin() {
   const [mutate, result] = useMutation(ApolloSDK.AuthenticateAdminDocument);
@@ -16,4 +19,23 @@ export function useAuthenticateAdmin() {
     authenticateAdmin,
     loading: result.loading,
   };
+}
+
+export function useSignOutAdmin() {
+  const router = useRouter();
+
+  async function signOut(everywhere = true) {
+    if (everywhere) {
+      await signOutEverywhereFn();
+    } else {
+      await clearSessionFn();
+    }
+
+    await firebaseSignOut();
+
+    await router.invalidate();
+    await router.navigate({ to: "/login" });
+  }
+
+  return { signOut };
 }

@@ -59,7 +59,7 @@ export class UserService {
   }
 
   async getByFirebaseUid(firebaseUid: string) {
-    return this.prisma.user.findUniqueOrThrow({
+    return this.prisma.user.findUnique({
       where: { firebaseUid },
     });
   }

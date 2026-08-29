@@ -20,6 +20,15 @@ query CurrentUser {
   }
 }
 
+query CurrentCongregant {
+  currentCongregant {
+    status
+    user {
+      ...UserFields
+    }
+  }
+}
+
 mutation AuthenticateCongregant {
   authenticateCongregant {
     ...UserFields

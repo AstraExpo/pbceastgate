@@ -2,7 +2,7 @@ import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { createUserWithEmail, signOut } from "@eastgate/auth";
+import { createUserWithEmail, signOut } from "@eastgate/auth/client";
 import { Button } from "@eastgate/ui/components/button";
 import { Input } from "@eastgate/ui/components/input";
 import {

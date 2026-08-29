@@ -9,7 +9,7 @@ import {
   signInWithGoogle,
   signInWithMicrosoft,
   signOut,
-} from "@eastgate/auth";
+} from "@eastgate/auth/client";
 import { Button } from "@eastgate/ui/components/button";
 import { Input } from "@eastgate/ui/components/input";
 import {

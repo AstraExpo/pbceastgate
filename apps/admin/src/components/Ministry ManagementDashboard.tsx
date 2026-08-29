@@ -1,3 +1,4 @@
+import { useSignOutAdmin } from "@/hooks/auth";
 import {
   useCreateMinistry,
   useDeleteMinistry,
@@ -21,6 +22,7 @@ export function MinistryManagementDashboard() {
   const { createMinistry, loading: loadingCreate } = useCreateMinistry();
   const { updateMinistry, loading: loadingUpdate } = useUpdateMinistry();
   const { deleteMinistry } = useDeleteMinistry();
+  const { signOut } = useSignOutAdmin();
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -80,6 +82,7 @@ export function MinistryManagementDashboard() {
         <p className="text-xs sm:text-sm text-gray-500 mt-1 font-normal">
           Validating operational communication across the network stack.
         </p>
+        <Button onClick={() => signOut()}>Sign out</Button>
       </header>
 
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">

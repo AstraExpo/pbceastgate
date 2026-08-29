@@ -1,5 +1,5 @@
 import { clientEnv } from "@/config/client.env";
-import { initializeFirebaseAuth } from "@eastgate/auth";
+import { initializeFirebaseAuth } from "@eastgate/auth/client";
 
 export const firebaseAuth = initializeFirebaseAuth({
   apiKey: clientEnv.get("VITE_FIREBASE_API_KEY"),

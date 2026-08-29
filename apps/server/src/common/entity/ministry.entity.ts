@@ -1,9 +1,9 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
 export class Ministry {
   @Field(() => String)
-  id!: number;
+  id!: string;
 
   @Field(() => String)
   name!: string;

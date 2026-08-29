@@ -1,21 +1,9 @@
-import { ApolloSDK } from "@/graphql";
+import { AuthStatus, User } from "@/graphql";
 import type { ApolloClientIntegration } from "@apollo/client-integration-tanstack-start";
 
-export interface AdminAuthUser extends Pick<
-  ApolloSDK.UserFieldsFragment,
-  | "id"
-  | "firebaseUid"
-  | "email"
-  | "image"
-  | "name"
-  | "systemRole"
-  | "membershipStatus"
-  | "emailVerified"
-> {}
-
 export interface AdminAuthContext {
-  status: "loading" | "authenticated" | "anonymous";
-  user: AdminAuthUser | null;
+  status: AuthStatus;
+  user: User | null;
 }
 
 export type RouterContext = ApolloClientIntegration.RouterContext & {
@@ -23,9 +11,17 @@ export type RouterContext = ApolloClientIntegration.RouterContext & {
 };
 
 export function isAuthenticated(auth: AdminAuthContext): boolean {
-  return auth.status === "authenticated";
+  return auth.status === "Authenticated";
 }
 
 export function isAdmin(auth: AdminAuthContext): boolean {
-  return auth.status === "authenticated" && auth.user?.systemRole === "Admin";
+  return auth.status === "Authenticated" && auth.user?.systemRole === "Admin";
+}
+
+export function isSystem(auth: AdminAuthContext): boolean {
+  return auth.status === "Authenticated" && auth.user?.systemRole === "System";
+}
+
+export function isEditor(auth: AdminAuthContext): boolean {
+  return auth.status === "Authenticated" && auth.user?.systemRole === "Editor";
 }

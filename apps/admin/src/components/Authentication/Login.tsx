@@ -17,16 +17,18 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import {
+  getToken,
   signInWithApple,
   signInWithEmail,
   signInWithFacebook,
   signInWithGoogle,
   signInWithMicrosoft,
   signOut,
-} from "@eastgate/auth";
+} from "@eastgate/auth/client";
 import { useAuthenticateAdmin } from "@/hooks/auth";
 import { useNavigate, useRouter } from "@tanstack/react-router";
 import { AppleIcon, GoogleIcon, MetaIcon, MicrosoftIcon } from "./Assets";
+import { createSessionFn } from "@/server/auth.function";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email."),
@@ -67,11 +69,14 @@ export function LoginForm() {
       return;
     }
 
+    const idToken = await getToken(true);
+    if (idToken) {
+      await createSessionFn({ data: { idToken } });
+    }
+
     await router.invalidate();
 
-    await navigate({
-      to: "/dashboard",
-    });
+    await navigate({ to: "/dashboard" });
   };
 
   const onSubmit = async (data: LoginFormValues) => {

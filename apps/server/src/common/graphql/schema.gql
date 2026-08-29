@@ -2,6 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+enum AuthStatus {
+  Authenticated
+  UnAuthenticated
+}
+
+type AuthStatusResponse {
+  status: AuthStatus!
+  user: User
+}
+
 input CreateMinistryInput {
   description: String
   headId: String
@@ -47,6 +57,8 @@ type Mutation {
 }
 
 type Query {
+  currentAdmin: AuthStatusResponse!
+  currentCongregant: AuthStatusResponse!
   currentUser: User
   getAdminUsers(adminRole: SystemRole!): [User!]!
   getEditorUsers(editorRole: SystemRole!): [User!]!

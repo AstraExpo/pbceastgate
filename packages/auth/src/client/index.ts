@@ -17,6 +17,7 @@ import {
   verifyPasswordResetCode,
   confirmPasswordReset,
   createUserWithEmailAndPassword,
+  onIdTokenChanged,
 } from "firebase/auth";
 
 export function initializeFirebaseAuth(config: FirebaseOptions): Auth {
@@ -102,11 +103,24 @@ export async function getToken(forceRefresh = false): Promise<string | null> {
   return user.getIdToken(forceRefresh);
 }
 
+export function subscribeToIdTokenChanges(
+  callback: (user: User | null) => void,
+): Unsubscribe {
+  return onIdTokenChanged(getAuthInstance(), callback);
+}
+
 export function subscribeToAuthChanges(
   callback: (user: User | null) => void,
 ): Unsubscribe {
   return onAuthStateChanged(getAuthInstance(), callback);
 }
 
+export type {
+  User,
+  Auth,
+  Unsubscribe,
+  AuthError,
+  AuthErrorCodes,
+} from "firebase/auth";
+export type { FirebaseOptions, FirebaseError } from "firebase/app";
 export { AuthProvider, useAuth } from "./auth-provider.js";
-export type { User } from "firebase/auth";

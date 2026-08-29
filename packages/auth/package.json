@@ -3,10 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "exports": {
+    "./client": {
+      "types": "./src/client/index.ts",
+      "default": "./src/client/index.ts"
+    },
+    "./admin": {
+      "types": "./src/admin/index.ts",
+      "default": "./src/admin/index.ts"
+    }
+  },
   "dependencies": {
-    "firebase": "^10.12.0"
+    "firebase": "catalog:",
+    "firebase-admin": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

@@ -11,6 +11,7 @@ import { RouterContext } from "@/hooks/auth/types";
 import { getCurrentAdminFn } from "@/server/auth.function";
 import { Toaster } from "@eastgate/ui/components/sonner";
 import "@/lib/firebase";
+import { SessionSync } from "@/components/session-sync";
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
@@ -53,6 +54,7 @@ function RootLayout() {
       </head>
       <body>
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-admin-theme">
+          <SessionSync />
           <Outlet />
           <Toaster />
         </ThemeProvider>

@@ -1,4 +1,4 @@
-import { SystemRole } from "@/common/graphql/generated/apollo.types";
+import { SystemRole } from "@/generated/prisma/enums";
 import { SetMetadata } from "@nestjs/common";
 
 export const ROLES_KEY = "roles";

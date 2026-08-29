@@ -9,9 +9,17 @@ const apolloConfig = {
     rootDir,
     "../../apps/client/src/graphql/generated/client.graphql.ts",
   ),
+  client_types: join(
+    rootDir,
+    "../../apps/client/src/graphql/generated/client.types.ts",
+  ),
   admin: join(
     rootDir,
     "../../apps/admin/src/graphql/generated/admin.graphql.ts",
+  ),
+  admin_types: join(
+    rootDir,
+    "../../apps/admin/src/graphql/generated/admin.types.ts",
   ),
   server: join(
     rootDir,
@@ -44,6 +52,19 @@ const config: CodegenConfig = {
       },
     },
 
+    [apolloConfig.client_types]: {
+      documents: join(
+        rootDir,
+        "../../apps/client/src/graphql/operations/**/*.graphql",
+      ),
+      plugins: ["typescript"],
+      config: {
+        scalars,
+        nonOptionalTypename: true,
+        documentMode: "documentNode",
+      },
+    },
+
     [apolloConfig.admin]: {
       documents: join(
         rootDir,
@@ -56,6 +77,20 @@ const config: CodegenConfig = {
         documentMode: "documentNode",
       },
     },
+
+    [apolloConfig.admin_types]: {
+      documents: join(
+        rootDir,
+        "../../apps/admin/src/graphql/operations/**/*.graphql",
+      ),
+      plugins: ["typescript"],
+      config: {
+        scalars,
+        nonOptionalTypename: true,
+        documentMode: "documentNode",
+      },
+    },
+
     [apolloConfig.server]: {
       plugins: ["typescript", "typescript-resolvers"],
       config: {

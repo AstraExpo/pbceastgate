@@ -1,11 +1,29 @@
-import { ObjectType, Field } from "@nestjs/graphql";
+import { ObjectType, Field, registerEnumType } from "@nestjs/graphql";
 import { User } from "./user.entity";
+
+export enum AuthStatus {
+  Authenticated,
+  UnAuthenticated,
+}
+
+registerEnumType(AuthStatus, {
+  name: "AuthStatus",
+});
+
+@ObjectType()
+export class AuthStatusResponse {
+  @Field(() => AuthStatus)
+  status!: AuthStatus;
+
+  @Field(() => User, { nullable: true })
+  user?: User | null;
+}
 
 @ObjectType()
 export class AuthResponse {
-  @Field(() => String, { description: "The JWT access token" })
+  @Field(() => String)
   accessToken!: string;
 
-  @Field(() => User, { description: "The authenticated user profile" })
+  @Field(() => User)
   user!: User;
 }

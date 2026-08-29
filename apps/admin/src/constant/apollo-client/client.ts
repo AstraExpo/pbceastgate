@@ -9,7 +9,7 @@ import {
 import { ErrorLink } from "@apollo/client/link/error";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { SetContextLink } from "@apollo/client/link/context";
-import { getToken } from "@eastgate/auth";
+import { getToken } from "@eastgate/auth/client";
 
 if (adminEnv.get("VITE_APP_ENV") === "development" && !adminEnv.isServer) {
   import("@apollo/client/dev").then(

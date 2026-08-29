@@ -26,6 +26,15 @@ mutation AuthenticateAdmin {
   }
 }
 
+query CurrentAdmin {
+  currentAdmin {
+    status
+    user {
+      ...UserFields
+    }
+  }
+}
+
 # mutation LogoutAdmin {
 #   logoutAdmin
 # }

@@ -1,7 +1,7 @@
 import { routerWithApolloClient } from "@apollo/client-integration-tanstack-start";
 import { createRouter } from "@tanstack/react-router";
 import { createApolloClient } from "@eastgate/graphql/apollo";
-import { getToken } from "@eastgate/auth";
+import { getToken } from "@eastgate/auth/client";
 import { routeTree } from "./routeTree.gen";
 import { clientEnv } from "./config/client.env";
 import { ApolloLink } from "@apollo/client";
