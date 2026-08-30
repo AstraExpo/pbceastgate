@@ -9,6 +9,7 @@ import {
   signInWithGoogle,
   signInWithMicrosoft,
   signOut,
+  UserCredential,
 } from "@eastgate/auth/client";
 import { Button } from "@eastgate/ui/components/button";
 import { Input } from "@eastgate/ui/components/input";
@@ -18,10 +19,11 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@eastgate/ui/components/field";
-import { useAuthenticateCongregant } from "@/hooks/auth";
+import { useAuthenticateCongregant, useSignUpCongregant } from "@/hooks/auth";
 import { AuthCard } from "./AuthCard";
 import { AppleIcon, GoogleIcon, MetaIcon, MicrosoftIcon } from "./Assets";
 import { AuthContainer } from "./AuthContainer";
+import { clearSessionFn, createSessionFn } from "@/server/auth.function";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email."),
@@ -32,32 +34,67 @@ const loginSchema = z.object({
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
-type FirebaseSignIn = () => Promise<unknown>;
+type FirebaseSignIn = () => Promise<UserCredential>;
 
 export function LoginForm() {
   const navigate = useNavigate();
   const router = useRouter();
   const { authenticateCongregant, loading: authenticatingCongregant } =
     useAuthenticateCongregant();
+  const { signUpCongregant, loading: signingUpCongregant } =
+    useSignUpCongregant();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const isLoading = form.formState.isSubmitting || authenticatingCongregant;
+  const isLoading =
+    form.formState.isSubmitting ||
+    authenticatingCongregant ||
+    signingUpCongregant;
 
   const completeCongregantLogin = async (signIn: FirebaseSignIn) => {
-    await signIn();
+    const credentials = await signIn();
 
     const { user } = await authenticateCongregant();
 
     if (!user) {
       await signOut();
+      await clearSessionFn();
       return;
     }
 
+    const idToken = await credentials.user.getIdToken(true);
+
+    if (idToken) {
+      await createSessionFn({ data: { idToken } });
+    }
+
     await router.invalidate();
+
+    await navigate({ to: "/home" });
+  };
+
+  const completeProviderLogin = async (signIn: FirebaseSignIn) => {
+    const credentials = await signIn();
+
+    const { user } = await signUpCongregant();
+
+    if (!user) {
+      await signOut();
+      await clearSessionFn();
+      return;
+    }
+
+    const idToken = await credentials.user.getIdToken(true);
+
+    if (idToken) {
+      await createSessionFn({ data: { idToken } });
+    }
+
+    await router.invalidate();
+
     await navigate({ to: "/home" });
   };
 
@@ -140,7 +177,7 @@ export function LoginForm() {
             variant="outline"
             size="icon"
             disabled={isLoading}
-            onClick={() => completeCongregantLogin(signInWithGoogle)}
+            onClick={() => completeProviderLogin(signInWithGoogle)}
             aria-label="Continue with Google"
           >
             <GoogleIcon />
@@ -150,7 +187,7 @@ export function LoginForm() {
             variant="outline"
             size="icon"
             disabled={isLoading}
-            onClick={() => completeCongregantLogin(signInWithApple)}
+            onClick={() => completeProviderLogin(signInWithApple)}
             aria-label="Continue with Apple"
           >
             <AppleIcon />
@@ -160,7 +197,7 @@ export function LoginForm() {
             variant="outline"
             size="icon"
             disabled={isLoading}
-            onClick={() => completeCongregantLogin(signInWithFacebook)}
+            onClick={() => completeProviderLogin(signInWithFacebook)}
             aria-label="Continue with Facebook"
           >
             <MetaIcon />
@@ -170,7 +207,7 @@ export function LoginForm() {
             variant="outline"
             size="icon"
             disabled={isLoading}
-            onClick={() => completeCongregantLogin(signInWithMicrosoft)}
+            onClick={() => completeProviderLogin(signInWithMicrosoft)}
             aria-label="Continue with Microsoft"
           >
             <MicrosoftIcon />

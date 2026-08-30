@@ -1,10 +1,10 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { EastgateLanding } from "@/components/landing/EastgateLanding";
-import { isAuthenticated } from "@/hooks/auth/types";
+import { AuthStatus } from "@/graphql";
 
 export const Route = createFileRoute("/")({
   beforeLoad: ({ context }) => {
-    if (isAuthenticated(context.auth)) {
+    if (context.auth.status === AuthStatus.Authenticated) {
       throw redirect({
         to: "/home",
       });

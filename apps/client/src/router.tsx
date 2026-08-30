@@ -4,15 +4,23 @@ import { createApolloClient } from "@eastgate/graphql/apollo";
 import { getToken } from "@eastgate/auth/client";
 import { routeTree } from "./routeTree.gen";
 import { clientEnv } from "./config/client.env";
-import { ApolloLink } from "@apollo/client";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { SetContextLink } from "@apollo/client/link/context";
 import { handleGraphQLError } from "./lib/graphql-errors";
+import { getCookie } from "@tanstack/react-start/server";
+import { SESSION_COOKIE_NAME } from "./server/auth/constants";
+import { AuthStatus } from "./graphql";
 
 const createAuthLink = createIsomorphicFn()
   .server(() => {
-    return new ApolloLink((operation, forward) => {
-      return forward(operation);
+    return new SetContextLink(async prevContext => {
+      const token = getCookie(SESSION_COOKIE_NAME);
+      return {
+        headers: {
+          ...prevContext.headers,
+          authorization: token ? `Bearer ${token}` : "",
+        },
+      };
     });
   })
   .client(() => {
@@ -36,14 +44,13 @@ export function getRouter() {
     enableDevtools: clientEnv.get("VITE_APP_ENV") === "development",
     onGraphQLError: handleGraphQLError,
   });
-  console.log("[Apollo] client created:", apolloClient);
 
   const router = createRouter({
     routeTree,
     context: {
       ...routerWithApolloClient.defaultContext,
       auth: {
-        status: "loading",
+        status: AuthStatus.UnAuthenticated,
         user: null,
       },
     },
@@ -51,8 +58,6 @@ export function getRouter() {
   });
 
   const wrappedRouter = routerWithApolloClient(router, apolloClient);
-
-  console.log("[Apollo] router wrapped:", wrappedRouter);
 
   return wrappedRouter;
 }

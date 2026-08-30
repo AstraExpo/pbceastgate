@@ -11,6 +11,7 @@ import { Toaster } from "@eastgate/ui/components/sonner";
 import "@/lib/firebase";
 import { RouterContext } from "@/hooks/auth/types";
 import { getCurrentCongregantFn } from "@/server/auth.function";
+import { SessionSync } from "@/components/session-sync";
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
@@ -52,6 +53,7 @@ function RootLayout() {
       </head>
       <body>
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-client-theme">
+          <SessionSync />
           <Outlet />
           <Toaster />
         </ThemeProvider>

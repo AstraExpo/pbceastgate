@@ -1,9 +1,9 @@
-import { isAuthenticated } from "@/hooks/auth/types";
+import { AuthStatus } from "@/graphql";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth")({
   beforeLoad: ({ context }) => {
-    if (isAuthenticated(context.auth)) {
+    if (context.auth.status === AuthStatus.Authenticated) {
       throw redirect({
         to: "/home",
       });

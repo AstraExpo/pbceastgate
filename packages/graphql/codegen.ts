@@ -39,6 +39,11 @@ const scalars = {
 const config: CodegenConfig = {
   schema,
   generates: {
+    [apolloConfig.client_types]: {
+      plugins: ["typescript"],
+      config: { scalars },
+    },
+
     [apolloConfig.client]: {
       documents: join(
         rootDir,
@@ -52,17 +57,9 @@ const config: CodegenConfig = {
       },
     },
 
-    [apolloConfig.client_types]: {
-      documents: join(
-        rootDir,
-        "../../apps/client/src/graphql/operations/**/*.graphql",
-      ),
+    [apolloConfig.admin_types]: {
       plugins: ["typescript"],
-      config: {
-        scalars,
-        nonOptionalTypename: true,
-        documentMode: "documentNode",
-      },
+      config: { scalars },
     },
 
     [apolloConfig.admin]: {
@@ -71,19 +68,6 @@ const config: CodegenConfig = {
         "../../apps/admin/src/graphql/operations/**/*.graphql",
       ),
       plugins: ["typescript-operations", "typed-document-node"],
-      config: {
-        scalars,
-        nonOptionalTypename: true,
-        documentMode: "documentNode",
-      },
-    },
-
-    [apolloConfig.admin_types]: {
-      documents: join(
-        rootDir,
-        "../../apps/admin/src/graphql/operations/**/*.graphql",
-      ),
-      plugins: ["typescript"],
       config: {
         scalars,
         nonOptionalTypename: true,

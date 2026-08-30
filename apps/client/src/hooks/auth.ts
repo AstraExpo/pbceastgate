@@ -1,5 +1,8 @@
 import { ApolloSDK } from "@/graphql";
+import { clearSessionFn, signOutEverywhereFn } from "@/server/auth.function";
 import { useMutation } from "@apollo/client/react";
+import { useRouter } from "@tanstack/react-router";
+import { signOut as firebaseSignOut } from "@eastgate/auth/client";
 
 export function useAuthenticateCongregant() {
   const [mutate, result] = useMutation(
@@ -35,4 +38,24 @@ export function useSignUpCongregant() {
     signUpCongregant,
     loading: result.loading,
   };
+}
+
+export function useSignOutCongregant() {
+  const router = useRouter();
+
+  async function signOut(everywhere = false) {
+    if (everywhere) {
+      await signOutEverywhereFn();
+    } else {
+      await clearSessionFn();
+    }
+
+    await firebaseSignOut();
+
+    await router.invalidate();
+
+    await router.navigate({ to: "/logIn" });
+  }
+
+  return { signOut };
 }

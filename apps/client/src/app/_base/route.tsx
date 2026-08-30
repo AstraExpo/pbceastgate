@@ -1,7 +1,15 @@
 import ClientLayout from "@/components/landing/layout/ClientLayout";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { AuthStatus } from "@/graphql";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_base")({
+  beforeLoad: ({ context }) => {
+    if (context.auth.status === AuthStatus.UnAuthenticated) {
+      throw redirect({
+        to: "/logIn",
+      });
+    }
+  },
   component: BaseLayout,
 });
 

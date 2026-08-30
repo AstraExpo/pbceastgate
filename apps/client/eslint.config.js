@@ -28,6 +28,23 @@ export default [
           ],
         },
       ],
+      "no-restricted-globals": [
+        "error",
+        {
+          name: "process",
+          message: "process is server-only — restrict usage to src/server/**.",
+        },
+        {
+          name: "Buffer",
+          message: "Buffer is server-only — restrict usage to src/server/**.",
+        },
+      ],
     },
+    overrides: [
+      {
+        files: ["src/server/**"],
+        rules: { "no-restricted-globals": "off" },
+      },
+    ],
   },
 ];

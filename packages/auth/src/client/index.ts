@@ -121,6 +121,7 @@ export type {
   Unsubscribe,
   AuthError,
   AuthErrorCodes,
+  UserCredential,
 } from "firebase/auth";
 export type { FirebaseOptions, FirebaseError } from "firebase/app";
 export { AuthProvider, useAuth } from "./auth-provider.js";

@@ -24,7 +24,7 @@ export function useAuthenticateAdmin() {
 export function useSignOutAdmin() {
   const router = useRouter();
 
-  async function signOut(everywhere = true) {
+  async function signOut(everywhere = false) {
     if (everywhere) {
       await signOutEverywhereFn();
     } else {
@@ -34,6 +34,7 @@ export function useSignOutAdmin() {
     await firebaseSignOut();
 
     await router.invalidate();
+
     await router.navigate({ to: "/login" });
   }
 

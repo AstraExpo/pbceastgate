@@ -45,8 +45,6 @@ export function getRouter() {
     onGraphQLError: handleGraphQLError,
   });
 
-  console.log("[Apollo] client created:", apolloClient);
-
   const router = createRouter({
     routeTree,
     context: {
@@ -60,8 +58,6 @@ export function getRouter() {
   });
 
   const wrappedRouter = routerWithApolloClient(router, apolloClient);
-
-  console.log("[Apollo] router wrapped:", wrappedRouter);
 
   return wrappedRouter;
 }

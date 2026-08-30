@@ -17,7 +17,7 @@ export enum AuthStatus {
 }
 
 export type AuthStatusResponse = {
-  __typename: 'AuthStatusResponse';
+  __typename?: 'AuthStatusResponse';
   status: AuthStatus;
   user?: Maybe<User>;
 };
@@ -43,7 +43,7 @@ export enum MembershipStatus {
 }
 
 export type Ministry = {
-  __typename: 'Ministry';
+  __typename?: 'Ministry';
   description?: Maybe<Scalars['String']['output']>;
   headId?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -51,7 +51,7 @@ export type Ministry = {
 };
 
 export type Mutation = {
-  __typename: 'Mutation';
+  __typename?: 'Mutation';
   authenticateAdmin: User;
   authenticateCongregant: User;
   createMinistry: Ministry;
@@ -96,7 +96,7 @@ export type MutationUpdateUserArgs = {
 };
 
 export type Query = {
-  __typename: 'Query';
+  __typename?: 'Query';
   currentAdmin: AuthStatusResponse;
   currentCongregant: AuthStatusResponse;
   currentUser?: Maybe<User>;
@@ -160,7 +160,7 @@ export type QueryMinistryArgs = {
 };
 
 export type Sermon = {
-  __typename: 'Sermon';
+  __typename?: 'Sermon';
   date: Scalars['String']['output'];
   id: Scalars['String']['output'];
   preacher: Scalars['String']['output'];
@@ -191,7 +191,7 @@ export type UpdateUserInput = {
 };
 
 export type User = {
-  __typename: 'User';
+  __typename?: 'User';
   banExpires?: Maybe<Scalars['DateTime']['output']>;
   banReason?: Maybe<Scalars['String']['output']>;
   banned: Scalars['Boolean']['output'];
