@@ -59,7 +59,7 @@ type Mutation {
 type Query {
   currentAdmin: AuthStatusResponse!
   currentCongregant: AuthStatusResponse!
-  currentUser: User
+  currentUser: AuthStatusResponse!
   getAdminUsers(adminRole: SystemRole!): [User!]!
   getEditorUsers(editorRole: SystemRole!): [User!]!
   getGuestUsers(guestStatus: MembershipStatus!): [User!]!
@@ -117,5 +117,12 @@ type User {
   membershipStatus: MembershipStatus!
   name: String!
   systemRole: SystemRole!
+  theme: UserTheme!
   updatedAt: DateTime!
+}
+
+enum UserTheme {
+  dark
+  light
+  system
 }

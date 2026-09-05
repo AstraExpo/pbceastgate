@@ -99,7 +99,7 @@ export type Query = {
   __typename?: 'Query';
   currentAdmin: AuthStatusResponse;
   currentCongregant: AuthStatusResponse;
-  currentUser?: Maybe<User>;
+  currentUser: AuthStatusResponse;
   getAdminUsers: Array<User>;
   getEditorUsers: Array<User>;
   getGuestUsers: Array<User>;
@@ -204,5 +204,12 @@ export type User = {
   membershipStatus: MembershipStatus;
   name: Scalars['String']['output'];
   systemRole: SystemRole;
+  theme: UserTheme;
   updatedAt: Scalars['DateTime']['output'];
 };
+
+export enum UserTheme {
+  Dark = 'dark',
+  Light = 'light',
+  System = 'system'
+}
