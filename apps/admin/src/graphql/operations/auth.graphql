@@ -14,11 +14,11 @@ fragment UserFields on User {
   updatedAt
 }
 
-query CurrentUser {
-  currentUser {
-    ...UserFields
-  }
-}
+# query CurrentUser {
+#   currentUser {
+#     ...UserFields
+#   }
+# }
 
 mutation AuthenticateAdmin {
   authenticateAdmin {

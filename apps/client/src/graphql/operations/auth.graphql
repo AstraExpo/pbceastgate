@@ -8,6 +8,7 @@ fragment UserFields on User {
   banned
   banReason
   banExpires
+  theme
   systemRole
   membershipStatus
   createdAt
@@ -16,7 +17,10 @@ fragment UserFields on User {
 
 query CurrentUser {
   currentUser {
-    ...UserFields
+    status
+    user {
+      ...UserFields
+    }
   }
 }
 
