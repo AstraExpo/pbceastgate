@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { MinistryService } from './ministry.service.js';
-import { MinistryResolver } from './ministry.resolver.js';
+import { Module } from "@nestjs/common";
+import { MinistryService } from "./ministry.service";
+import { MinistryResolver } from "./ministry.resolver";
 
 @Module({
   providers: [MinistryService, MinistryResolver],

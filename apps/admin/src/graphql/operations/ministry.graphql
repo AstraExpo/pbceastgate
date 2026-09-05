@@ -1,38 +1,35 @@
+fragment MinistryFields on Ministry {
+  id
+  name
+  description
+  headId
+}
+
 query GetMinistries {
   ministries {
-    id
-    name
-    description
-    headId
+    ...MinistryFields
   }
 }
 
-query GetMinistry($id: Int!) {
+query GetMinistry($id: String!) {
   ministry(id: $id) {
-    id
-    name
-    description
-    headId
+    ...MinistryFields
   }
 }
 
 mutation CreateMinistry($input: CreateMinistryInput!) {
   createMinistry(input: $input) {
-    id
-    name
-    description
+    ...MinistryFields
   }
 }
 
-mutation UpdateMinistry($id: Int!, $input: UpdateMinistryInput!) {
+mutation UpdateMinistry($id: String!, $input: UpdateMinistryInput!) {
   updateMinistry(id: $id, input: $input) {
-    id
-    name
-    description
+    ...MinistryFields
   }
 }
 
-mutation DeleteMinistry($id: Int!) {
+mutation DeleteMinistry($id: String!) {
   deleteMinistry(id: $id) {
     id
   }

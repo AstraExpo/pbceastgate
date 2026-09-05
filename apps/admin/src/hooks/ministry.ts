@@ -1,134 +1,144 @@
 import { ApolloSDK } from "@/graphql";
+import { Reference } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client/react";
 
-/**
- * Hook to retrieve a single ministry by its ID.
- * Explicitly types the variables payload to satisfy the non-optional baseOptions schema requirement.
- */
-export function useGetMinistry(ministryId: number) {
-  const queryVariables: ApolloSDK.GetMinistryQueryVariables = {
-    id: ministryId,
-  };
-
-  const { data, loading, error } = ApolloSDK.useGetMinistryQuery({
+export function useGetMinistry(ministryId: string) {
+  const result = useQuery(ApolloSDK.GetMinistryDocument, {
+    variables: { id: ministryId },
     skip: !ministryId,
-    variables: queryVariables,
   });
 
   return {
-    ministry: data?.ministry ?? null,
-    isPending: loading,
-    error,
+    ministry: result.data?.ministry ?? null,
+    loading: result.loading,
+    error: result.error,
+    refetch: result.refetch,
   };
 }
 
-/**
- * Hook to retrieve all ministries.
- * Follows the pre-bound generic signature since no runtime query variables are required.
- */
 export function useGetMinistries() {
-  const { data, loading, error } = ApolloSDK.useGetMinistriesQuery();
+  const result = useQuery(ApolloSDK.GetMinistriesDocument);
 
   return {
-    ministries: data?.ministries ?? [],
-    isPending: loading,
-    error,
+    ministries: result.data?.ministries ?? [],
+    loading: result.loading,
+    error: result.error,
+    refetch: result.refetch,
   };
 }
 
-/**
- * Hook to create a new ministry and manually append it to the cache layout.
- */
 export function useCreateMinistry() {
-  const [createMinistryMutation, { loading }] =
-    ApolloSDK.useCreateMinistryMutation({
-      update: (cache, { data }) => {
-        const newMinistry = data?.createMinistry;
-        if (!newMinistry) return;
+  const [mutate, result] = useMutation(ApolloSDK.CreateMinistryDocument, {
+    update(cache, { data }) {
+      const ministry = data?.createMinistry;
 
-        cache.modify({
-          fields: {
-            // Explicitly typing existing references avoids nested inference dropouts
-            ministries: (existing = []) => {
-              return [...existing, newMinistry];
-            },
+      if (!ministry) {
+        return;
+      }
+
+      cache.modify({
+        fields: {
+          ministries(existingRefs = [], { readField, toReference }) {
+            const alreadyExists = existingRefs.some(
+              (ref: Reference | undefined) =>
+                readField("id", ref) === ministry.id,
+            );
+
+            if (alreadyExists) {
+              return existingRefs;
+            }
+
+            const newRef = toReference(ministry);
+
+            if (!newRef) {
+              return existingRefs;
+            }
+
+            return [...existingRefs, newRef];
           },
-        });
-      },
-    });
-
-  const createMinistry = async (input: ApolloSDK.CreateMinistryInput) => {
-    // Explicitly type the variables object using the generated mutation variable contract
-    const mutationVariables: ApolloSDK.CreateMinistryMutationVariables = {
-      input,
-    };
-
-    return createMinistryMutation({
-      variables: mutationVariables,
-    });
-  };
+        },
+      });
+    },
+  });
 
   return {
-    createMinistry,
-    isPending: loading,
+    createMinistry: async (input: ApolloSDK.CreateMinistryInput) => {
+      const result = await mutate({
+        variables: { input },
+      });
+
+      return result.data?.createMinistry ?? null;
+    },
+
+    loading: result.loading,
+    error: result.error,
   };
 }
 
-/**
- * Hook to update an existing ministry.
- * Refetched variables are explicitly typed to satisfy the strict mutation tuple contract.
- */
 export function useUpdateMinistry() {
-  const [updateMinistryMutation, { loading, error }] =
-    ApolloSDK.useUpdateMinistryMutation();
-
-  const updateMinistry = async (
-    id: number,
-    input: ApolloSDK.UpdateMinistryInput,
-  ) => {
-    const mutationVariables: ApolloSDK.UpdateMinistryMutationVariables = {
-      input,
-      id,
-    };
-
-    return updateMinistryMutation({
-      variables: mutationVariables,
-    });
-  };
+  const [mutate, result] = useMutation(ApolloSDK.UpdateMinistryDocument);
 
   return {
-    updateMinistry,
-    isPending: loading,
-    error,
+    updateMinistry: async (
+      id: string,
+      input: ApolloSDK.UpdateMinistryInput,
+    ) => {
+      const response = await mutate({
+        variables: {
+          id,
+          input,
+        },
+      });
+
+      return response.data?.updateMinistry ?? null;
+    },
+
+    loading: result.loading,
+    error: result.error,
   };
 }
 
-/**
- * Hook to delete a ministry record and evict it from the localized cache layout.
- * Corrects the invalid runtime syntax and applies explicit variable typing.
- */
 export function useDeleteMinistry() {
-  const [deleteMinistryMutation, { loading, error }] =
-    ApolloSDK.useDeleteMinistryMutation();
+  const [mutate, result] = useMutation(ApolloSDK.DeleteMinistryDocument, {
+    update(cache, { data }) {
+      const deletedId = data?.deleteMinistry?.id;
 
-  const deleteMinistry = async (id: number) => {
-    const mutationVariables: ApolloSDK.DeleteMinistryMutationVariables = {
-      id,
-    };
+      if (!deletedId) {
+        return;
+      }
 
-    return deleteMinistryMutation({
-      variables: mutationVariables,
-      update: cache => {
-        // Globally evict the object using its normalized cache identifier
-        cache.evict({ id: cache.identify({ __typename: "Ministry", id }) });
-        // Run garbage collection to purge dead references from parent arrays (e.g., ministries list)
-        cache.gc();
-      },
-    });
-  };
+      cache.modify({
+        fields: {
+          ministries(existingRefs = [], { readField }) {
+            return existingRefs.filter(
+              (ref: Reference | undefined) =>
+                readField("id", ref) !== deletedId,
+            );
+          },
+        },
+      });
+
+      cache.evict({
+        id: cache.identify({
+          __typename: "Ministry",
+          id: deletedId,
+        }),
+      });
+
+      cache.gc();
+    },
+  });
 
   return {
-    deleteMinistry,
-    isPending: loading,
-    error,
+    deleteMinistry: async (id: string) => {
+      const response = await mutate({
+        variables: { id },
+      });
+
+      return Boolean(response.data?.deleteMinistry);
+    },
+
+    loading: result.loading,
+    error: result.error,
   };
 }

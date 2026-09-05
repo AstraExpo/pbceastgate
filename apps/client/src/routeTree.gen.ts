@@ -9,278 +9,294 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/__root'
-import { Route as ProtectedRouteImport } from './app/_protected'
-import { Route as MerchRouteImport } from './app/_merch'
-import { Route as BaseRouteImport } from './app/_base'
-import { Route as AuthRouteImport } from './app/_auth'
-import { Route as BaseIndexRouteImport } from './app/_base/index'
-import { Route as ProtectedHomeRouteImport } from './app/_protected/home'
-import { Route as MerchShopRouteImport } from './app/_merch/shop'
-import { Route as BaseProfileRouteImport } from './app/_base/profile'
-import { Route as AuthSignUpRouteImport } from './app/_auth/signUp'
+import { Route as IndexRouteImport } from './app/index'
+import { Route as AuthRouteRouteImport } from './app/_auth/route'
+import { Route as AuthForgotpasswordRouteImport } from './app/_auth/forgotpassword'
 import { Route as AuthLogInRouteImport } from './app/_auth/logIn'
-import { Route as AuthForgotPasswordRouteImport } from './app/_auth/forgotPassword'
+import { Route as AuthSignupRouteImport } from './app/_auth/signup'
+import { Route as PbceastgateAdminRouteRouteImport } from './app/_pbceastgate/_admin/route'
+import { Route as PbceastgateClientRouteRouteImport } from './app/_pbceastgate/_client/route'
+import { Route as PbceastgateAdminDashboardRouteImport } from './app/_pbceastgate/_admin/dashboard'
+import { Route as PbceastgateClientProtectedRouteRouteImport } from './app/_pbceastgate/_client/_protected/route'
+import { Route as PbceastgateClientHomeRouteImport } from './app/_pbceastgate/_client/home'
+import { Route as PbceastgateClientProtectedProfileRouteImport } from './app/_pbceastgate/_client/_protected/profile'
 
-const ProtectedRoute = ProtectedRouteImport.update({
-  id: '/_protected',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MerchRoute = MerchRouteImport.update({
-  id: '/_merch',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BaseRoute = BaseRouteImport.update({
-  id: '/_base',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
+const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BaseIndexRoute = BaseIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => BaseRoute,
-} as any)
-const ProtectedHomeRoute = ProtectedHomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => ProtectedRoute,
-} as any)
-const MerchShopRoute = MerchShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => MerchRoute,
-} as any)
-const BaseProfileRoute = BaseProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => BaseRoute,
-} as any)
-const AuthSignUpRoute = AuthSignUpRouteImport.update({
-  id: '/signUp',
-  path: '/signUp',
-  getParentRoute: () => AuthRoute,
+const AuthForgotpasswordRoute = AuthForgotpasswordRouteImport.update({
+  id: '/forgotpassword',
+  path: '/forgotpassword',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthLogInRoute = AuthLogInRouteImport.update({
   id: '/logIn',
   path: '/logIn',
-  getParentRoute: () => AuthRoute,
+  getParentRoute: () => AuthRouteRoute,
 } as any)
-const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: '/forgotPassword',
-  path: '/forgotPassword',
-  getParentRoute: () => AuthRoute,
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
+const PbceastgateAdminRouteRoute = PbceastgateAdminRouteRouteImport.update({
+  id: '/_pbceastgate/_admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PbceastgateClientRouteRoute = PbceastgateClientRouteRouteImport.update({
+  id: '/_pbceastgate/_client',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PbceastgateAdminDashboardRoute =
+  PbceastgateAdminDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => PbceastgateAdminRouteRoute,
+  } as any)
+const PbceastgateClientProtectedRouteRoute =
+  PbceastgateClientProtectedRouteRouteImport.update({
+    id: '/_protected',
+    getParentRoute: () => PbceastgateClientRouteRoute,
+  } as any)
+const PbceastgateClientHomeRoute = PbceastgateClientHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => PbceastgateClientRouteRoute,
+} as any)
+const PbceastgateClientProtectedProfileRoute =
+  PbceastgateClientProtectedProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => PbceastgateClientProtectedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof BaseIndexRoute
-  '/forgotPassword': typeof AuthForgotPasswordRoute
+  '/': typeof IndexRoute
+  '/forgotpassword': typeof AuthForgotpasswordRoute
   '/logIn': typeof AuthLogInRoute
-  '/signUp': typeof AuthSignUpRoute
-  '/profile': typeof BaseProfileRoute
-  '/shop': typeof MerchShopRoute
-  '/home': typeof ProtectedHomeRoute
+  '/signup': typeof AuthSignupRoute
+  '/dashboard': typeof PbceastgateAdminDashboardRoute
+  '/home': typeof PbceastgateClientHomeRoute
+  '/profile': typeof PbceastgateClientProtectedProfileRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof BaseIndexRoute
-  '/forgotPassword': typeof AuthForgotPasswordRoute
+  '/': typeof IndexRoute
+  '/forgotpassword': typeof AuthForgotpasswordRoute
   '/logIn': typeof AuthLogInRoute
-  '/signUp': typeof AuthSignUpRoute
-  '/profile': typeof BaseProfileRoute
-  '/shop': typeof MerchShopRoute
-  '/home': typeof ProtectedHomeRoute
+  '/signup': typeof AuthSignupRoute
+  '/dashboard': typeof PbceastgateAdminDashboardRoute
+  '/home': typeof PbceastgateClientHomeRoute
+  '/profile': typeof PbceastgateClientProtectedProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_auth': typeof AuthRouteWithChildren
-  '/_base': typeof BaseRouteWithChildren
-  '/_merch': typeof MerchRouteWithChildren
-  '/_protected': typeof ProtectedRouteWithChildren
-  '/_auth/forgotPassword': typeof AuthForgotPasswordRoute
+  '/': typeof IndexRoute
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/_pbceastgate/_admin': typeof PbceastgateAdminRouteRouteWithChildren
+  '/_pbceastgate/_client': typeof PbceastgateClientRouteRouteWithChildren
+  '/_auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/_auth/logIn': typeof AuthLogInRoute
-  '/_auth/signUp': typeof AuthSignUpRoute
-  '/_base/profile': typeof BaseProfileRoute
-  '/_merch/shop': typeof MerchShopRoute
-  '/_protected/home': typeof ProtectedHomeRoute
-  '/_base/': typeof BaseIndexRoute
+  '/_auth/signup': typeof AuthSignupRoute
+  '/_pbceastgate/_client/_protected': typeof PbceastgateClientProtectedRouteRouteWithChildren
+  '/_pbceastgate/_admin/dashboard': typeof PbceastgateAdminDashboardRoute
+  '/_pbceastgate/_client/home': typeof PbceastgateClientHomeRoute
+  '/_pbceastgate/_client/_protected/profile': typeof PbceastgateClientProtectedProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/forgotPassword'
+    | '/forgotpassword'
     | '/logIn'
-    | '/signUp'
-    | '/profile'
-    | '/shop'
+    | '/signup'
+    | '/dashboard'
     | '/home'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/forgotPassword'
+    | '/forgotpassword'
     | '/logIn'
-    | '/signUp'
-    | '/profile'
-    | '/shop'
+    | '/signup'
+    | '/dashboard'
     | '/home'
+    | '/profile'
   id:
     | '__root__'
+    | '/'
     | '/_auth'
-    | '/_base'
-    | '/_merch'
-    | '/_protected'
-    | '/_auth/forgotPassword'
+    | '/_pbceastgate/_admin'
+    | '/_pbceastgate/_client'
+    | '/_auth/forgotpassword'
     | '/_auth/logIn'
-    | '/_auth/signUp'
-    | '/_base/profile'
-    | '/_merch/shop'
-    | '/_protected/home'
-    | '/_base/'
+    | '/_auth/signup'
+    | '/_pbceastgate/_client/_protected'
+    | '/_pbceastgate/_admin/dashboard'
+    | '/_pbceastgate/_client/home'
+    | '/_pbceastgate/_client/_protected/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthRoute: typeof AuthRouteWithChildren
-  BaseRoute: typeof BaseRouteWithChildren
-  MerchRoute: typeof MerchRouteWithChildren
-  ProtectedRoute: typeof ProtectedRouteWithChildren
+  IndexRoute: typeof IndexRoute
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  PbceastgateAdminRouteRoute: typeof PbceastgateAdminRouteRouteWithChildren
+  PbceastgateClientRouteRoute: typeof PbceastgateClientRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_protected': {
-      id: '/_protected'
-      path: ''
+    '/': {
+      id: '/'
+      path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof ProtectedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_merch': {
-      id: '/_merch'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof MerchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_base': {
-      id: '/_base'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof BaseRouteImport
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
       id: '/_auth'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof AuthRouteImport
+      preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_base/': {
-      id: '/_base/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof BaseIndexRouteImport
-      parentRoute: typeof BaseRoute
-    }
-    '/_protected/home': {
-      id: '/_protected/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof ProtectedHomeRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
-    '/_merch/shop': {
-      id: '/_merch/shop'
-      path: '/shop'
-      fullPath: '/shop'
-      preLoaderRoute: typeof MerchShopRouteImport
-      parentRoute: typeof MerchRoute
-    }
-    '/_base/profile': {
-      id: '/_base/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof BaseProfileRouteImport
-      parentRoute: typeof BaseRoute
-    }
-    '/_auth/signUp': {
-      id: '/_auth/signUp'
-      path: '/signUp'
-      fullPath: '/signUp'
-      preLoaderRoute: typeof AuthSignUpRouteImport
-      parentRoute: typeof AuthRoute
+    '/_auth/forgotpassword': {
+      id: '/_auth/forgotpassword'
+      path: '/forgotpassword'
+      fullPath: '/forgotpassword'
+      preLoaderRoute: typeof AuthForgotpasswordRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/_auth/logIn': {
       id: '/_auth/logIn'
       path: '/logIn'
       fullPath: '/logIn'
       preLoaderRoute: typeof AuthLogInRouteImport
-      parentRoute: typeof AuthRoute
+      parentRoute: typeof AuthRouteRoute
     }
-    '/_auth/forgotPassword': {
-      id: '/_auth/forgotPassword'
-      path: '/forgotPassword'
-      fullPath: '/forgotPassword'
-      preLoaderRoute: typeof AuthForgotPasswordRouteImport
-      parentRoute: typeof AuthRoute
+    '/_auth/signup': {
+      id: '/_auth/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_pbceastgate/_admin': {
+      id: '/_pbceastgate/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PbceastgateAdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_pbceastgate/_client': {
+      id: '/_pbceastgate/_client'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PbceastgateClientRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_pbceastgate/_admin/dashboard': {
+      id: '/_pbceastgate/_admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof PbceastgateAdminDashboardRouteImport
+      parentRoute: typeof PbceastgateAdminRouteRoute
+    }
+    '/_pbceastgate/_client/_protected': {
+      id: '/_pbceastgate/_client/_protected'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PbceastgateClientProtectedRouteRouteImport
+      parentRoute: typeof PbceastgateClientRouteRoute
+    }
+    '/_pbceastgate/_client/home': {
+      id: '/_pbceastgate/_client/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof PbceastgateClientHomeRouteImport
+      parentRoute: typeof PbceastgateClientRouteRoute
+    }
+    '/_pbceastgate/_client/_protected/profile': {
+      id: '/_pbceastgate/_client/_protected/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof PbceastgateClientProtectedProfileRouteImport
+      parentRoute: typeof PbceastgateClientProtectedRouteRoute
     }
   }
 }
 
-interface AuthRouteChildren {
-  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+interface AuthRouteRouteChildren {
+  AuthForgotpasswordRoute: typeof AuthForgotpasswordRoute
   AuthLogInRoute: typeof AuthLogInRoute
-  AuthSignUpRoute: typeof AuthSignUpRoute
+  AuthSignupRoute: typeof AuthSignupRoute
 }
 
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthForgotpasswordRoute: AuthForgotpasswordRoute,
   AuthLogInRoute: AuthLogInRoute,
-  AuthSignUpRoute: AuthSignUpRoute,
+  AuthSignupRoute: AuthSignupRoute,
 }
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
-
-interface BaseRouteChildren {
-  BaseProfileRoute: typeof BaseProfileRoute
-  BaseIndexRoute: typeof BaseIndexRoute
-}
-
-const BaseRouteChildren: BaseRouteChildren = {
-  BaseProfileRoute: BaseProfileRoute,
-  BaseIndexRoute: BaseIndexRoute,
-}
-
-const BaseRouteWithChildren = BaseRoute._addFileChildren(BaseRouteChildren)
-
-interface MerchRouteChildren {
-  MerchShopRoute: typeof MerchShopRoute
-}
-
-const MerchRouteChildren: MerchRouteChildren = {
-  MerchShopRoute: MerchShopRoute,
-}
-
-const MerchRouteWithChildren = MerchRoute._addFileChildren(MerchRouteChildren)
-
-interface ProtectedRouteChildren {
-  ProtectedHomeRoute: typeof ProtectedHomeRoute
-}
-
-const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedHomeRoute: ProtectedHomeRoute,
-}
-
-const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
-  ProtectedRouteChildren,
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
 )
 
+interface PbceastgateAdminRouteRouteChildren {
+  PbceastgateAdminDashboardRoute: typeof PbceastgateAdminDashboardRoute
+}
+
+const PbceastgateAdminRouteRouteChildren: PbceastgateAdminRouteRouteChildren = {
+  PbceastgateAdminDashboardRoute: PbceastgateAdminDashboardRoute,
+}
+
+const PbceastgateAdminRouteRouteWithChildren =
+  PbceastgateAdminRouteRoute._addFileChildren(
+    PbceastgateAdminRouteRouteChildren,
+  )
+
+interface PbceastgateClientProtectedRouteRouteChildren {
+  PbceastgateClientProtectedProfileRoute: typeof PbceastgateClientProtectedProfileRoute
+}
+
+const PbceastgateClientProtectedRouteRouteChildren: PbceastgateClientProtectedRouteRouteChildren =
+  {
+    PbceastgateClientProtectedProfileRoute:
+      PbceastgateClientProtectedProfileRoute,
+  }
+
+const PbceastgateClientProtectedRouteRouteWithChildren =
+  PbceastgateClientProtectedRouteRoute._addFileChildren(
+    PbceastgateClientProtectedRouteRouteChildren,
+  )
+
+interface PbceastgateClientRouteRouteChildren {
+  PbceastgateClientProtectedRouteRoute: typeof PbceastgateClientProtectedRouteRouteWithChildren
+  PbceastgateClientHomeRoute: typeof PbceastgateClientHomeRoute
+}
+
+const PbceastgateClientRouteRouteChildren: PbceastgateClientRouteRouteChildren =
+  {
+    PbceastgateClientProtectedRouteRoute:
+      PbceastgateClientProtectedRouteRouteWithChildren,
+    PbceastgateClientHomeRoute: PbceastgateClientHomeRoute,
+  }
+
+const PbceastgateClientRouteRouteWithChildren =
+  PbceastgateClientRouteRoute._addFileChildren(
+    PbceastgateClientRouteRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
-  AuthRoute: AuthRouteWithChildren,
-  BaseRoute: BaseRouteWithChildren,
-  MerchRoute: MerchRouteWithChildren,
-  ProtectedRoute: ProtectedRouteWithChildren,
+  IndexRoute: IndexRoute,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  PbceastgateAdminRouteRoute: PbceastgateAdminRouteRouteWithChildren,
+  PbceastgateClientRouteRoute: PbceastgateClientRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

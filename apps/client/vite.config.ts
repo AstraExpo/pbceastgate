@@ -32,7 +32,6 @@ export default defineConfig({
     nitro(),
   ],
   optimizeDeps: {
-    // Explicitly pre-bundle 'zod' on server start so Vite doesn't re-optimize mid-session
     include: ["zod"],
   },
   resolve: {
@@ -40,5 +39,14 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
       "~": resolve(__dirname, "./app"),
     },
+    dedupe: [
+      "react",
+      "react-dom",
+      "@apollo/client",
+      "@apollo/client-react-streaming",
+      "@apollo/client-integration-tanstack-start",
+      "graphql",
+      "rxjs",
+    ],
   },
 });

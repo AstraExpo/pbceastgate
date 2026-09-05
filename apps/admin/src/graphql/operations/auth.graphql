@@ -1,0 +1,40 @@
+fragment UserFields on User {
+  id
+  firebaseUid
+  name
+  email
+  image
+  emailVerified
+  banned
+  banReason
+  banExpires
+  systemRole
+  membershipStatus
+  createdAt
+  updatedAt
+}
+
+# query CurrentUser {
+#   currentUser {
+#     ...UserFields
+#   }
+# }
+
+mutation AuthenticateAdmin {
+  authenticateAdmin {
+    ...UserFields
+  }
+}
+
+query CurrentAdmin {
+  currentAdmin {
+    status
+    user {
+      ...UserFields
+    }
+  }
+}
+
+# mutation LogoutAdmin {
+#   logoutAdmin
+# }

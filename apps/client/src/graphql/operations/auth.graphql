@@ -1,0 +1,50 @@
+fragment UserFields on User {
+  id
+  firebaseUid
+  name
+  email
+  image
+  emailVerified
+  banned
+  banReason
+  banExpires
+  theme
+  systemRole
+  membershipStatus
+  createdAt
+  updatedAt
+}
+
+query CurrentUser {
+  currentUser {
+    status
+    user {
+      ...UserFields
+    }
+  }
+}
+
+query CurrentCongregant {
+  currentCongregant {
+    status
+    user {
+      ...UserFields
+    }
+  }
+}
+
+mutation AuthenticateCongregant {
+  authenticateCongregant {
+    ...UserFields
+  }
+}
+
+mutation SignUpCongregant {
+  signUpCongregant {
+    ...UserFields
+  }
+}
+
+# mutation LogoutCongregant {
+#   logoutCongregant
+# }

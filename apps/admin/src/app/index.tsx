@@ -1,15 +1,15 @@
-import { MinistryManagementDashboard } from "@/components/Ministry ManagementDashboard";
-import { createFileRoute } from "@tanstack/react-router";
+import { AuthStatus } from "@/graphql";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: ({ context }) => {
+    if (context.auth.status === AuthStatus.Authenticated) {
+      throw redirect({ to: "/dashboard" });
+    }
+  },
   component: Home,
 });
 
 function Home() {
-
-  return (
-    <main className="min-h-dvh w-screen flex items-center justify-center flex-col gap-y-4 p-4">
-      <MinistryManagementDashboard />
-    </main>
-  );
+  return <div>Home</div>;
 }

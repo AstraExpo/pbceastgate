@@ -1,3 +1,4 @@
+import { useSignOutAdmin } from "@/hooks/auth";
 import {
   useCreateMinistry,
   useDeleteMinistry,
@@ -10,17 +11,18 @@ import { useState } from "react";
 export function MinistryManagementDashboard() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Operational Custom Hooks
   const {
     ministries,
-    isPending: loadingFetch,
+    loading: loadingFetch,
     error: errorFetch,
   } = useGetMinistries();
-  const { createMinistry, isPending: loadingCreate } = useCreateMinistry();
-  const { updateMinistry, isPending: loadingUpdate } = useUpdateMinistry();
+  const { createMinistry, loading: loadingCreate } = useCreateMinistry();
+  const { updateMinistry, loading: loadingUpdate } = useUpdateMinistry();
   const { deleteMinistry } = useDeleteMinistry();
+  const { signOut } = useSignOutAdmin();
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export function MinistryManagementDashboard() {
   };
 
   const handleEditSetup = (ministry: {
-    id: number;
+    id: string;
     name: string;
     description?: string | null;
   }) => {
@@ -62,7 +64,7 @@ export function MinistryManagementDashboard() {
     setDescription("");
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Confirm record deletion?")) return;
     try {
       await deleteMinistry(id);
@@ -80,6 +82,7 @@ export function MinistryManagementDashboard() {
         <p className="text-xs sm:text-sm text-gray-500 mt-1 font-normal">
           Validating operational communication across the network stack.
         </p>
+        <Button onClick={() => signOut()}>Sign out</Button>
       </header>
 
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">

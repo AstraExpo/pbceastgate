@@ -2,41 +2,127 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+enum AuthStatus {
+  Authenticated
+  UnAuthenticated
+}
+
+type AuthStatusResponse {
+  status: AuthStatus!
+  user: User
+}
+
 input CreateMinistryInput {
   description: String
-  headId: Int
+  headId: String
   name: String!
+}
+
+input CreateUserInput {
+  email: String!
+  firebaseUid: String!
+  image: String
+  membershipStatus: String = "Guest"
+  name: String!
+  systemRole: String = "User"
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum MembershipStatus {
+  Guest
+  Member
 }
 
 type Ministry {
   description: String
-  headId: Int
-  id: Int!
+  headId: String
+  id: String!
   name: String!
 }
 
 type Mutation {
+  authenticateAdmin: User!
+  authenticateCongregant: User!
   createMinistry(input: CreateMinistryInput!): Ministry!
-  deleteMinistry(id: Int!): Ministry!
-  updateMinistry(id: Int!, input: UpdateMinistryInput!): Ministry!
+  createUser(input: CreateUserInput!): User!
+  deleteMinistry(id: String!): Ministry!
+  deleteUser(userId: String!): User!
+  signUpCongregant: User!
+  updateMinistry(id: String!, input: UpdateMinistryInput!): Ministry!
+  updateUser(input: UpdateUserInput!, userId: String!): User!
 }
 
 type Query {
+  currentAdmin: AuthStatusResponse!
+  currentCongregant: AuthStatusResponse!
+  currentUser: AuthStatusResponse!
+  getAdminUsers(adminRole: SystemRole!): [User!]!
+  getEditorUsers(editorRole: SystemRole!): [User!]!
+  getGuestUsers(guestStatus: MembershipStatus!): [User!]!
+  getMemberUsers(memberStatus: MembershipStatus!): [User!]!
+  getNormalUsers(userRole: SystemRole!): [User!]!
+  getUserByEmail(email: String!): User!
+  getUserByFirebaseUid(firebaseUid: String!): User!
+  getUserById(userId: String!): User!
+  getUsers: [User!]!
   ministries: [Ministry!]!
-  ministry(id: Int!): Ministry
+  ministry(id: String!): Ministry
   sermons: [Sermon!]!
 }
 
 type Sermon {
   date: String!
-  id: ID!
+  id: String!
   preacher: String!
   title: String!
   videoUrl: String
 }
 
+enum SystemRole {
+  Admin
+  Editor
+  System
+  User
+}
+
 input UpdateMinistryInput {
   description: String
-  headId: Int
+  headId: String
   name: String
+}
+
+input UpdateUserInput {
+  email: String
+  firebaseUid: String
+  image: String
+  membershipStatus: String = "Guest"
+  name: String
+  systemRole: String = "User"
+}
+
+type User {
+  banExpires: DateTime
+  banReason: String
+  banned: Boolean!
+  createdAt: DateTime!
+  email: String!
+  emailVerified: Boolean!
+  firebaseUid: String!
+  id: String!
+  image: String
+  membershipStatus: MembershipStatus!
+  name: String!
+  systemRole: SystemRole!
+  theme: UserTheme!
+  updatedAt: DateTime!
+}
+
+enum UserTheme {
+  dark
+  light
+  system
 }

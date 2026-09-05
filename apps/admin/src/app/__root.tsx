@@ -1,16 +1,27 @@
 import {
   Outlet,
-  createRootRoute,
+  createRootRouteWithContext,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import appCss from "./../styles/styles.css?url";
-import { ApolloProvider } from "@apollo/client/react";
-import { apolloClient } from "../constant/apollo-client/client";
 import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
 import { getThemeFromCookie } from "@/server/theme.function";
+import { RouterContext } from "@/hooks/auth/types";
+import { getCurrentAdminFn } from "@/server/auth.function";
+import { Toaster } from "@eastgate/ui/components/sonner";
+import "@/lib/firebase";
+import { SessionSync } from "@/components/session-sync";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
+  beforeLoad: async () => {
+    const auth = await getCurrentAdminFn();
+
+    return {
+      auth,
+    };
+  },
+
   loader: async () => {
     return await getThemeFromCookie();
   },
@@ -43,9 +54,9 @@ function RootLayout() {
       </head>
       <body>
         <ThemeProvider defaultTheme={theme} storageKey="eastgate-admin-theme">
-          <ApolloProvider client={apolloClient}>
-            <Outlet />
-          </ApolloProvider>
+          <SessionSync />
+          <Outlet />
+          <Toaster />
         </ThemeProvider>
         <Scripts />
       </body>

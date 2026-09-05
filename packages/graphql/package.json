@@ -1,0 +1,48 @@
+{
+  "name": "@eastgate/graphql",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./apollo": {
+      "types": "./src/apollo/index.ts",
+      "default": "./src/apollo/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "codegen": "graphql-codegen --config codegen.ts",
+    "codegen:watch": "graphql-codegen --config codegen.ts --watch",
+    "lint": "eslint .",
+    "check-types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@apollo/client": "catalog:",
+    "@apollo/client-integration-tanstack-start": "catalog:",
+    "@apollo/client-react-streaming": "catalog:",
+    "graphql": "catalog:",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@apollo/client": "catalog:",
+    "@apollo/client-integration-tanstack-start": "catalog:",
+    "@apollo/client-react-streaming": "catalog:",
+    "@eastgate/eslint-config": "workspace:*",
+    "@eastgate/typescript-config": "workspace:*",
+    "@graphql-codegen/cli": "^6.0.0",
+    "@graphql-codegen/import-types-preset": "^4.0.1",
+    "@graphql-codegen/typed-document-node": "^6.1.0",
+    "@graphql-codegen/typescript": "^6.1.0",
+    "@graphql-codegen/typescript-operations": "^6.0.0",
+    "@graphql-codegen/typescript-resolvers": "^6.0.2",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "graphql": "catalog:",
+    "rxjs": "catalog:",
+    "typescript": "catalog:"
+  }
+}

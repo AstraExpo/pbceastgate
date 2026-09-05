@@ -7,7 +7,6 @@ enum EnvMode {
   Production = "production",
 }
 
-/** WebSocket Endpoint Format Constraint Verification */
 const wsUrlSchema = z
   .string()
   .refine(
@@ -15,22 +14,30 @@ const wsUrlSchema = z
     "WebSocket URL must start with 'ws://' or 'wss://'",
   );
 
-/** Client-Side Bounded Context Environment Schema */
 export const ClientEnvSchema = z.object({
   VITE_APP_ENV: z.enum(["development", "staging", "production"]),
   VITE_APP_BASE_URL: z.string().url(),
   VITE_API_URL: z.string().url(),
   VITE_GRAPHQL_URL: z.string().url(),
   VITE_SUBSCRIPTION_URL: wsUrlSchema,
+  VITE_FIREBASE_API_KEY: z.string().min(1, "Firebase API Key is missing"),
+  VITE_FIREBASE_AUTH_DOMAIN: z
+    .string()
+    .min(1, "Firebase Auth Domain is missing"),
+  VITE_FIREBASE_PROJECT_ID: z.string().min(1, "Firebase Project ID is missing"),
 });
 
-type EnvConfig = z.infer<typeof ClientEnvSchema>;
+type HardcodedConfig = Omit<
+  z.infer<typeof ClientEnvSchema>,
+  | "VITE_FIREBASE_API_KEY"
+  | "VITE_FIREBASE_AUTH_DOMAIN"
+  | "VITE_FIREBASE_PROJECT_ID"
+>;
 
-/** Concrete Hardcoded Fallbacks per Deployment Node Target */
-const config: Record<EnvMode, EnvConfig> = {
+const config: Record<EnvMode, HardcodedConfig> = {
   [EnvMode.Development]: {
     VITE_APP_ENV: "development",
-    VITE_APP_BASE_URL: "http://localhost:3000",
+    VITE_APP_BASE_URL: "http://localhost:3001",
     VITE_API_URL: "http://localhost:4000/api",
     VITE_GRAPHQL_URL: "http://localhost:4000/graphql",
     VITE_SUBSCRIPTION_URL: "ws://localhost:4000/graphql",
@@ -65,8 +72,13 @@ export function createClientEnvFactory<TClient extends z.ZodRawShape>(
   const mode = import.meta.env.MODE || "development";
   const envMode = getModeFromStr(mode);
 
-  // Choose exact configuration mapping node matching target build profile
-  const runtimeTargetConfig = config[envMode];
+  const runtimeTargetConfig = {
+    ...config[envMode],
+    VITE_FIREBASE_API_KEY: import.meta.env.VITE_FIREBASE_API_KEY,
+    VITE_FIREBASE_AUTH_DOMAIN: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    VITE_FIREBASE_PROJECT_ID: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  };
+
   const envCache = {} as z.infer<z.ZodObject<TClient>>;
 
   const validationResult = z
@@ -88,9 +100,6 @@ export function createClientEnvFactory<TClient extends z.ZodRawShape>(
   return {
     isServer: !isClient,
     mode: envMode,
-    /**
-     * Retrieve a verified client-safe configuration property
-     */
     get<Key extends keyof z.infer<z.ZodObject<TClient>>>(
       key: Key,
     ): z.infer<z.ZodObject<TClient>>[Key] {
@@ -104,5 +113,4 @@ export function createClientEnvFactory<TClient extends z.ZodRawShape>(
   };
 }
 
-/** Pure Type-Safe Structural Output instance */
 export const clientEnv = createClientEnvFactory(ClientEnvSchema.shape);

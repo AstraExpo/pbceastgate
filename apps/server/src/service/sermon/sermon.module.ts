@@ -1,10 +1,8 @@
-import { Module } from '@nestjs/common'
-import { SermonsResolver } from './sermon.resolver.js'
+import { Module } from "@nestjs/common";
+import { SermonsResolver } from "./sermon.resolver";
 
 @Module({
-  imports: [
-
-  ],
+  imports: [],
   providers: [SermonsResolver],
 })
 export class SermonModule {}

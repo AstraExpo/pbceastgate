@@ -1,15 +1,16 @@
 {
   "extends": "@eastgate/typescript-config/tanstack.json",
   "compilerOptions": {
+    "types": ["node", "vite/client"],
     "paths": {
       "~/*": ["./app/*"],
       "@/*": ["./src/*"]
     }
   },
   "include": [
-    "src/**/*.ts", 
-    "src/**/*.tsx", 
-    "app/**/*.ts", 
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "app/**/*.ts",
     "app/**/*.tsx",
     ".tanstack/router/routeTree.gen.ts"
   ],

@@ -1,37 +1,52 @@
-import { defineConfig } from 'vite'
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import viteReact from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import { nitro } from 'nitro/vite'
-import { fileURLToPath } from 'node:url'
-import { dirname, resolve } from 'node:path'
+import { defineConfig } from "vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import { nitro } from "nitro/vite";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default defineConfig({
+  ssr: {
+    noExternal: [
+      "@tanstack/react-start",
+      "@tanstack/react-start-server",
+      "@tanstack/start-server-core",
+    ],
+  },
   server: {
     port: 3000,
   },
   plugins: [
     tailwindcss(),
     tanstackStart({
-      srcDirectory: 'src',
+      srcDirectory: "src",
       router: {
-        routesDirectory: 'app', 
+        routesDirectory: "app",
       },
     }),
     viteReact(),
     nitro(),
   ],
-    optimizeDeps: {
-    // Explicitly pre-bundle 'zod' on server start so Vite doesn't re-optimize mid-session
-    include: ['zod'],
+  optimizeDeps: {
+    include: ["zod"],
   },
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
       "~": resolve(__dirname, "./app"),
     },
+    dedupe: [
+      "react",
+      "react-dom",
+      "@apollo/client",
+      "@apollo/client-react-streaming",
+      "@apollo/client-integration-tanstack-start",
+      "graphql",
+      "rxjs",
+    ],
   },
-})
+});

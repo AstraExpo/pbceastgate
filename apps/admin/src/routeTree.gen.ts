@@ -10,33 +10,71 @@
 
 import { Route as rootRouteImport } from './app/__root'
 import { Route as IndexRouteImport } from './app/index'
+import { Route as AuthRouteRouteImport } from './app/_auth/route'
+import { Route as PbcadminRouteRouteImport } from './app/_pbcadmin/route'
+import { Route as AuthLoginRouteImport } from './app/_auth/login'
+import { Route as PbcadminDashboardRouteImport } from './app/_pbcadmin/dashboard'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRouteRoute = AuthRouteRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PbcadminRouteRoute = PbcadminRouteRouteImport.update({
+  id: '/_pbcadmin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const PbcadminDashboardRoute = PbcadminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => PbcadminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof AuthLoginRoute
+  '/dashboard': typeof PbcadminDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof AuthLoginRoute
+  '/dashboard': typeof PbcadminDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/_pbcadmin': typeof PbcadminRouteRouteWithChildren
+  '/_auth/login': typeof AuthLoginRoute
+  '/_pbcadmin/dashboard': typeof PbcadminDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/login' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/login' | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/_pbcadmin'
+    | '/_auth/login'
+    | '/_pbcadmin/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  PbcadminRouteRoute: typeof PbcadminRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +86,65 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_pbcadmin': {
+      id: '/_pbcadmin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PbcadminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_pbcadmin/dashboard': {
+      id: '/_pbcadmin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof PbcadminDashboardRouteImport
+      parentRoute: typeof PbcadminRouteRoute
+    }
   }
 }
 
+interface AuthRouteRouteChildren {
+  AuthLoginRoute: typeof AuthLoginRoute
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthLoginRoute: AuthLoginRoute,
+}
+
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
+
+interface PbcadminRouteRouteChildren {
+  PbcadminDashboardRoute: typeof PbcadminDashboardRoute
+}
+
+const PbcadminRouteRouteChildren: PbcadminRouteRouteChildren = {
+  PbcadminDashboardRoute: PbcadminDashboardRoute,
+}
+
+const PbcadminRouteRouteWithChildren = PbcadminRouteRoute._addFileChildren(
+  PbcadminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  PbcadminRouteRoute: PbcadminRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
