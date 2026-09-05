@@ -27,6 +27,12 @@ enum MembershipStatus {
   Member
 }
 
+enum UserTheme {
+  light
+  dark
+  system
+}
+
 model User {
   user          Int     @id @default(autoincrement())
   id            String  @unique @default(uuid())
@@ -42,6 +48,7 @@ model User {
 
   systemRole       SystemRole       @default(User)
   membershipStatus MembershipStatus @default(Guest)
+  theme            UserTheme        @default(system)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
