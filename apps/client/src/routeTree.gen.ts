@@ -11,15 +11,15 @@
 import { Route as rootRouteImport } from './app/__root'
 import { Route as IndexRouteImport } from './app/index'
 import { Route as AuthRouteRouteImport } from './app/_auth/route'
-import { Route as BaseRouteRouteImport } from './app/_base/route'
-import { Route as MerchRouteRouteImport } from './app/_merch/route'
-import { Route as ProtectedRouteRouteImport } from './app/_protected/route'
 import { Route as AuthForgotpasswordRouteImport } from './app/_auth/forgotpassword'
 import { Route as AuthLogInRouteImport } from './app/_auth/logIn'
 import { Route as AuthSignupRouteImport } from './app/_auth/signup'
-import { Route as BaseProfileRouteImport } from './app/_base/profile'
-import { Route as MerchShopRouteImport } from './app/_merch/shop'
-import { Route as ProtectedHomeRouteImport } from './app/_protected/home'
+import { Route as PbceastgateAdminRouteRouteImport } from './app/_pbceastgate/_admin/route'
+import { Route as PbceastgateClientRouteRouteImport } from './app/_pbceastgate/_client/route'
+import { Route as PbceastgateAdminDashboardRouteImport } from './app/_pbceastgate/_admin/dashboard'
+import { Route as PbceastgateClientProtectedRouteRouteImport } from './app/_pbceastgate/_client/_protected/route'
+import { Route as PbceastgateClientHomeRouteImport } from './app/_pbceastgate/_client/home'
+import { Route as PbceastgateClientProtectedProfileRouteImport } from './app/_pbceastgate/_client/_protected/profile'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,18 +28,6 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BaseRouteRoute = BaseRouteRouteImport.update({
-  id: '/_base',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MerchRouteRoute = MerchRouteRouteImport.update({
-  id: '/_merch',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
-  id: '/_protected',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthForgotpasswordRoute = AuthForgotpasswordRouteImport.update({
@@ -57,53 +45,68 @@ const AuthSignupRoute = AuthSignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const BaseProfileRoute = BaseProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => BaseRouteRoute,
+const PbceastgateAdminRouteRoute = PbceastgateAdminRouteRouteImport.update({
+  id: '/_pbceastgate/_admin',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const MerchShopRoute = MerchShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => MerchRouteRoute,
+const PbceastgateClientRouteRoute = PbceastgateClientRouteRouteImport.update({
+  id: '/_pbceastgate/_client',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const ProtectedHomeRoute = ProtectedHomeRouteImport.update({
+const PbceastgateAdminDashboardRoute =
+  PbceastgateAdminDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => PbceastgateAdminRouteRoute,
+  } as any)
+const PbceastgateClientProtectedRouteRoute =
+  PbceastgateClientProtectedRouteRouteImport.update({
+    id: '/_protected',
+    getParentRoute: () => PbceastgateClientRouteRoute,
+  } as any)
+const PbceastgateClientHomeRoute = PbceastgateClientHomeRouteImport.update({
   id: '/home',
   path: '/home',
-  getParentRoute: () => ProtectedRouteRoute,
+  getParentRoute: () => PbceastgateClientRouteRoute,
 } as any)
+const PbceastgateClientProtectedProfileRoute =
+  PbceastgateClientProtectedProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => PbceastgateClientProtectedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/forgotpassword': typeof AuthForgotpasswordRoute
   '/logIn': typeof AuthLogInRoute
   '/signup': typeof AuthSignupRoute
-  '/profile': typeof BaseProfileRoute
-  '/shop': typeof MerchShopRoute
-  '/home': typeof ProtectedHomeRoute
+  '/dashboard': typeof PbceastgateAdminDashboardRoute
+  '/home': typeof PbceastgateClientHomeRoute
+  '/profile': typeof PbceastgateClientProtectedProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgotpassword': typeof AuthForgotpasswordRoute
   '/logIn': typeof AuthLogInRoute
   '/signup': typeof AuthSignupRoute
-  '/profile': typeof BaseProfileRoute
-  '/shop': typeof MerchShopRoute
-  '/home': typeof ProtectedHomeRoute
+  '/dashboard': typeof PbceastgateAdminDashboardRoute
+  '/home': typeof PbceastgateClientHomeRoute
+  '/profile': typeof PbceastgateClientProtectedProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
-  '/_base': typeof BaseRouteRouteWithChildren
-  '/_merch': typeof MerchRouteRouteWithChildren
-  '/_protected': typeof ProtectedRouteRouteWithChildren
+  '/_pbceastgate/_admin': typeof PbceastgateAdminRouteRouteWithChildren
+  '/_pbceastgate/_client': typeof PbceastgateClientRouteRouteWithChildren
   '/_auth/forgotpassword': typeof AuthForgotpasswordRoute
   '/_auth/logIn': typeof AuthLogInRoute
   '/_auth/signup': typeof AuthSignupRoute
-  '/_base/profile': typeof BaseProfileRoute
-  '/_merch/shop': typeof MerchShopRoute
-  '/_protected/home': typeof ProtectedHomeRoute
+  '/_pbceastgate/_client/_protected': typeof PbceastgateClientProtectedRouteRouteWithChildren
+  '/_pbceastgate/_admin/dashboard': typeof PbceastgateAdminDashboardRoute
+  '/_pbceastgate/_client/home': typeof PbceastgateClientHomeRoute
+  '/_pbceastgate/_client/_protected/profile': typeof PbceastgateClientProtectedProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -112,39 +115,38 @@ export interface FileRouteTypes {
     | '/forgotpassword'
     | '/logIn'
     | '/signup'
-    | '/profile'
-    | '/shop'
+    | '/dashboard'
     | '/home'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/forgotpassword'
     | '/logIn'
     | '/signup'
-    | '/profile'
-    | '/shop'
+    | '/dashboard'
     | '/home'
+    | '/profile'
   id:
     | '__root__'
     | '/'
     | '/_auth'
-    | '/_base'
-    | '/_merch'
-    | '/_protected'
+    | '/_pbceastgate/_admin'
+    | '/_pbceastgate/_client'
     | '/_auth/forgotpassword'
     | '/_auth/logIn'
     | '/_auth/signup'
-    | '/_base/profile'
-    | '/_merch/shop'
-    | '/_protected/home'
+    | '/_pbceastgate/_client/_protected'
+    | '/_pbceastgate/_admin/dashboard'
+    | '/_pbceastgate/_client/home'
+    | '/_pbceastgate/_client/_protected/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  BaseRouteRoute: typeof BaseRouteRouteWithChildren
-  MerchRouteRoute: typeof MerchRouteRouteWithChildren
-  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
+  PbceastgateAdminRouteRoute: typeof PbceastgateAdminRouteRouteWithChildren
+  PbceastgateClientRouteRoute: typeof PbceastgateClientRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -161,27 +163,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_base': {
-      id: '/_base'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof BaseRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_merch': {
-      id: '/_merch'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof MerchRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_protected': {
-      id: '/_protected'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof ProtectedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/forgotpassword': {
@@ -205,26 +186,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignupRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/_base/profile': {
-      id: '/_base/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof BaseProfileRouteImport
-      parentRoute: typeof BaseRouteRoute
+    '/_pbceastgate/_admin': {
+      id: '/_pbceastgate/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PbceastgateAdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_merch/shop': {
-      id: '/_merch/shop'
-      path: '/shop'
-      fullPath: '/shop'
-      preLoaderRoute: typeof MerchShopRouteImport
-      parentRoute: typeof MerchRouteRoute
+    '/_pbceastgate/_client': {
+      id: '/_pbceastgate/_client'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PbceastgateClientRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_protected/home': {
-      id: '/_protected/home'
+    '/_pbceastgate/_admin/dashboard': {
+      id: '/_pbceastgate/_admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof PbceastgateAdminDashboardRouteImport
+      parentRoute: typeof PbceastgateAdminRouteRoute
+    }
+    '/_pbceastgate/_client/_protected': {
+      id: '/_pbceastgate/_client/_protected'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PbceastgateClientProtectedRouteRouteImport
+      parentRoute: typeof PbceastgateClientRouteRoute
+    }
+    '/_pbceastgate/_client/home': {
+      id: '/_pbceastgate/_client/home'
       path: '/home'
       fullPath: '/home'
-      preLoaderRoute: typeof ProtectedHomeRouteImport
-      parentRoute: typeof ProtectedRouteRoute
+      preLoaderRoute: typeof PbceastgateClientHomeRouteImport
+      parentRoute: typeof PbceastgateClientRouteRoute
+    }
+    '/_pbceastgate/_client/_protected/profile': {
+      id: '/_pbceastgate/_client/_protected/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof PbceastgateClientProtectedProfileRouteImport
+      parentRoute: typeof PbceastgateClientProtectedRouteRoute
     }
   }
 }
@@ -245,48 +247,56 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
-interface BaseRouteRouteChildren {
-  BaseProfileRoute: typeof BaseProfileRoute
+interface PbceastgateAdminRouteRouteChildren {
+  PbceastgateAdminDashboardRoute: typeof PbceastgateAdminDashboardRoute
 }
 
-const BaseRouteRouteChildren: BaseRouteRouteChildren = {
-  BaseProfileRoute: BaseProfileRoute,
+const PbceastgateAdminRouteRouteChildren: PbceastgateAdminRouteRouteChildren = {
+  PbceastgateAdminDashboardRoute: PbceastgateAdminDashboardRoute,
 }
 
-const BaseRouteRouteWithChildren = BaseRouteRoute._addFileChildren(
-  BaseRouteRouteChildren,
-)
+const PbceastgateAdminRouteRouteWithChildren =
+  PbceastgateAdminRouteRoute._addFileChildren(
+    PbceastgateAdminRouteRouteChildren,
+  )
 
-interface MerchRouteRouteChildren {
-  MerchShopRoute: typeof MerchShopRoute
+interface PbceastgateClientProtectedRouteRouteChildren {
+  PbceastgateClientProtectedProfileRoute: typeof PbceastgateClientProtectedProfileRoute
 }
 
-const MerchRouteRouteChildren: MerchRouteRouteChildren = {
-  MerchShopRoute: MerchShopRoute,
+const PbceastgateClientProtectedRouteRouteChildren: PbceastgateClientProtectedRouteRouteChildren =
+  {
+    PbceastgateClientProtectedProfileRoute:
+      PbceastgateClientProtectedProfileRoute,
+  }
+
+const PbceastgateClientProtectedRouteRouteWithChildren =
+  PbceastgateClientProtectedRouteRoute._addFileChildren(
+    PbceastgateClientProtectedRouteRouteChildren,
+  )
+
+interface PbceastgateClientRouteRouteChildren {
+  PbceastgateClientProtectedRouteRoute: typeof PbceastgateClientProtectedRouteRouteWithChildren
+  PbceastgateClientHomeRoute: typeof PbceastgateClientHomeRoute
 }
 
-const MerchRouteRouteWithChildren = MerchRouteRoute._addFileChildren(
-  MerchRouteRouteChildren,
-)
+const PbceastgateClientRouteRouteChildren: PbceastgateClientRouteRouteChildren =
+  {
+    PbceastgateClientProtectedRouteRoute:
+      PbceastgateClientProtectedRouteRouteWithChildren,
+    PbceastgateClientHomeRoute: PbceastgateClientHomeRoute,
+  }
 
-interface ProtectedRouteRouteChildren {
-  ProtectedHomeRoute: typeof ProtectedHomeRoute
-}
-
-const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
-  ProtectedHomeRoute: ProtectedHomeRoute,
-}
-
-const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
-  ProtectedRouteRouteChildren,
-)
+const PbceastgateClientRouteRouteWithChildren =
+  PbceastgateClientRouteRoute._addFileChildren(
+    PbceastgateClientRouteRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
-  BaseRouteRoute: BaseRouteRouteWithChildren,
-  MerchRouteRoute: MerchRouteRouteWithChildren,
-  ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
+  PbceastgateAdminRouteRoute: PbceastgateAdminRouteRouteWithChildren,
+  PbceastgateClientRouteRoute: PbceastgateClientRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -5,25 +5,42 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import appCss from "./../styles/styles.css?url";
-import { getThemeFromCookie } from "@/server/theme.function";
-import { ThemeProvider } from "@eastgate/ui/theme/ThemeProvider.js";
 import { Toaster } from "@eastgate/ui/components/sonner";
 import "@/lib/firebase";
 import { RouterContext } from "@/hooks/auth/types";
-import { getCurrentCongregantFn } from "@/server/auth.function";
+import { getCurrentUserFn } from "@/server/auth.function";
 import { SessionSync } from "@/components/session-sync";
+import {
+  getPreferencesFn,
+  setPreferencesFn,
+} from "@/server/preferences.function";
+import { AuthStatus } from "@/graphql";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
-    const auth = await getCurrentCongregantFn();
+    const auth = await getCurrentUserFn();
 
     return {
       auth,
     };
   },
-  loader: async () => {
-    return await getThemeFromCookie();
+  loader: async ({ context }) => {
+    const cookiePrefs = await getPreferencesFn();
+    if (
+      context.auth.status === AuthStatus.Authenticated &&
+      context.auth.user.theme &&
+      context.auth.user.theme !== cookiePrefs.theme
+    ) {
+      return await setPreferencesFn({
+        data: { theme: context.auth.user.theme },
+      });
+    }
+    return cookiePrefs;
   },
+  // loader: async () => {
+  //   return await getThemeFromCookie();
+  // },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -39,6 +56,28 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         href: appCss,
       },
     ],
+    scripts: [
+      {
+        children: `
+          (function () {
+            try {
+              var match = document.cookie.match(/eastgate_preferences=([^;]+)/);
+              var theme = "system";
+              if (match) {
+                var prefs = JSON.parse(decodeURIComponent(match[1]));
+                theme = prefs.theme || "system";
+              }
+              var resolved = theme === "system"
+                ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+                : theme;
+              document.documentElement.classList.add(resolved);
+            } catch (e) {
+              document.documentElement.classList.add("light");
+            }
+          })();
+        `,
+      },
+    ],
   }),
   component: RootLayout,
   notFoundComponent: NotFoundLayout,
@@ -46,13 +85,18 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootLayout() {
   const { theme } = Route.useLoaderData();
+  const initialClass =
+    theme === "dark" ? "dark" : theme === "light" ? "light" : "light";
+
+  const { auth } = Route.useRouteContext();
+  const isAuthenticated = auth.status === AuthStatus.Authenticated;
   return (
-    <html lang="en" className={theme}>
+    <html lang="en" className={initialClass}>
       <head>
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider defaultTheme={theme} storageKey="eastgate-client-theme">
+        <ThemeProvider defaultTheme={theme} isAuthenticated={isAuthenticated}>
           <SessionSync />
           <Outlet />
           <Toaster />
