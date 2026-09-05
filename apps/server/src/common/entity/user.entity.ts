@@ -1,4 +1,8 @@
-import { MembershipStatus, SystemRole } from "@/generated/prisma/enums";
+import {
+  MembershipStatus,
+  SystemRole,
+  UserTheme,
+} from "@/generated/prisma/enums";
 import { ObjectType, Field, registerEnumType } from "@nestjs/graphql";
 
 registerEnumType(SystemRole, {
@@ -7,6 +11,10 @@ registerEnumType(SystemRole, {
 
 registerEnumType(MembershipStatus, {
   name: "MembershipStatus",
+});
+
+registerEnumType(UserTheme, {
+  name: "UserTheme",
 });
 
 @ObjectType()
@@ -37,6 +45,9 @@ export class User {
 
   @Field(() => Date, { nullable: true })
   banExpires?: Date | null;
+
+  @Field(() => UserTheme)
+  theme!: UserTheme;
 
   @Field(() => SystemRole)
   systemRole!: SystemRole;

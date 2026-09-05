@@ -25,6 +25,16 @@ export class AuthResolver {
 
   @Public()
   @Query(() => AuthStatusResponse)
+  async currentUser(
+    @CurrentUser() user: User | null,
+  ): Promise<AuthStatusResponse> {
+    return user
+      ? { status: AuthStatus.Authenticated, user }
+      : { status: AuthStatus.UnAuthenticated, user: null };
+  }
+
+  @Public()
+  @Query(() => AuthStatusResponse)
   async currentAdmin(
     @CurrentUser() user: User | null,
   ): Promise<AuthStatusResponse> {

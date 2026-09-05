@@ -1,28 +1,13 @@
-import { Resolver, Query, Mutation, Args, Context } from "@nestjs/graphql";
+import { Resolver, Query, Mutation, Args } from "@nestjs/graphql";
 import { UserService } from "./user.service";
 import { User } from "@/common/entity/user.entity";
 import { CreateUserInput } from "@/common/dto/user/create.dto";
 import { UpdateUserInput } from "@/common/dto/user/update.dto";
-import { type GraphQLContext } from "@/common/config/graphql.config";
-import { Public } from "../auth/decorators/public.decorators";
 import { MembershipStatus, SystemRole } from "@/generated/prisma/enums";
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
-
-  // --------------------------------------------------
-  // AUTHENTICATION
-  // --------------------------------------------------
-
-  @Public()
-  @Query(() => User, {
-    nullable: true,
-  })
-  currentUser(@Context() context: GraphQLContext): User | null {
-    return context.req.auth?.user ?? null;
-  }
-
   // --------------------------------------------------
   // QUERIES
   // --------------------------------------------------
