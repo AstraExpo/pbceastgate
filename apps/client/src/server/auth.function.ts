@@ -58,7 +58,7 @@ export const signOutEverywhereFn = createServerFn({ method: "POST" }).handler(
   },
 );
 
-export const getCurrentCongregantFn = createServerFn({ method: "GET" }).handler(
+export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
   async () => {
     const sessionCookie = getCookie(SESSION_COOKIE_NAME);
     if (!sessionCookie) {
@@ -76,18 +76,18 @@ export const getCurrentCongregantFn = createServerFn({ method: "GET" }).handler(
     const client = createServerFnApolloClient();
 
     const { data, error } = await client.query({
-      query: ApolloSDK.CurrentCongregantDocument,
+      query: ApolloSDK.CurrentUserDocument,
     });
 
     if (error) throw error;
 
     if (
-      data?.currentCongregant.status === AuthStatus.Authenticated &&
-      data?.currentCongregant.user
+      data?.currentUser.status === AuthStatus.Authenticated &&
+      data?.currentUser.user
     ) {
       return {
-        status: data.currentCongregant.status,
-        user: data.currentCongregant.user,
+        status: data.currentUser.status,
+        user: data.currentUser.user,
       };
     }
 
